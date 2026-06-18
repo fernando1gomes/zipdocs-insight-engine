@@ -50,7 +50,7 @@ export function PillarCard({
         </div>
         <div className="text-right">
           <div className="text-[10px] text-muted-foreground">impacta</div>
-          <div className="text-[10px] font-medium text-muted-foreground">👥 {pillar.impactPillars.length} pilares</div>
+          <div className="text-[10px] font-medium text-muted-foreground">👥 {pillar.impact} pilares</div>
         </div>
       </div>
       <p className="mt-2 text-xs text-muted-foreground leading-snug">{pillar.message}</p>
