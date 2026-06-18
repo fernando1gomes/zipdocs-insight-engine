@@ -78,8 +78,56 @@ function Dashboard() {
           <Legend />
           <TipCard />
         </div>
+
+        <AlertsPanel />
       </div>
     </div>
+  );
+}
+
+function AlertsPanel() {
+  const qc = useQueryClient();
+  const { data: alerts } = useQuery({
+    queryKey: ["alerts"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("alerts")
+        .select("id, title, message, severity, pillar_id, created_at")
+        .eq("is_resolved", false)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      return data ?? [];
+    },
+  });
+
+  async function resolve(id: string) {
+    await supabase.from("alerts").update({ is_resolved: true, resolved_at: new Date().toISOString() }).eq("id", id);
+    qc.invalidateQueries({ queryKey: ["alerts"] });
+  }
+
+  if (!alerts || alerts.length === 0) return null;
+
+  return (
+    <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-lg">🔔</span>
+        <h2 className="text-lg font-bold">Alertas</h2>
+        <span className="text-xs text-muted-foreground">({alerts.length})</span>
+      </div>
+      <ul className="flex flex-col gap-2">
+        {alerts.map((a) => (
+          <li key={a.id} className="flex items-start justify-between gap-3 rounded-lg border border-border/60 px-3 py-2">
+            <div className="min-w-0">
+              <div className="text-sm font-semibold truncate">{a.title}</div>
+              <div className="text-xs text-muted-foreground">{a.message}</div>
+            </div>
+            <button onClick={() => resolve(a.id)} className="shrink-0 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-secondary">
+              Resolver
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
