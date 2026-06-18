@@ -19,6 +19,10 @@ function PillarDetail() {
   const def = PILLAR_DEFAULTS.find((p) => p.id === pillarId);
   const qc = useQueryClient();
   const [score, setScore] = useState<number>(7);
+  const [behavior, setBehavior] = useState<number>(7);
+  const [execution, setExecution] = useState<number>(7);
+  const [frequency, setFrequency] = useState<number>(7);
+  const [interdependence, setInterdependence] = useState<number>(7);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [insight, setInsight] = useState<string | null>(null);
@@ -67,11 +71,18 @@ function PillarDetail() {
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
+    const final = Number(
+      ((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)
+    );
     const { error } = await supabase.from("pillar_evaluations").insert({
       user_id: u.user.id,
       pillar_id: pillarId,
-      final_score: score,
+      final_score: final,
       subjective_score: score,
+      behavior_score: behavior,
+      action_execution_score: execution,
+      frequency_score: frequency,
+      interdependence_score: interdependence,
       user_comment: comment || null,
     });
     setSubmitting(false);
