@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { LifeWheel } from "@/components/LifeWheel";
 import { PillarCard } from "@/components/PillarCard";
 import { RadialWheel } from "@/components/RadialWheel";
-import { PILLARS, overallBalance, statusFromScore, type Pillar } from "@/lib/pillars";
+import { PILLARS, overallBalance, type Pillar } from "@/lib/pillars";
 
 export const Route = createFileRoute("/")({
   head: () => ({
