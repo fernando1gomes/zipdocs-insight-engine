@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
 import { Route as AuthenticatedAlertasRouteImport } from './routes/_authenticated/alertas'
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/alertas': typeof AuthenticatedAlertasRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/alertas': typeof AuthenticatedAlertasRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,12 +85,27 @@ export interface FileRoutesById {
   '/_authenticated/alertas': typeof AuthenticatedAlertasRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/acoes' | '/alertas' | '/checkin' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/acoes'
+    | '/alertas'
+    | '/checkin'
+    | '/dashboard'
+    | '/historico'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/acoes' | '/alertas' | '/checkin' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/acoes'
+    | '/alertas'
+    | '/checkin'
+    | '/dashboard'
+    | '/historico'
   id:
     | '__root__'
     | '/'
@@ -92,6 +115,7 @@ export interface FileRouteTypes {
     | '/_authenticated/alertas'
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/historico'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -122,6 +146,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/historico': {
+      id: '/_authenticated/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -159,6 +190,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAlertasRoute: typeof AuthenticatedAlertasRoute
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -166,6 +198,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAlertasRoute: AuthenticatedAlertasRoute,
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
