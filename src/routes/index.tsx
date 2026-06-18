@@ -22,10 +22,16 @@ function Index() {
   const [hovered, setHovered] = useState<number | null>(null);
   const balance = useMemo(() => overallBalance(pillars), [pillars]);
 
-  const priorities = pillars
-    .filter((p) => statusFromScore(p.score) !== "balanced")
-    .sort((a, b) => a.score - b.score)
-    .slice(0, 5);
+  const PRIORITY_NAMES = [
+    "Saúde e disposição",
+    "Emocional",
+    "Espiritualidade e sentido",
+    "Financeiro",
+    "Intelectual e aprendizado",
+  ];
+  const priorities = PRIORITY_NAMES
+    .map((n) => pillars.find((p) => p.name === n))
+    .filter((p): p is Pillar => Boolean(p));
 
   return (
     <div className="min-h-screen bg-background">
