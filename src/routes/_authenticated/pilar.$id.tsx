@@ -6,6 +6,8 @@ import { PILLAR_DEFAULTS, statusFromScore } from "@/lib/pillars";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { generatePillarInsight } from "@/lib/insights.functions";
 
 export const Route = createFileRoute("/_authenticated/pilar/$id")({
   component: PillarDetail,
@@ -19,6 +21,9 @@ function PillarDetail() {
   const [score, setScore] = useState<number>(7);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [insight, setInsight] = useState<string | null>(null);
+  const [loadingInsight, setLoadingInsight] = useState(false);
+  const runInsight = useServerFn(generatePillarInsight);
 
   const { data: userPillar } = useQuery({
     queryKey: ["user_pillar", pillarId],
@@ -101,6 +106,18 @@ function PillarDetail() {
   if (!def) return <div className="p-8">Pilar não encontrado.</div>;
   const current = Number(userPillar?.current_score ?? 0);
   const status = statusFromScore(current);
+
+  async function fetchInsight() {
+    setLoadingInsight(true);
+    try {
+      const r = await runInsight({ data: { pillarId } });
+      setInsight(r.insight);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro na IA");
+    } finally {
+      setLoadingInsight(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
