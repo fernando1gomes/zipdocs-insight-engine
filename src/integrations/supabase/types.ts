@@ -14,6 +14,329 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          pillar_id: number | null
+          recommendation_type: string
+          status: string
+          suggested_action: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          pillar_id?: number | null
+          recommendation_type: string
+          status?: string
+          suggested_action?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          pillar_id?: number | null
+          recommendation_type?: string
+          status?: string
+          suggested_action?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_recommendations_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean
+          is_resolved: boolean
+          message: string
+          pillar_id: number | null
+          resolved_at: string | null
+          severity: string
+          title: string
+          trigger_reason: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          is_resolved?: boolean
+          message: string
+          pillar_id?: number | null
+          resolved_at?: string | null
+          severity?: string
+          title: string
+          trigger_reason?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          is_resolved?: boolean
+          message?: string
+          pillar_id?: number | null
+          resolved_at?: string | null
+          severity?: string
+          title?: string
+          trigger_reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_action_logs: {
+        Row: {
+          action_id: string
+          created_at: string
+          id: string
+          log_date: string
+          pillar_id: number
+          status: string
+          user_id: string
+          user_note: string | null
+        }
+        Insert: {
+          action_id: string
+          created_at?: string
+          id?: string
+          log_date?: string
+          pillar_id: number
+          status: string
+          user_id: string
+          user_note?: string | null
+        }
+        Update: {
+          action_id?: string
+          created_at?: string
+          id?: string
+          log_date?: string
+          pillar_id?: number
+          status?: string
+          user_id?: string
+          user_note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_action_logs_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "pillar_actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_action_logs_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_actions: {
+        Row: {
+          action_type: string
+          completed_at: string | null
+          created_at: string
+          days_overdue: number
+          description: string | null
+          due_date: string | null
+          frequency_type: string | null
+          frequency_value: number | null
+          id: string
+          next_due_date: string | null
+          obstacle_expected: string | null
+          pillar_id: number
+          priority: string
+          required_resource: string | null
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_type?: string
+          completed_at?: string | null
+          created_at?: string
+          days_overdue?: number
+          description?: string | null
+          due_date?: string | null
+          frequency_type?: string | null
+          frequency_value?: number | null
+          id?: string
+          next_due_date?: string | null
+          obstacle_expected?: string | null
+          pillar_id: number
+          priority?: string
+          required_resource?: string | null
+          start_date?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          completed_at?: string | null
+          created_at?: string
+          days_overdue?: number
+          description?: string | null
+          due_date?: string | null
+          frequency_type?: string | null
+          frequency_value?: number | null
+          id?: string
+          next_due_date?: string | null
+          obstacle_expected?: string | null
+          pillar_id?: number
+          priority?: string
+          required_resource?: string | null
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_actions_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_evaluations: {
+        Row: {
+          action_execution_score: number | null
+          ai_summary: string | null
+          behavior_score: number | null
+          created_at: string
+          evaluation_date: string
+          final_score: number
+          frequency_score: number | null
+          id: string
+          interdependence_score: number | null
+          pillar_id: number
+          subjective_score: number | null
+          user_comment: string | null
+          user_id: string
+        }
+        Insert: {
+          action_execution_score?: number | null
+          ai_summary?: string | null
+          behavior_score?: number | null
+          created_at?: string
+          evaluation_date?: string
+          final_score: number
+          frequency_score?: number | null
+          id?: string
+          interdependence_score?: number | null
+          pillar_id: number
+          subjective_score?: number | null
+          user_comment?: string | null
+          user_id: string
+        }
+        Update: {
+          action_execution_score?: number | null
+          ai_summary?: string | null
+          behavior_score?: number | null
+          created_at?: string
+          evaluation_date?: string
+          final_score?: number
+          frequency_score?: number | null
+          id?: string
+          interdependence_score?: number | null
+          pillar_id?: number
+          subjective_score?: number | null
+          user_comment?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_evaluations_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_interdependencies: {
+        Row: {
+          created_at: string
+          id: string
+          impact_description: string | null
+          impact_level: string
+          source_pillar_id: number
+          target_pillar_id: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          impact_description?: string | null
+          impact_level?: string
+          source_pillar_id: number
+          target_pillar_id: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          impact_description?: string | null
+          impact_level?: string
+          source_pillar_id?: number
+          target_pillar_id?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_interdependencies_source_pillar_id_fkey"
+            columns: ["source_pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_interdependencies_target_pillar_id_fkey"
+            columns: ["target_pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pillars: {
         Row: {
           created_at: string
@@ -174,6 +497,108 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      weekly_checkin_answers: {
+        Row: {
+          answer: string
+          checkin_id: string
+          created_at: string
+          id: string
+          question: string
+          user_id: string
+        }
+        Insert: {
+          answer: string
+          checkin_id: string
+          created_at?: string
+          id?: string
+          question: string
+          user_id: string
+        }
+        Update: {
+          answer?: string
+          checkin_id?: string
+          created_at?: string
+          id?: string
+          question?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_checkin_answers_checkin_id_fkey"
+            columns: ["checkin_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_checkins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_checkins: {
+        Row: {
+          ai_summary: string | null
+          created_at: string
+          id: string
+          is_completed: boolean
+          main_focus_pillar_id: number | null
+          most_improved_pillar_id: number | null
+          most_neglected_pillar_id: number | null
+          updated_at: string
+          user_id: string
+          user_reflection: string | null
+          week_end_date: string
+          week_start_date: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          main_focus_pillar_id?: number | null
+          most_improved_pillar_id?: number | null
+          most_neglected_pillar_id?: number | null
+          updated_at?: string
+          user_id: string
+          user_reflection?: string | null
+          week_end_date: string
+          week_start_date: string
+        }
+        Update: {
+          ai_summary?: string | null
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          main_focus_pillar_id?: number | null
+          most_improved_pillar_id?: number | null
+          most_neglected_pillar_id?: number | null
+          updated_at?: string
+          user_id?: string
+          user_reflection?: string | null
+          week_end_date?: string
+          week_start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_checkins_main_focus_pillar_id_fkey"
+            columns: ["main_focus_pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_checkins_most_improved_pillar_id_fkey"
+            columns: ["most_improved_pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_checkins_most_neglected_pillar_id_fkey"
+            columns: ["most_neglected_pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
