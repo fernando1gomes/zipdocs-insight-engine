@@ -22,10 +22,9 @@ function PillarDetail() {
     Number(((s + b + e + f + i * impactWeight) / (4 + impactWeight)).toFixed(2));
   const qc = useQueryClient();
   const [score, setScore] = useState<number>(7);
-  const [behavior, setBehavior] = useState<number>(7);
   const [execution, setExecution] = useState<number>(7);
-  const [frequency, setFrequency] = useState<number>(7);
   const [interdependence, setInterdependence] = useState<number>(7);
+  const [criteriaScores, setCriteriaScores] = useState<Record<string, number>>({});
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [insight, setInsight] = useState<string | null>(null);
@@ -69,23 +68,64 @@ function PillarDetail() {
     },
   });
 
+  const { data: criteria } = useQuery({
+    queryKey: ["pillar_criteria", pillarId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("pillar_criteria")
+        .select("id, key, label, question_text, hint, weight, order_index")
+        .eq("pillar_id", pillarId)
+        .eq("is_active", true)
+        .order("order_index");
+      return data ?? [];
+    },
+  });
+
+  function setCrit(id: string, v: number) {
+    setCriteriaScores((s) => ({ ...s, [id]: v }));
+  }
+
+  // média ponderada dos critérios objetivos = behavior_score
+  const behaviorAvg = (() => {
+    const items = criteria ?? [];
+    if (!items.length) return 7;
+    let sum = 0;
+    let wsum = 0;
+    for (const c of items) {
+      const v = criteriaScores[c.id] ?? 7;
+      const w = Number(c.weight ?? 1);
+      sum += v * w;
+      wsum += w;
+    }
+    return wsum > 0 ? sum / wsum : 7;
+  })();
+
   async function submitEvaluation(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
-    const final = computeFinal(score, behavior, execution, frequency, interdependence);
-    const { error } = await supabase.from("pillar_evaluations").insert({
+    const final = computeFinal(score, behaviorAvg, execution, behaviorAvg, interdependence);
+    const { data: evalIns, error } = await supabase.from("pillar_evaluations").insert({
       user_id: u.user.id,
       pillar_id: pillarId,
       final_score: final,
       subjective_score: score,
-      behavior_score: behavior,
+      behavior_score: Number(behaviorAvg.toFixed(2)),
       action_execution_score: execution,
-      frequency_score: frequency,
+      frequency_score: Number(behaviorAvg.toFixed(2)),
       interdependence_score: interdependence,
       user_comment: comment || null,
-    });
+    }).select("id").single();
+    if (!error && evalIns && (criteria ?? []).length > 0) {
+      const rows = (criteria ?? []).map((c) => ({
+        evaluation_id: evalIns.id,
+        criterion_id: c.id,
+        user_id: u.user!.id,
+        score: criteriaScores[c.id] ?? 7,
+      }));
+      await supabase.from("pillar_criteria_scores").insert(rows);
+    }
     setSubmitting(false);
     if (error) {
       toast.error("Erro: " + error.message);
@@ -96,6 +136,7 @@ function PillarDetail() {
     qc.invalidateQueries({ queryKey: ["user_pillar", pillarId] });
     qc.invalidateQueries({ queryKey: ["pillar_history", pillarId] });
     qc.invalidateQueries({ queryKey: ["user_pillars"] });
+    qc.invalidateQueries({ queryKey: ["alerts"] });
   }
 
   async function completeAction(actionId: string) {
@@ -176,23 +217,27 @@ function PillarDetail() {
               value={score}
               onChange={setScore}
             />
-            <CriterionSlider
-              label="Comportamento"
-              hint="Quanto seus comportamentos atuais refletem este pilar?"
-              value={behavior}
-              onChange={setBehavior}
-            />
+            {(criteria ?? []).length > 0 && (
+              <div className="mt-2 mb-2 rounded-lg bg-secondary/30 px-3 py-2">
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                  Critérios objetivos deste pilar
+                </div>
+                {(criteria ?? []).map((c) => (
+                  <CriterionSlider
+                    key={c.id}
+                    label={c.label}
+                    hint={c.question_text}
+                    value={criteriaScores[c.id] ?? 7}
+                    onChange={(v) => setCrit(c.id, v)}
+                  />
+                ))}
+              </div>
+            )}
             <CriterionSlider
               label="Execução de ações"
               hint="Você executou as ações planejadas para este pilar?"
               value={execution}
               onChange={setExecution}
-            />
-            <CriterionSlider
-              label="Frequência"
-              hint="Com que regularidade você pratica os hábitos deste pilar?"
-              value={frequency}
-              onChange={setFrequency}
             />
             <CriterionSlider
               label="Interdependência"
@@ -203,7 +248,7 @@ function PillarDetail() {
             <div className="mt-2 rounded-lg bg-secondary/40 px-3 py-2 text-sm">
               Nota final:{" "}
               <span className="font-bold">
-                {computeFinal(score, behavior, execution, frequency, interdependence).toFixed(2)}
+                {computeFinal(score, behaviorAvg, execution, behaviorAvg, interdependence).toFixed(2)}
               </span>
               <span className="ml-2 text-xs text-muted-foreground">
                 (interdependência pesa ×{impactWeight.toFixed(1)} — impacto deste pilar: {def.impact}/10)
