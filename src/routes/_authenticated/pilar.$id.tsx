@@ -6,6 +6,8 @@ import { PILLAR_DEFAULTS, statusFromScore } from "@/lib/pillars";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { generatePillarInsight } from "@/lib/insights.functions";
 
 export const Route = createFileRoute("/_authenticated/pilar/$id")({
   component: PillarDetail,
@@ -19,6 +21,9 @@ function PillarDetail() {
   const [score, setScore] = useState<number>(7);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [insight, setInsight] = useState<string | null>(null);
+  const [loadingInsight, setLoadingInsight] = useState(false);
+  const runInsight = useServerFn(generatePillarInsight);
 
   const { data: userPillar } = useQuery({
     queryKey: ["user_pillar", pillarId],
@@ -102,6 +107,18 @@ function PillarDetail() {
   const current = Number(userPillar?.current_score ?? 0);
   const status = statusFromScore(current);
 
+  async function fetchInsight() {
+    setLoadingInsight(true);
+    try {
+      const r = await runInsight({ data: { pillarId } });
+      setInsight(r.insight);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro na IA");
+    } finally {
+      setLoadingInsight(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-5xl px-4 py-6 md:px-8 md:py-8">
@@ -118,6 +135,20 @@ function PillarDetail() {
             <div className="ml-auto text-4xl font-bold" style={{ color: `var(--${status})` }}>
               {current.toFixed(1)}
             </div>
+          </div>
+          <div className="mt-5 rounded-xl border border-[color:var(--focus)]/30 bg-[color:var(--focus)]/5 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">✨</span>
+                <span className="text-sm font-semibold">Insight da IA</span>
+              </div>
+              <Button size="sm" variant="outline" onClick={fetchInsight} disabled={loadingInsight}>
+                {loadingInsight ? "Pensando..." : insight ? "Gerar de novo" : "Gerar insight"}
+              </Button>
+            </div>
+            {insight && (
+              <p className="mt-3 text-sm leading-relaxed text-foreground whitespace-pre-line">{insight}</p>
+            )}
           </div>
         </div>
 
