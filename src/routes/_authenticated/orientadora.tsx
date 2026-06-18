@@ -84,8 +84,8 @@ function Chat({
 }: {
   transport: DefaultChatTransport<UIMessage>;
   initialMessages: UIMessage[];
-  endRef: React.RefObject<HTMLDivElement>;
-  inputRef: React.RefObject<HTMLTextAreaElement>;
+  endRef: React.RefObject<HTMLDivElement | null>;
+  inputRef: React.RefObject<HTMLTextAreaElement | null>;
 }) {
   const { messages, sendMessage, status, error } = useChat({
     id: "single",

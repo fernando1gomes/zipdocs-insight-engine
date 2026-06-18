@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedOrientadoraRouteImport } from './routes/_authenticated/orientadora'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
@@ -38,6 +39,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOrientadoraRoute =
+  AuthenticatedOrientadoraRouteImport.update({
+    id: '/orientadora',
+    path: '/orientadora',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/orientadora': typeof AuthenticatedOrientadoraRoute
   '/api/chat': typeof ApiChatRoute
   '/pilar/$id': typeof AuthenticatedPilarIdRoute
 }
@@ -81,6 +89,7 @@ export interface FileRoutesByTo {
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/orientadora': typeof AuthenticatedOrientadoraRoute
   '/api/chat': typeof ApiChatRoute
   '/pilar/$id': typeof AuthenticatedPilarIdRoute
 }
@@ -93,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/orientadora': typeof AuthenticatedOrientadoraRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/pilar/$id': typeof AuthenticatedPilarIdRoute
 }
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/dashboard'
     | '/onboarding'
+    | '/orientadora'
     | '/api/chat'
     | '/pilar/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/dashboard'
     | '/onboarding'
+    | '/orientadora'
     | '/api/chat'
     | '/pilar/$id'
   id:
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
+    | '/_authenticated/orientadora'
     | '/api/chat'
     | '/_authenticated/pilar/$id'
   fileRoutesById: FileRoutesById
@@ -166,6 +179,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/orientadora': {
+      id: '/_authenticated/orientadora'
+      path: '/orientadora'
+      fullPath: '/orientadora'
+      preLoaderRoute: typeof AuthenticatedOrientadoraRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
@@ -210,6 +230,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedOrientadoraRoute: typeof AuthenticatedOrientadoraRoute
   AuthenticatedPilarIdRoute: typeof AuthenticatedPilarIdRoute
 }
 
@@ -218,6 +239,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedOrientadoraRoute: AuthenticatedOrientadoraRoute,
   AuthenticatedPilarIdRoute: AuthenticatedPilarIdRoute,
 }
 
