@@ -76,7 +76,8 @@ Em até 4 frases curtas e empáticas em português, dê: (1) um diagnóstico bre
       user_id: context.userId,
       pillar_id: pillarId,
       recommendation_type: "insight",
-      content: insight,
+      title: `Insight — ${pillarName}`,
+      message: insight,
     });
 
     return { insight };
