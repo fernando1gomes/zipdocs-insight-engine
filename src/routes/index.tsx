@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { LifeWheel } from "@/components/LifeWheel";
 import { PillarCard } from "@/components/PillarCard";
+import { RadialWheel } from "@/components/RadialWheel";
 import { PILLARS, overallBalance, statusFromScore, type Pillar } from "@/lib/pillars";
 
 export const Route = createFileRoute("/")({
@@ -21,9 +22,6 @@ function Index() {
   const [hovered, setHovered] = useState<number | null>(null);
   const balance = useMemo(() => overallBalance(pillars), [pillars]);
 
-  const left = pillars.slice(0, 4);
-  const rest = pillars.slice(4);
-
   const priorities = pillars
     .filter((p) => statusFromScore(p.score) !== "balanced")
     .sort((a, b) => a.score - b.score)
@@ -31,7 +29,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-[1400px] px-4 py-6 md:px-8 md:py-10">
+      <div className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--focus)] text-white text-xl shadow-md">
@@ -52,32 +50,38 @@ function Index() {
           </div>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr_1fr]">
-          <div className="flex flex-col gap-4">
-            {left.map((p) => (
-              <PillarCard key={p.id} pillar={p} hovered={hovered === p.id} onHover={setHovered} />
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-6">
-            <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/60">
-              <LifeWheel pillars={pillars} balance={balance} hovered={hovered} onHover={setHovered} />
-            </div>
-            <Legend />
-            <TipCard />
-          </div>
-
+        {/* Desktop radial layout */}
+        <div className="hidden xl:grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <RadialWheel pillars={pillars} balance={balance} hovered={hovered} onHover={setHovered} />
           <div className="flex flex-col gap-4">
             <PrioritiesCard priorities={priorities} onHover={setHovered} />
             <NextActionCard />
           </div>
         </div>
 
-        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {rest.map((p) => (
-            <PillarCard key={p.id} pillar={p} hovered={hovered === p.id} onHover={setHovered} />
-          ))}
-        </section>
+        {/* Tablet / mobile stacked layout */}
+        <div className="xl:hidden grid gap-6 lg:grid-cols-[1fr_340px]">
+          <div className="flex flex-col gap-6">
+            <div className="rounded-3xl bg-card p-6 shadow-sm border border-border/60">
+              <LifeWheel pillars={pillars} balance={balance} hovered={hovered} onHover={setHovered} />
+            </div>
+            <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+              {pillars.map((p) => (
+                <PillarCard key={p.id} pillar={p} hovered={hovered === p.id} onHover={setHovered} />
+              ))}
+            </section>
+          </div>
+          <div className="flex flex-col gap-4">
+            <PrioritiesCard priorities={priorities} onHover={setHovered} />
+            <NextActionCard />
+          </div>
+        </div>
+
+        {/* Footer: legend + tip side by side */}
+        <div className="mt-8 grid gap-4 md:grid-cols-[1.4fr_1fr]">
+          <Legend />
+          <TipCard />
+        </div>
       </div>
     </div>
   );
