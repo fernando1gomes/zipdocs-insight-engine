@@ -166,16 +166,45 @@ function PillarDetail() {
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <form onSubmit={submitEvaluation} className="rounded-2xl bg-card border border-border/60 p-5 shadow-sm">
             <h2 className="text-lg font-bold mb-3">Nova avaliação</h2>
-            <label className="block text-sm font-medium mb-1">Como está agora? ({score.toFixed(1)})</label>
-            <input
-              type="range"
-              min={0}
-              max={10}
-              step={0.5}
+            <p className="text-xs text-muted-foreground mb-4">
+              Avalie 0–10 em cada critério. A nota final é a média.
+            </p>
+            <CriterionSlider
+              label="Percepção subjetiva"
+              hint="Como você se sente em relação a este pilar agora?"
               value={score}
-              onChange={(e) => setScore(Number(e.target.value))}
-              className="w-full"
+              onChange={setScore}
             />
+            <CriterionSlider
+              label="Comportamento"
+              hint="Quanto seus comportamentos atuais refletem este pilar?"
+              value={behavior}
+              onChange={setBehavior}
+            />
+            <CriterionSlider
+              label="Execução de ações"
+              hint="Você executou as ações planejadas para este pilar?"
+              value={execution}
+              onChange={setExecution}
+            />
+            <CriterionSlider
+              label="Frequência"
+              hint="Com que regularidade você pratica os hábitos deste pilar?"
+              value={frequency}
+              onChange={setFrequency}
+            />
+            <CriterionSlider
+              label="Interdependência"
+              hint="Quanto este pilar tem impactado positivamente os outros?"
+              value={interdependence}
+              onChange={setInterdependence}
+            />
+            <div className="mt-2 rounded-lg bg-secondary/40 px-3 py-2 text-sm">
+              Nota final:{" "}
+              <span className="font-bold">
+                {((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)}
+              </span>
+            </div>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
