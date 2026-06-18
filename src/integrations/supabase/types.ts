@@ -14,16 +14,182 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pillars: {
+        Row: {
+          created_at: string
+          default_order: number
+          description: string | null
+          icon: string | null
+          id: number
+          is_active: boolean
+          name: string
+          short_name: string
+        }
+        Insert: {
+          created_at?: string
+          default_order: number
+          description?: string | null
+          icon?: string | null
+          id: number
+          is_active?: boolean
+          name: string
+          short_name: string
+        }
+        Update: {
+          created_at?: string
+          default_order?: number
+          description?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean
+          name?: string
+          short_name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          current_cycle_end_date: string | null
+          current_cycle_start_date: string | null
+          display_name: string | null
+          id: string
+          notification_preferences: Json
+          onboarding_completed: boolean
+          preferred_checkin_day: number | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          current_cycle_end_date?: string | null
+          current_cycle_start_date?: string | null
+          display_name?: string | null
+          id: string
+          notification_preferences?: Json
+          onboarding_completed?: boolean
+          preferred_checkin_day?: number | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          current_cycle_end_date?: string | null
+          current_cycle_start_date?: string | null
+          display_name?: string | null
+          id?: string
+          notification_preferences?: Json
+          onboarding_completed?: boolean
+          preferred_checkin_day?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_pillars: {
+        Row: {
+          created_at: string
+          current_score: number
+          days_without_action: number
+          desired_score: number
+          focus_cycle_status: string | null
+          id: string
+          impact_score: number
+          last_action_date: string | null
+          last_evaluation_date: string | null
+          overdue_actions_count: number
+          pillar_id: number
+          priority_level: string
+          risk_level: string
+          status_color: string
+          trend: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_score?: number
+          days_without_action?: number
+          desired_score?: number
+          focus_cycle_status?: string | null
+          id?: string
+          impact_score?: number
+          last_action_date?: string | null
+          last_evaluation_date?: string | null
+          overdue_actions_count?: number
+          pillar_id: number
+          priority_level?: string
+          risk_level?: string
+          status_color?: string
+          trend?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_score?: number
+          days_without_action?: number
+          desired_score?: number
+          focus_cycle_status?: string | null
+          id?: string
+          impact_score?: number
+          last_action_date?: string | null
+          last_evaluation_date?: string | null
+          overdue_actions_count?: number
+          pillar_id?: number
+          priority_level?: string
+          risk_level?: string
+          status_color?: string
+          trend?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_pillars_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +316,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
