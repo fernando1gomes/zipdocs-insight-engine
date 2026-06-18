@@ -203,7 +203,10 @@ function PillarDetail() {
             <div className="mt-2 rounded-lg bg-secondary/40 px-3 py-2 text-sm">
               Nota final:{" "}
               <span className="font-bold">
-                {((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)}
+                {computeFinal(score, behavior, execution, frequency, interdependence).toFixed(2)}
+              </span>
+              <span className="ml-2 text-xs text-muted-foreground">
+                (interdependência pesa ×{impactWeight.toFixed(1)} — impacto deste pilar: {def.impact}/10)
               </span>
             </div>
             <textarea
