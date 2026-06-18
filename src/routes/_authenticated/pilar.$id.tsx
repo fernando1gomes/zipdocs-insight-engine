@@ -17,6 +17,9 @@ function PillarDetail() {
   const { id } = Route.useParams();
   const pillarId = Number(id);
   const def = PILLAR_DEFAULTS.find((p) => p.id === pillarId);
+  const impactWeight = (def?.impact ?? 5) / 10;
+  const computeFinal = (s: number, b: number, e: number, f: number, i: number) =>
+    Number(((s + b + e + f + i * impactWeight) / (4 + impactWeight)).toFixed(2));
   const qc = useQueryClient();
   const [score, setScore] = useState<number>(7);
   const [behavior, setBehavior] = useState<number>(7);
@@ -71,9 +74,7 @@ function PillarDetail() {
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
-    const final = Number(
-      ((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)
-    );
+    const final = computeFinal(score, behavior, execution, frequency, interdependence);
     const { error } = await supabase.from("pillar_evaluations").insert({
       user_id: u.user.id,
       pillar_id: pillarId,
@@ -202,7 +203,10 @@ function PillarDetail() {
             <div className="mt-2 rounded-lg bg-secondary/40 px-3 py-2 text-sm">
               Nota final:{" "}
               <span className="font-bold">
-                {((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)}
+                {computeFinal(score, behavior, execution, frequency, interdependence).toFixed(2)}
+              </span>
+              <span className="ml-2 text-xs text-muted-foreground">
+                (interdependência pesa ×{impactWeight.toFixed(1)} — impacto deste pilar: {def.impact}/10)
               </span>
             </div>
             <textarea
