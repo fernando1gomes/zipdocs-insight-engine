@@ -12,7 +12,7 @@ export interface Pillar {
   focus?: boolean;
 }
 
-export const PILLARS: Pillar[] = [
+export const PILLAR_DEFAULTS: Pillar[] = [
   { id: 1, name: "Contribuição e legado", shortName: "Contribuição", icon: "🤝", score: 7.0, message: "Equilíbrio, crescer", impact: 9, impactPillars: ["Emocional", "Profissional", "Social"] },
   { id: 2, name: "Emocional", shortName: "Emocional", icon: "❤️", score: 4.8, message: "Crítico, acolher emoções", impact: 6, impactPillars: ["Saúde", "Relacionamento", "Profissional"] },
   { id: 3, name: "Família", shortName: "Família", icon: "👨‍👩‍👧‍👦", score: 8.1, message: "Equilibrado, conectar", impact: 8, impactPillars: ["Emocional", "Saúde", "Lazer"] },
@@ -25,6 +25,29 @@ export const PILLARS: Pillar[] = [
   { id: 10, name: "Lazer e prazer", shortName: "Lazer", icon: "📚", score: 6.3, message: "Atenção, reservar tempo", impact: 4, impactPillars: ["Descanso", "Criatividade", "Saúde"] },
   { id: 11, name: "Saúde e disposição", shortName: "Saúde", icon: "🏃", score: 6.2, message: "Atenção, fortalecer rotina", impact: 8, impactPillars: ["Energia", "Emocional", "Profissional"] },
 ];
+
+/** Backwards-compatibility alias kept so the legacy mock dashboard still renders. */
+export const PILLARS = PILLAR_DEFAULTS;
+
+export function messageForScore(score: number, shortName: string): string {
+  if (score <= 0) return "Sem dados — avalie este pilar";
+  if (score < 6) return `Crítico, priorize ${shortName.toLowerCase()}`;
+  if (score < 7) return `Atenção, fortalecer ${shortName.toLowerCase()}`;
+  return `Equilibrado, manter ${shortName.toLowerCase()}`;
+}
+
+/** Merge DB user_pillars rows with the static defaults to produce the Pillar shape used by UI. */
+export function mergeWithDefaults(rows: Array<{ pillar_id: number; current_score: number | null }>): Pillar[] {
+  return PILLAR_DEFAULTS.map((def) => {
+    const row = rows.find((r) => r.pillar_id === def.id);
+    const score = row?.current_score ?? 0;
+    return {
+      ...def,
+      score: Number(score),
+      message: messageForScore(Number(score), def.shortName),
+    };
+  }).sort((a, b) => a.id - b.id);
+}
 
 export function statusFromScore(score: number): PillarStatus {
   if (score <= 0) return "empty";
