@@ -262,3 +262,34 @@ function PillarDetail() {
     </div>
   );
 }
+
+function CriterionSlider({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  value: number;
+  onChange: (n: number) => void;
+}) {
+  return (
+    <div className="mb-3">
+      <div className="flex items-baseline justify-between">
+        <label className="text-sm font-medium">{label}</label>
+        <span className="text-sm font-bold">{value.toFixed(1)}</span>
+      </div>
+      <p className="text-xs text-muted-foreground mb-1">{hint}</p>
+      <input
+        type="range"
+        min={0}
+        max={10}
+        step={0.5}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full"
+      />
+    </div>
+  );
+}
