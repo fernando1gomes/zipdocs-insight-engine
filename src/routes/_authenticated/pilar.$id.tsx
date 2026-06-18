@@ -19,6 +19,10 @@ function PillarDetail() {
   const def = PILLAR_DEFAULTS.find((p) => p.id === pillarId);
   const qc = useQueryClient();
   const [score, setScore] = useState<number>(7);
+  const [behavior, setBehavior] = useState<number>(7);
+  const [execution, setExecution] = useState<number>(7);
+  const [frequency, setFrequency] = useState<number>(7);
+  const [interdependence, setInterdependence] = useState<number>(7);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [insight, setInsight] = useState<string | null>(null);
@@ -67,11 +71,18 @@ function PillarDetail() {
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
+    const final = Number(
+      ((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)
+    );
     const { error } = await supabase.from("pillar_evaluations").insert({
       user_id: u.user.id,
       pillar_id: pillarId,
-      final_score: score,
+      final_score: final,
       subjective_score: score,
+      behavior_score: behavior,
+      action_execution_score: execution,
+      frequency_score: frequency,
+      interdependence_score: interdependence,
       user_comment: comment || null,
     });
     setSubmitting(false);
@@ -155,16 +166,45 @@ function PillarDetail() {
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <form onSubmit={submitEvaluation} className="rounded-2xl bg-card border border-border/60 p-5 shadow-sm">
             <h2 className="text-lg font-bold mb-3">Nova avaliação</h2>
-            <label className="block text-sm font-medium mb-1">Como está agora? ({score.toFixed(1)})</label>
-            <input
-              type="range"
-              min={0}
-              max={10}
-              step={0.5}
+            <p className="text-xs text-muted-foreground mb-4">
+              Avalie 0–10 em cada critério. A nota final é a média.
+            </p>
+            <CriterionSlider
+              label="Percepção subjetiva"
+              hint="Como você se sente em relação a este pilar agora?"
               value={score}
-              onChange={(e) => setScore(Number(e.target.value))}
-              className="w-full"
+              onChange={setScore}
             />
+            <CriterionSlider
+              label="Comportamento"
+              hint="Quanto seus comportamentos atuais refletem este pilar?"
+              value={behavior}
+              onChange={setBehavior}
+            />
+            <CriterionSlider
+              label="Execução de ações"
+              hint="Você executou as ações planejadas para este pilar?"
+              value={execution}
+              onChange={setExecution}
+            />
+            <CriterionSlider
+              label="Frequência"
+              hint="Com que regularidade você pratica os hábitos deste pilar?"
+              value={frequency}
+              onChange={setFrequency}
+            />
+            <CriterionSlider
+              label="Interdependência"
+              hint="Quanto este pilar tem impactado positivamente os outros?"
+              value={interdependence}
+              onChange={setInterdependence}
+            />
+            <div className="mt-2 rounded-lg bg-secondary/40 px-3 py-2 text-sm">
+              Nota final:{" "}
+              <span className="font-bold">
+                {((score + behavior + execution + frequency + interdependence) / 5).toFixed(2)}
+              </span>
+            </div>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -219,6 +259,37 @@ function PillarDetail() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function CriterionSlider({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  value: number;
+  onChange: (n: number) => void;
+}) {
+  return (
+    <div className="mb-3">
+      <div className="flex items-baseline justify-between">
+        <label className="text-sm font-medium">{label}</label>
+        <span className="text-sm font-bold">{value.toFixed(1)}</span>
+      </div>
+      <p className="text-xs text-muted-foreground mb-1">{hint}</p>
+      <input
+        type="range"
+        min={0}
+        max={10}
+        step={0.5}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full"
+      />
     </div>
   );
 }
