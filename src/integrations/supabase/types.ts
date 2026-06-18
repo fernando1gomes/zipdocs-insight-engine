@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          parts: Json | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          parts?: Json | null
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          parts?: Json | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_recommendations: {
         Row: {
           created_at: string
@@ -232,6 +291,133 @@ export type Database = {
             columns: ["pillar_id"]
             isOneToOne: false
             referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_checkin_questions: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          order_index: number
+          pillar_id: number
+          question_text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          order_index?: number
+          pillar_id: number
+          question_text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          order_index?: number
+          pillar_id?: number
+          question_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_checkin_questions_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_criteria: {
+        Row: {
+          created_at: string
+          hint: string | null
+          id: string
+          is_active: boolean
+          key: string
+          label: string
+          order_index: number
+          pillar_id: number
+          question_text: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          hint?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          label: string
+          order_index?: number
+          pillar_id: number
+          question_text: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          hint?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          label?: string
+          order_index?: number
+          pillar_id?: number
+          question_text?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_criteria_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pillar_criteria_scores: {
+        Row: {
+          comment: string | null
+          created_at: string
+          criterion_id: string
+          evaluation_id: string
+          id: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          criterion_id: string
+          evaluation_id: string
+          id?: string
+          score: number
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          criterion_id?: string
+          evaluation_id?: string
+          id?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_criteria_scores_criterion_id_fkey"
+            columns: ["criterion_id"]
+            isOneToOne: false
+            referencedRelation: "pillar_criteria"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_criteria_scores_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "pillar_evaluations"
             referencedColumns: ["id"]
           },
         ]
@@ -605,12 +791,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_pillar_alerts: { Args: { _user_id: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      recalculate_user_pillar: {
+        Args: { _pillar_id: number; _user_id: string }
+        Returns: undefined
       }
     }
     Enums: {
