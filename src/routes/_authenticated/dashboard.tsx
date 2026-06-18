@@ -7,7 +7,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { overallBalance, statusFromScore, type Pillar } from "@/lib/pillars";
 import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
