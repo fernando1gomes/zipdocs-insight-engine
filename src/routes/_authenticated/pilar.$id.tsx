@@ -136,6 +136,20 @@ function PillarDetail() {
               {current.toFixed(1)}
             </div>
           </div>
+          <div className="mt-5 rounded-xl border border-[color:var(--focus)]/30 bg-[color:var(--focus)]/5 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">✨</span>
+                <span className="text-sm font-semibold">Insight da IA</span>
+              </div>
+              <Button size="sm" variant="outline" onClick={fetchInsight} disabled={loadingInsight}>
+                {loadingInsight ? "Pensando..." : insight ? "Gerar de novo" : "Gerar insight"}
+              </Button>
+            </div>
+            {insight && (
+              <p className="mt-3 text-sm leading-relaxed text-foreground whitespace-pre-line">{insight}</p>
+            )}
+          </div>
         </div>
 
         <div className="mt-6 grid gap-6 md:grid-cols-2">
