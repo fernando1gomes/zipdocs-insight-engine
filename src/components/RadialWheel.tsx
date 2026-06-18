@@ -15,27 +15,69 @@ interface Props {
   onHover: (id: number | null) => void;
 }
 
-// Layout constants (container viewBox coordinates)
-const W = 1100;
-const H = 880;
+// Layout constants (container coordinates ≈ rendered px at desktop)
+const W = 1120;
+const H = 760;
 const CX = W / 2;
 const CY = H / 2;
-const R_OUTER = 180;
-const R_INNER = 90;
-const R_CARD = 330; // distance from center to card anchor edge
+const R_OUTER = 170;
+const R_INNER = 85;
 
 const N = 11;
 const segDeg = 360 / N;
 
 function segAngles(i: number) {
-  // segment i: from a0 to a1, starting at top going clockwise
-  const a0 = -90 + i * segDeg;
+  // segment i: centered so pillar 1 (i=0) sits at the top
+  const a0 = -90 - segDeg / 2 + i * segDeg;
   const a1 = a0 + segDeg;
   const mid = (a0 + a1) / 2;
   return { a0, a1, mid };
 }
 
 const toRad = (d: number) => (d * Math.PI) / 180;
+
+// Manual card placement mirroring the reference image.
+// Coordinates are in container units (W × H); anchor controls translate.
+type Anchor = "tl" | "tc" | "tr" | "cl" | "cr" | "bl" | "br";
+const CARD_POS: Record<number, { x: number; y: number; anchor: Anchor }> = {
+  1:  { x: 560, y: 8,   anchor: "tc" },
+  2:  { x: 900, y: 60,  anchor: "tl" },
+  3:  { x: 940, y: 250, anchor: "cl" },
+  4:  { x: 940, y: 410, anchor: "cl" },
+  5:  { x: 900, y: 600, anchor: "bl" },
+  6:  { x: 600, y: 752, anchor: "bl" },
+  7:  { x: 520, y: 752, anchor: "br" },
+  8:  { x: 220, y: 600, anchor: "br" },
+  9:  { x: 180, y: 410, anchor: "cr" },
+  10: { x: 180, y: 250, anchor: "cr" },
+  11: { x: 220, y: 60,  anchor: "tr" },
+};
+
+function anchorTranslate(a: Anchor): string {
+  switch (a) {
+    case "tl": return "translate(0, 0)";
+    case "tc": return "translate(-50%, 0)";
+    case "tr": return "translate(-100%, 0)";
+    case "cl": return "translate(0, -50%)";
+    case "cr": return "translate(-100%, -50%)";
+    case "bl": return "translate(0, -100%)";
+    case "br": return "translate(-100%, -100%)";
+  }
+}
+
+// Connector terminates near the card edge facing the wheel.
+function connectorEnd(pos: { x: number; y: number; anchor: Anchor }, cardW = 220, cardH = 130) {
+  const { x, y, anchor } = pos;
+  switch (anchor) {
+    case "tc": return { x, y: y + cardH }; // line meets bottom-center of top card
+    case "tl": return { x, y: y + cardH / 2 };
+    case "tr": return { x, y: y + cardH / 2 };
+    case "cl": return { x, y };
+    case "cr": return { x, y };
+    case "bl": return { x, y: y - cardH / 2 };
+    case "br": return { x, y: y - cardH / 2 };
+  }
+}
 
 export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
   return (
@@ -62,18 +104,19 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
           const midR = toRad(mid);
 
           // icon position inside segment
-          const iconR = (R_INNER + R_OUTER) / 2 + 6;
+          const iconR = (R_INNER + R_OUTER) / 2 + 4;
           const ix = CX + iconR * Math.cos(midR);
           const iy = CY + iconR * Math.sin(midR);
           // number badge near inner edge
-          const numR = R_INNER + 16;
+          const numR = R_INNER + 14;
           const nx = CX + numR * Math.cos(midR);
           const ny = CY + numR * Math.sin(midR);
-          // connector line from outer edge towards card
-          const lx1 = CX + (R_OUTER + 4) * Math.cos(midR);
-          const ly1 = CY + (R_OUTER + 4) * Math.sin(midR);
-          const lx2 = CX + (R_CARD - 8) * Math.cos(midR);
-          const ly2 = CY + (R_CARD - 8) * Math.sin(midR);
+          // connector: from outer edge of segment to card-anchor edge
+          const start = {
+            x: CX + (R_OUTER + 4) * Math.cos(midR),
+            y: CY + (R_OUTER + 4) * Math.sin(midR),
+          };
+          const end = connectorEnd(CARD_POS[p.id]);
 
           return (
             <g
@@ -105,22 +148,23 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
                 y={iy + 6}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize="22"
+                fontSize="20"
               >
                 {p.icon}
               </text>
-              {/* connector */}
+              {/* connector to card */}
               <line
-                x1={lx1}
-                y1={ly1}
-                x2={lx2}
-                y2={ly2}
+                x1={start.x}
+                y1={start.y}
+                x2={end.x}
+                y2={end.y}
                 stroke="var(--border)"
                 strokeWidth={1.5}
                 strokeDasharray="3 4"
+                opacity={0.7}
               />
-              <circle cx={lx1} cy={ly1} r={3.5} fill="white" stroke={STATUS_FILL[status]} strokeWidth={1.5} />
-              <circle cx={lx2} cy={ly2} r={3} fill="var(--border)" />
+              <circle cx={start.x} cy={start.y} r={3.5} fill="white" stroke={STATUS_FILL[status]} strokeWidth={1.5} />
+              <circle cx={end.x} cy={end.y} r={3} fill="white" stroke="var(--border)" strokeWidth={1} />
             </g>
           );
         })}
@@ -144,29 +188,21 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
         <text x={CX} y={CY + 46} textAnchor="middle" fontSize="16">⚖️</text>
       </svg>
 
-      {/* Cards positioned radially in % coordinates */}
-      {pillars.map((p, i) => {
-        const { mid } = segAngles(i);
-        const rad = toRad(mid);
-        const cosA = Math.cos(rad);
-        const sinA = Math.sin(rad);
-        // anchor point at radius R_CARD
-        const px = CX + R_CARD * cosA;
-        const py = CY + R_CARD * sinA;
-        const leftPct = (px / W) * 100;
-        const topPct = (py / H) * 100;
-        // translate so the card edge nearest the wheel sits at the anchor
-        const txPct = -50 - 50 * cosA;
-        const tyPct = -50 - 50 * sinA;
+      {/* Cards positioned with explicit anchors per the reference layout */}
+      {pillars.map((p) => {
+        const pos = CARD_POS[p.id];
+        if (!pos) return null;
         return (
           <div
             key={p.id}
             className="absolute"
             style={{
-              left: `${leftPct}%`,
-              top: `${topPct}%`,
-              transform: `translate(${txPct}%, ${tyPct}%)`,
-              width: 220,
+              left: `${(pos.x / W) * 100}%`,
+              top: `${(pos.y / H) * 100}%`,
+              transform: anchorTranslate(pos.anchor),
+              width: `${(220 / W) * 100}%`,
+              minWidth: 200,
+              maxWidth: 240,
             }}
           >
             <PillarCard pillar={p} hovered={hovered === p.id} onHover={onHover} />
