@@ -13,7 +13,7 @@ import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts"
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Roda da Vida Viva" },
+      { title: "Dashboard — Vida em Eixo" },
       { name: "description", content: "Visão integrada dos seus 11 pilares." },
     ],
   }),

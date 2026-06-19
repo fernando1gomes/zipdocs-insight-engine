@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/autorresponsabilidade")({
   },
   head: () => ({
     meta: [
-      { title: "Autorresponsabilidade — Roda da Vida Viva" },
+      { title: "Autorresponsabilidade — Vida em Eixo" },
       {
         name: "description",
         content:

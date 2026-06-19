@@ -27,7 +27,7 @@ const TESTIMONIALS = [
 ];
 
 const FAQ = [
-  { q: "É gratuito?", a: "Sim. Você cria sua conta, faz sua Roda da Vida completa e usa todas as áreas — autoavaliação, impactos, plano, check-in e IA — sem custo." },
+  { q: "É gratuito?", a: "Sim. Você cria sua conta, faz sua Roda da Vida (Vida em Eixo) completa e usa todas as áreas — autoavaliação, impactos, plano, check-in e IA — sem custo." },
   { q: "Quanto tempo leva pra começar?", a: "A autoavaliação inicial leva entre 8 e 15 minutos. Você pode pausar e voltar quando quiser." },
   { q: "Preciso fazer tudo de uma vez?", a: "Não. A Roda é um processo vivo. Comece pela autoavaliação, e o sistema te guia pelos próximos passos no seu ritmo." },
   { q: "Como a IA me ajuda?", a: "Ela enxerga sua roda inteira — pontuações, impactos, plano — e conversa com você fazendo perguntas que ajudam a clarear escolhas e próximos passos." },
@@ -57,7 +57,7 @@ function LandingNav() {
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--landing-ink)] text-lg text-white">
           🌱
         </div>
-        <span className="text-lg font-semibold tracking-tight">Roda da Vida Viva</span>
+        <span className="text-lg font-semibold tracking-tight">Vida em Eixo</span>
       </Link>
       <div className="flex items-center gap-2">
         <Link to="/auth" className="landing-cta landing-cta-ghost hidden sm:inline-flex">
@@ -85,7 +85,7 @@ function Hero() {
             <span className="italic text-[color:var(--landing-ink-soft)]">em uma só imagem.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--landing-ink-soft)]">
-            A Roda da Vida Viva é um espelho honesto dos 11 pilares que sustentam você.
+            A Vida em Eixo é um espelho honesto dos 11 pilares que sustentam você.
             Você avalia, vê o efeito dominó entre eles e descobre exatamente onde mexer
             primeiro para mudar tudo.
           </p>
@@ -347,7 +347,7 @@ function LandingFooter() {
   return (
     <footer className="border-t border-[color:var(--landing-line)] py-8">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-sm text-[color:var(--landing-muted)]">
-        <p>© {new Date().getFullYear()} Roda da Vida Viva. Feito para quem quer ver a vida inteira.</p>
+        <p>© {new Date().getFullYear()} Vida em Eixo. Feito para quem quer ver a vida inteira.</p>
         <Link to="/auth" className="hover:text-[color:var(--landing-ink)]">Entrar / Criar conta</Link>
       </div>
     </footer>
