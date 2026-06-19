@@ -133,7 +133,6 @@ function ActionsPage() {
           ))}
         </div>
 
-        <ul className="flex flex-col gap-2">
         <div className="flex flex-col gap-6">
           {PILLAR_DEFAULTS.filter((def) =>
             (actions ?? []).some((a) => a.pillar_id === def.id),
