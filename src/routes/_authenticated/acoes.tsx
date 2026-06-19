@@ -6,7 +6,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PILLAR_DEFAULTS } from "@/lib/pillars";
+import { PILLAR_DEFAULTS, statusFromScore } from "@/lib/pillars";
+import { usePillars } from "@/lib/usePillars";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/acoes")({
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/_authenticated/acoes")({
 
 function ActionsPage() {
   const qc = useQueryClient();
+  const { pillars } = usePillars();
   const [filter, setFilter] = useState<"all" | "pending" | "completed">("pending");
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
@@ -133,39 +135,88 @@ function ActionsPage() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-6">
-          {PILLAR_DEFAULTS.filter((def) =>
-            (actions ?? []).some((a) => a.pillar_id === def.id),
-          ).map((def) => {
-            const items = (actions ?? []).filter((a) => a.pillar_id === def.id);
-            return (
-              <section key={def.id} className="rounded-2xl border border-border/60 bg-card/40 p-4">
-                <header className="mb-3 flex items-center gap-2">
-                  <span className="text-2xl">{def.icon}</span>
-                  <h2 className="text-sm font-bold">{def.name}</h2>
-                  <span className="text-xs text-muted-foreground">({items.length})</span>
-                </header>
-                <ul className="flex flex-col gap-2">
-                  {items.map((a) => (
-                    <li key={a.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold truncate">{a.title}</div>
-                        <div className="text-xs text-muted-foreground">{a.status}</div>
-                      </div>
-                      {a.status !== "completed" && (
-                        <Button size="sm" variant="outline" onClick={() => complete(a.id)}>
-                          Concluir
-                        </Button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+        <div className="flex flex-col gap-10">
+          {(() => {
+            const groups = PILLAR_DEFAULTS.filter((def) =>
+              (actions ?? []).some((a) => a.pillar_id === def.id),
             );
-          })}
-          {(actions ?? []).length === 0 && (
-            <p className="text-sm text-muted-foreground">Nenhuma ação aqui ainda.</p>
-          )}
+            if (groups.length === 0) {
+              const msg =
+                filter === "pending"
+                  ? "Nenhuma ação pendente em nenhum pilar."
+                  : filter === "completed"
+                    ? "Nenhuma ação concluída ainda."
+                    : "Nenhuma ação cadastrada ainda.";
+              return <p className="text-sm text-muted-foreground">{msg}</p>;
+            }
+            const statusColorVar = (s: ReturnType<typeof statusFromScore>) =>
+              s === "balanced"
+                ? "var(--balanced)"
+                : s === "attention"
+                  ? "var(--attention)"
+                  : s === "critical"
+                    ? "var(--critical)"
+                    : "var(--empty)";
+            return groups.map((def) => {
+              const score = pillars?.find((p) => p.id === def.id)?.score ?? 0;
+              const status = statusFromScore(score);
+              const color = statusColorVar(status);
+              const items = (actions ?? [])
+                .filter((a) => a.pillar_id === def.id)
+                .sort((a, b) => {
+                  const rank = (s: string) => (s === "completed" ? 2 : s === "overdue" ? 0 : 1);
+                  return rank(a.status) - rank(b.status);
+                });
+              const pending = items.filter((a) => a.status !== "completed").length;
+              const done = items.filter((a) => a.status === "completed").length;
+              return (
+                <section key={def.id}>
+                  <header
+                    className="mb-3 flex items-center gap-3 border-l-4 pl-3"
+                    style={{ borderColor: color }}
+                  >
+                    <span className="text-3xl">{def.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-lg font-extrabold leading-tight">{def.name}</h2>
+                      <div className="flex gap-2 mt-0.5">
+                        {pending > 0 && (
+                          <span
+                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                            style={{ background: `${color}22`, color }}
+                          >
+                            {pending} pendente{pending > 1 ? "s" : ""}
+                          </span>
+                        )}
+                        {done > 0 && (
+                          <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                            {done} concluída{done > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </header>
+                  <ul className="flex flex-col gap-2">
+                    {items.map((a) => (
+                      <li
+                        key={a.id}
+                        className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold truncate">{a.title}</div>
+                          <div className="text-xs text-muted-foreground">{a.status}</div>
+                        </div>
+                        {a.status !== "completed" && (
+                          <Button size="sm" variant="outline" onClick={() => complete(a.id)}>
+                            Concluir
+                          </Button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            });
+          })()}
         </div>
       </div>
     </div>
