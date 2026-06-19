@@ -134,27 +134,40 @@ function ActionsPage() {
         </div>
 
         <ul className="flex flex-col gap-2">
-          {(actions ?? []).map((a) => {
-            const def = PILLAR_DEFAULTS.find((p) => p.id === a.pillar_id);
+        <div className="flex flex-col gap-6">
+          {PILLAR_DEFAULTS.filter((def) =>
+            (actions ?? []).some((a) => a.pillar_id === def.id),
+          ).map((def) => {
+            const items = (actions ?? []).filter((a) => a.pillar_id === def.id);
             return (
-              <li key={a.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4">
-                <span className="text-2xl">{def?.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold truncate">{a.title}</div>
-                  <div className="text-xs text-muted-foreground">{def?.shortName} · {a.status}</div>
-                </div>
-                {a.status !== "completed" && (
-                  <Button size="sm" variant="outline" onClick={() => complete(a.id)}>
-                    Concluir
-                  </Button>
-                )}
-              </li>
+              <section key={def.id} className="rounded-2xl border border-border/60 bg-card/40 p-4">
+                <header className="mb-3 flex items-center gap-2">
+                  <span className="text-2xl">{def.icon}</span>
+                  <h2 className="text-sm font-bold">{def.name}</h2>
+                  <span className="text-xs text-muted-foreground">({items.length})</span>
+                </header>
+                <ul className="flex flex-col gap-2">
+                  {items.map((a) => (
+                    <li key={a.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold truncate">{a.title}</div>
+                        <div className="text-xs text-muted-foreground">{a.status}</div>
+                      </div>
+                      {a.status !== "completed" && (
+                        <Button size="sm" variant="outline" onClick={() => complete(a.id)}>
+                          Concluir
+                        </Button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
             );
           })}
           {(actions ?? []).length === 0 && (
-            <li className="text-sm text-muted-foreground">Nenhuma ação aqui ainda.</li>
+            <p className="text-sm text-muted-foreground">Nenhuma ação aqui ainda.</p>
           )}
-        </ul>
+        </div>
       </div>
     </div>
   );
