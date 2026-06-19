@@ -1,40 +1,54 @@
 ## Objetivo
 
-Refazer a página `/autoavaliacao` para que cada pilar tenha:
-1. **Lista de critérios objetivos** (checkboxes). Cada critério marcado vale uma fração de 10. Marcar todos = 10.
-2. **Nota subjetiva** (slider 0–10) — como o usuário se sente nesse pilar.
-3. **Nota final = média das duas** (subjetiva + objetiva ÷ 2), mantendo a escala 0–10 que o resto do sistema já usa (dashboard, alertas, recomendações).
-4. **Pergunta de fechamento** por pilar: *"O que precisa ser consertado, reposto ou colocado no lugar para este pilar chegar a 10?"* (textarea, opcional).
+Criar uma nova ferramenta **"Plano de Ação por Pilar"** onde o usuário, para cada um dos 11 pilares, responde a 3 perguntas-guia + um formulário 5W2H, com a IA sugerindo ações concretas baseadas no pilar, na nota atual da autoavaliação e no que ele marcou como "precisa ser consertado".
 
-> ⚠️ Você escreveu "soma das duas notas". Vou usar **média** porque o resto do app (dashboard, cores, alertas, recomendações da IA) está calibrado para 0–10. Se preferir soma literal (0–20), me avise antes da implementação.
+## Fluxo
 
-## Etapas
+1. Nova rota `/plano-acao` no menu (e card no dashboard).
+2. Lista todos os pilares com status (cor da autoavaliação) + botão **"Criar / editar plano"**.
+3. Ao abrir um pilar, wizard em 3 etapas:
 
-### 1. Repovoar `pillar_criteria` com a lista que você passou
-Migration que apaga critérios atuais e insere os 11 pilares × 4–6 critérios exatamente como você descreveu (Sono, Alimentação, Exercício, etc.), mapeando pelo nome do pilar (os IDs no banco diferem da ordem da sua lista — Saúde é 11, Contribuição é 1, etc.).
+   **Etapa 1 — Diagnóstico (3 perguntas)**
+   - O que está **quebrado** que preciso consertar?
+   - O que está **faltando** que preciso repor?
+   - O que está **fora do lugar** que preciso organizar?
+   (3 textareas; pré-preenche com o `user_comment` da última autoavaliação do pilar quando existir.)
 
-### 2. Refazer `src/routes/_authenticated/autoavaliacao.tsx`
-- Carregar critérios via `useQuery` em `pillar_criteria` (ordenados por `order_index`).
-- Para cada pilar (passo a passo, mantendo o wizard existente):
-  - Checkboxes dos critérios (estado local `Record<criterionId, boolean>`).
-  - Slider único de **percepção subjetiva** (0–10).
-  - Textarea de fechamento ("O que precisa ser consertado...").
-  - Exibir as três notas em tempo real: subjetiva, objetiva (`checked/total * 10`), final (média).
-- Remover sliders de "comportamento / execução / frequência / interdependência".
-- Navegação: Anterior / Pular / Próximo / Concluir (igual ao atual).
+   **Etapa 2 — Sugestões da IA**
+   - Botão "Gerar sugestões com IA" chama `createServerFn` que envia: pilar, ferramenta principal do pilar (ex: "Rotina de hábitos saudáveis"), nota atual, nota objetiva, critérios não marcados, e as 3 respostas da etapa 1.
+   - IA devolve 5–7 ações sugeridas (título + descrição curta + esforço estimado).
+   - Usuário marca quais quer adotar (vira itens do plano; cada uma pode virar `pillar_actions` ao concluir o wizard).
 
-### 3. Persistência ao concluir
-Para cada pilar, inserir em `pillar_evaluations`:
-- `final_score` = média
-- `subjective_score` = nota do slider
-- `behavior_score` = nota objetiva (reaproveitando a coluna para guardar o lado objetivo, evitando migração nova)
-- `user_comment` = texto da pergunta de fechamento
+   **Etapa 3 — 5W2H consolidado**
+   Formulário único com os 7 campos: O quê / Por quê / Como / Quando (data início + prazo) / Onde / Quem (apoio) / Quanto (tempo, energia, dinheiro).
+   Campo "Como" pré-preenchido com as ações escolhidas na etapa 2 (editável).
 
-E inserir uma linha em `pillar_criteria_scores` por critério (score 10 se marcado, 0 se não). Trigger existente já recalcula `user_pillars`, alertas, etc.
+4. **Salvar** = grava 1 linha em `pillar_action_plans` + N linhas em `pillar_actions` (uma por ação escolhida, já ligadas ao plano).
 
-### 4. Verificação
-Restart do dev server + `preview_control--get_preview_health` em `/autoavaliacao`, e uma navegação Playwright marcando alguns checkboxes para confirmar que o fluxo salva.
+## Banco de dados
 
-## Detalhes técnicos
-- Não mexer em `pillars`, `user_pillars`, `alerts`, nem nas funções `recalculate_user_pillar` / `generate_pillar_alerts` — elas continuam funcionando porque `final_score` continua 0–10.
-- Mapeamento de IDs (banco → sua lista): 1 Contribuição, 2 Emocional, 3 Família, 4 Relacionamento, 5 Social, 6 Carreira, 7 Financeiro, 8 Intelectual, 9 Espiritualidade, 10 Lazer, 11 Saúde. O pilar **Lazer** (id 10) não aparece na sua lista de critérios — vou mantê-lo com os critérios atuais ou removê-lo do wizard. **Preciso decidir:** manter Lazer com critérios genéricos, ou ocultar Lazer da autoavaliação? (responda junto com a aprovação)
+Migration nova:
+
+- `pillar_action_plans` (novo): `id`, `user_id`, `pillar_id`, `broken_text`, `missing_text`, `misplaced_text`, `what`, `why`, `how`, `when_start` (date), `when_due` (date), `where_text`, `who_text`, `how_much`, `status` ('active'|'paused'|'completed'), `created_at`, `updated_at`. RLS por `auth.uid()`, GRANTs para `authenticated`/`service_role`, trigger `set_updated_at`.
+- `pillar_actions`: adicionar coluna opcional `plan_id uuid references pillar_action_plans(id) on delete set null` para vincular ações criadas a partir do plano (sem quebrar ações soltas existentes).
+
+## Backend / IA
+
+- `src/lib/action-plan.functions.ts` com `createServerFn` `suggestPillarActions` protegido por `requireSupabaseAuth`.
+- Usa Lovable AI Gateway (`@/lib/ai-gateway.server`) com `google/gemini-3-flash-preview` e `generateText` + `Output.object` para devolver array tipado `{ title, description, effort: 'baixo'|'médio'|'alto' }`.
+- Prompt do sistema explica o método (consertar/repor/organizar + 5W2H) e a ferramenta principal de cada pilar (mapa fixo no código, conforme o texto enviado).
+
+## Frontend
+
+- `src/routes/_authenticated/plano-acao.tsx` — listagem de pilares com status do plano (sem plano / ativo / concluído).
+- `src/routes/_authenticated/plano-acao.$pillarId.tsx` — wizard 3 etapas (componentes locais, sem nova lib).
+- Card novo no dashboard ("Próximo passo: criar plano de ação para X") apontando para o pilar mais crítico sem plano.
+- Link no `AppHeader`.
+
+## O que NÃO muda
+
+- Autoavaliação, alertas, `recalculate_user_pillar`, `generate_pillar_alerts`, ações soltas existentes — tudo continua. O plano é uma camada acima que **gera** ações na tabela já existente.
+
+## Pergunta antes de implementar
+
+1. **Ações geradas pelo plano**: cada ação escolhida na etapa 2 deve virar automaticamente uma linha em `pillar_actions` (com prazo herdado do 5W2H), ou só ficam como texto dentro do plano até o usuário promover manualmente? Recomendo **virar `pillar_actions` automaticamente** para reusar todo o tracking que já existe (status, conclusão, alertas). Confirma?
