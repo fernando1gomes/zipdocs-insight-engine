@@ -13,14 +13,14 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedPlanoAcaoRouteImport } from './routes/_authenticated/plano-acao'
 import { Route as AuthenticatedOrientadoraRouteImport } from './routes/_authenticated/orientadora'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
 import { Route as AuthenticatedAutoavaliacaoRouteImport } from './routes/_authenticated/autoavaliacao'
 import { Route as AuthenticatedAcoesRouteImport } from './routes/_authenticated/acoes'
-import { Route as AuthenticatedPlanoAcaoIndexRouteImport } from './routes/_authenticated/plano-acao.index'
-import { Route as AuthenticatedPlanoAcaoPillarIdRouteImport } from './routes/_authenticated/plano-acao.$pillarId'
+import { Route as AuthenticatedPlanoAcaoPillarIdRouteImport } from './routes/_authenticated/plano-acao_.$pillarId'
 import { Route as AuthenticatedPilarIdRouteImport } from './routes/_authenticated/pilar.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -41,6 +41,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPlanoAcaoRoute = AuthenticatedPlanoAcaoRouteImport.update({
+  id: '/plano-acao',
+  path: '/plano-acao',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOrientadoraRoute =
   AuthenticatedOrientadoraRouteImport.update({
@@ -74,15 +79,9 @@ const AuthenticatedAcoesRoute = AuthenticatedAcoesRouteImport.update({
   path: '/acoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPlanoAcaoIndexRoute =
-  AuthenticatedPlanoAcaoIndexRouteImport.update({
-    id: '/plano-acao/',
-    path: '/plano-acao/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPlanoAcaoPillarIdRoute =
   AuthenticatedPlanoAcaoPillarIdRouteImport.update({
-    id: '/plano-acao/$pillarId',
+    id: '/plano-acao_/$pillarId',
     path: '/plano-acao/$pillarId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
@@ -101,10 +100,10 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/orientadora': typeof AuthenticatedOrientadoraRoute
+  '/plano-acao': typeof AuthenticatedPlanoAcaoRoute
   '/api/chat': typeof ApiChatRoute
   '/pilar/$id': typeof AuthenticatedPilarIdRoute
   '/plano-acao/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
-  '/plano-acao/': typeof AuthenticatedPlanoAcaoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,10 +114,10 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/orientadora': typeof AuthenticatedOrientadoraRoute
+  '/plano-acao': typeof AuthenticatedPlanoAcaoRoute
   '/api/chat': typeof ApiChatRoute
   '/pilar/$id': typeof AuthenticatedPilarIdRoute
   '/plano-acao/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
-  '/plano-acao': typeof AuthenticatedPlanoAcaoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,10 +130,10 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/orientadora': typeof AuthenticatedOrientadoraRoute
+  '/_authenticated/plano-acao': typeof AuthenticatedPlanoAcaoRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/pilar/$id': typeof AuthenticatedPilarIdRoute
-  '/_authenticated/plano-acao/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
-  '/_authenticated/plano-acao/': typeof AuthenticatedPlanoAcaoIndexRoute
+  '/_authenticated/plano-acao_/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,10 +146,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/orientadora'
+    | '/plano-acao'
     | '/api/chat'
     | '/pilar/$id'
     | '/plano-acao/$pillarId'
-    | '/plano-acao/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -161,10 +160,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/orientadora'
+    | '/plano-acao'
     | '/api/chat'
     | '/pilar/$id'
     | '/plano-acao/$pillarId'
-    | '/plano-acao'
   id:
     | '__root__'
     | '/'
@@ -176,10 +175,10 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/_authenticated/orientadora'
+    | '/_authenticated/plano-acao'
     | '/api/chat'
     | '/_authenticated/pilar/$id'
-    | '/_authenticated/plano-acao/$pillarId'
-    | '/_authenticated/plano-acao/'
+    | '/_authenticated/plano-acao_/$pillarId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,6 +217,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/plano-acao': {
+      id: '/_authenticated/plano-acao'
+      path: '/plano-acao'
+      fullPath: '/plano-acao'
+      preLoaderRoute: typeof AuthenticatedPlanoAcaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/orientadora': {
       id: '/_authenticated/orientadora'
@@ -261,15 +267,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAcoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/plano-acao/': {
-      id: '/_authenticated/plano-acao/'
-      path: '/plano-acao'
-      fullPath: '/plano-acao/'
-      preLoaderRoute: typeof AuthenticatedPlanoAcaoIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/plano-acao/$pillarId': {
-      id: '/_authenticated/plano-acao/$pillarId'
+    '/_authenticated/plano-acao_/$pillarId': {
+      id: '/_authenticated/plano-acao_/$pillarId'
       path: '/plano-acao/$pillarId'
       fullPath: '/plano-acao/$pillarId'
       preLoaderRoute: typeof AuthenticatedPlanoAcaoPillarIdRouteImport
@@ -292,9 +291,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedOrientadoraRoute: typeof AuthenticatedOrientadoraRoute
+  AuthenticatedPlanoAcaoRoute: typeof AuthenticatedPlanoAcaoRoute
   AuthenticatedPilarIdRoute: typeof AuthenticatedPilarIdRoute
   AuthenticatedPlanoAcaoPillarIdRoute: typeof AuthenticatedPlanoAcaoPillarIdRoute
-  AuthenticatedPlanoAcaoIndexRoute: typeof AuthenticatedPlanoAcaoIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -304,9 +303,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedOrientadoraRoute: AuthenticatedOrientadoraRoute,
+  AuthenticatedPlanoAcaoRoute: AuthenticatedPlanoAcaoRoute,
   AuthenticatedPilarIdRoute: AuthenticatedPilarIdRoute,
   AuthenticatedPlanoAcaoPillarIdRoute: AuthenticatedPlanoAcaoPillarIdRoute,
-  AuthenticatedPlanoAcaoIndexRoute: AuthenticatedPlanoAcaoIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
