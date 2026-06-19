@@ -1,60 +1,101 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
-import { PILLAR_DEFAULTS } from "@/lib/pillars";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/autoavaliacao")({
   component: AutoAvaliacao,
 });
 
-type Scores = {
-  subjective: number;
-  behavior: number;
-  execution: number;
-  frequency: number;
-  interdependence: number;
-  comment: string;
-};
+type Pillar = { id: number; name: string; short_name: string; icon: string | null; default_order: number };
+type Criterion = { id: string; pillar_id: number; label: string; question_text: string; order_index: number };
 
-const DEFAULTS: Scores = {
-  subjective: 7,
-  behavior: 7,
-  execution: 7,
-  frequency: 7,
-  interdependence: 7,
-  comment: "",
+type PillarState = {
+  checked: Record<string, boolean>;
+  subjective: number;
+  comment: string;
 };
 
 function AutoAvaliacao() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+
+  const { data: pillars, isLoading: pl } = useQuery({
+    queryKey: ["pillars-active"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("pillars")
+        .select("id,name,short_name,icon,default_order")
+        .eq("is_active", true)
+        .order("default_order");
+      if (error) throw error;
+      return data as Pillar[];
+    },
+  });
+
+  const { data: criteria, isLoading: cl } = useQuery({
+    queryKey: ["pillar-criteria-all"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("pillar_criteria")
+        .select("id,pillar_id,label,question_text,order_index")
+        .eq("is_active", true)
+        .order("pillar_id")
+        .order("order_index");
+      if (error) throw error;
+      return data as Criterion[];
+    },
+  });
+
   const [step, setStep] = useState(0);
-  const [data, setData] = useState<Record<number, Scores>>(
-    Object.fromEntries(PILLAR_DEFAULTS.map((p) => [p.id, { ...DEFAULTS }])),
-  );
+  const [state, setState] = useState<Record<number, PillarState>>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
-  const total = PILLAR_DEFAULTS.length;
-  const pillar = PILLAR_DEFAULTS[step];
-  const cur = data[pillar.id];
-  const impactWeight = pillar.impact / 10;
-  const finalScore = Number(
-    (
-      (cur.subjective + cur.behavior + cur.execution + cur.frequency + cur.interdependence * impactWeight) /
-      (4 + impactWeight)
-    ).toFixed(2),
-  );
+  const byPillar = useMemo(() => {
+    const m = new Map<number, Criterion[]>();
+    (criteria ?? []).forEach((c) => {
+      const a = m.get(c.pillar_id) ?? [];
+      a.push(c);
+      m.set(c.pillar_id, a);
+    });
+    return m;
+  }, [criteria]);
 
-  function update(field: keyof Scores, value: number | string) {
-    setData((d) => ({ ...d, [pillar.id]: { ...d[pillar.id], [field]: value } }));
+  if (pl || cl || !pillars) {
+    return (
+      <div className="min-h-screen grid place-items-center text-muted-foreground">
+        Carregando autoavaliação...
+      </div>
+    );
+  }
+
+  const total = pillars.length;
+  const pillar = pillars[Math.min(step, total - 1)];
+  const list = byPillar.get(pillar.id) ?? [];
+  const cur: PillarState = state[pillar.id] ?? { checked: {}, subjective: 7, comment: "" };
+
+  const checkedCount = list.filter((c) => cur.checked[c.id]).length;
+  const objective = list.length ? (checkedCount / list.length) * 10 : 0;
+  const finalScore = Number(((cur.subjective + objective) / 2).toFixed(2));
+
+  function updatePillar(patch: Partial<PillarState>) {
+    setState((s) => ({
+      ...s,
+      [pillar.id]: { ...(s[pillar.id] ?? { checked: {}, subjective: 7, comment: "" }), ...patch },
+    }));
+  }
+
+  function toggle(critId: string) {
+    updatePillar({ checked: { ...cur.checked, [critId]: !cur.checked[critId] } });
   }
 
   async function submitAll() {
+    if (!pillars) return;
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) {
@@ -62,30 +103,51 @@ function AutoAvaliacao() {
       toast.error("Faça login novamente");
       return;
     }
-    const rows = PILLAR_DEFAULTS.map((p) => {
-      const s = data[p.id];
-      const w = p.impact / 10;
-      const fs = Number(
-        ((s.subjective + s.behavior + s.execution + s.frequency + s.interdependence * w) / (4 + w)).toFixed(2),
-      );
-      return {
-        user_id: u.user!.id,
-        pillar_id: p.id,
-        final_score: fs,
-        subjective_score: s.subjective,
-        behavior_score: s.behavior,
-        action_execution_score: s.execution,
-        frequency_score: s.frequency,
-        interdependence_score: s.interdependence,
-        user_comment: s.comment || null,
-      };
-    });
-    const { error } = await supabase.from("pillar_evaluations").insert(rows);
-    setSubmitting(false);
-    if (error) {
-      toast.error("Erro ao salvar: " + error.message);
-      return;
+    const userId = u.user.id;
+
+    for (const p of pillars) {
+      const pl = byPillar.get(p.id) ?? [];
+      const st = state[p.id] ?? { checked: {}, subjective: 7, comment: "" };
+      const cc = pl.filter((c) => st.checked[c.id]).length;
+      const obj = pl.length ? (cc / pl.length) * 10 : 0;
+      const fs = Number(((st.subjective + obj) / 2).toFixed(2));
+
+      const { data: ev, error: evErr } = await supabase
+        .from("pillar_evaluations")
+        .insert({
+          user_id: userId,
+          pillar_id: p.id,
+          final_score: fs,
+          subjective_score: st.subjective,
+          behavior_score: Number(obj.toFixed(2)),
+          user_comment: st.comment || null,
+        })
+        .select("id")
+        .single();
+
+      if (evErr || !ev) {
+        setSubmitting(false);
+        toast.error("Erro ao salvar " + p.short_name + ": " + (evErr?.message ?? ""));
+        return;
+      }
+
+      if (pl.length) {
+        const rows = pl.map((c) => ({
+          evaluation_id: ev.id,
+          criterion_id: c.id,
+          user_id: userId,
+          score: st.checked[c.id] ? 10 : 0,
+        }));
+        const { error: csErr } = await supabase.from("pillar_criteria_scores").insert(rows);
+        if (csErr) {
+          setSubmitting(false);
+          toast.error("Erro ao salvar critérios de " + p.short_name + ": " + csErr.message);
+          return;
+        }
+      }
     }
+
+    setSubmitting(false);
     toast.success("Autoavaliação completa salva!");
     qc.invalidateQueries({ queryKey: ["user_pillars"] });
     qc.invalidateQueries({ queryKey: ["alerts"] });
@@ -121,61 +183,82 @@ function AutoAvaliacao() {
           </div>
 
           <div className="mt-6 flex items-center gap-4">
-            <div className="text-5xl">{pillar.icon}</div>
+            <div className="text-5xl">{pillar.icon ?? "•"}</div>
             <div>
               <h2 className="text-xl font-bold">{pillar.name}</h2>
               <p className="text-xs text-muted-foreground">
-                Impacto deste pilar nos demais: {pillar.impact}/10 · influencia{" "}
-                {pillar.impactPillars.join(", ")}
+                Marque cada critério que você cumpre hoje. Marcar todos = nota objetiva 10.
               </p>
             </div>
           </div>
 
-          <div className="mt-6 space-y-1">
-            <Slider
-              label="Percepção subjetiva"
-              hint="Como você se sente em relação a este pilar agora?"
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold mb-2">Critérios objetivos</h3>
+            {list.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nenhum critério cadastrado para este pilar.</p>
+            ) : (
+              <ul className="space-y-2">
+                {list.map((c) => (
+                  <li
+                    key={c.id}
+                    className="flex items-start gap-3 rounded-xl border border-border/60 p-3 hover:bg-secondary/30 cursor-pointer"
+                    onClick={() => toggle(c.id)}
+                  >
+                    <Checkbox
+                      checked={!!cur.checked[c.id]}
+                      onCheckedChange={() => toggle(c.id)}
+                      className="mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium">{c.label}</div>
+                      <div className="text-xs text-muted-foreground">{c.question_text}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-2 text-xs text-muted-foreground">
+              {checkedCount} de {list.length} marcados · nota objetiva{" "}
+              <span className="font-semibold text-foreground">{objective.toFixed(1)}</span>/10
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="flex items-baseline justify-between">
+              <label className="text-sm font-semibold">Percepção subjetiva</label>
+              <span className="text-sm font-bold">{cur.subjective.toFixed(1)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mb-1">
+              Independentemente dos critérios, como você se sente em relação a este pilar agora?
+            </p>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              step={0.5}
               value={cur.subjective}
-              onChange={(v) => update("subjective", v)}
-            />
-            <Slider
-              label="Comportamento"
-              hint="Seus hábitos e atitudes neste pilar estão saudáveis?"
-              value={cur.behavior}
-              onChange={(v) => update("behavior", v)}
-            />
-            <Slider
-              label="Execução de ações"
-              hint="Você executou as ações planejadas para este pilar?"
-              value={cur.execution}
-              onChange={(v) => update("execution", v)}
-            />
-            <Slider
-              label="Frequência"
-              hint="Com que regularidade você cuida deste pilar?"
-              value={cur.frequency}
-              onChange={(v) => update("frequency", v)}
-            />
-            <Slider
-              label="Interdependência"
-              hint="Quanto este pilar tem impactado positivamente os outros?"
-              value={cur.interdependence}
-              onChange={(v) => update("interdependence", v)}
+              onChange={(e) => updatePillar({ subjective: Number(e.target.value) })}
+              className="w-full"
             />
           </div>
 
-          <textarea
-            value={cur.comment}
-            onChange={(e) => update("comment", e.target.value)}
-            placeholder="Reflexão sobre este pilar (opcional)"
-            className="mt-4 w-full rounded-xl border border-input bg-background p-3 text-sm"
-            rows={2}
-          />
+          <div className="mt-6">
+            <label className="text-sm font-semibold">
+              O que precisa ser consertado, reposto ou colocado no lugar para este pilar chegar a 10?
+            </label>
+            <textarea
+              value={cur.comment}
+              onChange={(e) => updatePillar({ comment: e.target.value })}
+              placeholder="Sua reflexão (opcional)"
+              className="mt-2 w-full rounded-xl border border-input bg-background p-3 text-sm"
+              rows={3}
+            />
+          </div>
 
           <div className="mt-4 rounded-lg bg-secondary/40 px-3 py-2 text-sm">
             Nota final deste pilar: <span className="font-bold">{finalScore.toFixed(2)}</span>
             <span className="ml-2 text-xs text-muted-foreground">
-              (interdependência pesa ×{impactWeight.toFixed(1)})
+              (média entre subjetiva {cur.subjective.toFixed(1)} e objetiva {objective.toFixed(1)})
             </span>
           </div>
 
@@ -205,7 +288,7 @@ function AutoAvaliacao() {
         </div>
 
         <div className="mt-4 grid grid-cols-6 gap-2 md:grid-cols-11">
-          {PILLAR_DEFAULTS.map((p, idx) => (
+          {pillars.map((p, idx) => (
             <button
               key={p.id}
               onClick={() => setStep(idx)}
@@ -216,42 +299,11 @@ function AutoAvaliacao() {
               }`}
               title={p.name}
             >
-              {p.icon}
+              {p.icon ?? "•"}
             </button>
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Slider({
-  label,
-  hint,
-  value,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  value: number;
-  onChange: (n: number) => void;
-}) {
-  return (
-    <div className="mb-3">
-      <div className="flex items-baseline justify-between">
-        <label className="text-sm font-medium">{label}</label>
-        <span className="text-sm font-bold">{value.toFixed(1)}</span>
-      </div>
-      <p className="text-xs text-muted-foreground mb-1">{hint}</p>
-      <input
-        type="range"
-        min={0}
-        max={10}
-        step={0.5}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full"
-      />
     </div>
   );
 }
