@@ -8,6 +8,7 @@ import { overallBalance, statusFromScore, type Pillar } from "@/lib/pillars";
 import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -79,9 +80,90 @@ function Dashboard() {
           <TipCard />
         </div>
 
+        <ImpactPrioritiesBlock pillars={pillars} />
+
         <AlertsPanel />
       </div>
     </div>
+  );
+}
+
+function ImpactPrioritiesBlock({ pillars }: { pillars: Pillar[] }) {
+  const items = useMemo(() => {
+    return PILLAR_IMPACTS.map((imp) => {
+      const up = pillars.find((p) => p.id === imp.systemPillarId);
+      const score = up?.score ?? 0;
+      if (score <= 0) return null;
+      return {
+        impact: imp,
+        score,
+        priority: (10 - score) * INFLUENCE_WEIGHT[imp.influence],
+      };
+    })
+      .filter((x): x is { impact: typeof PILLAR_IMPACTS[number]; score: number; priority: number } => x !== null)
+      .sort((a, b) => b.priority - a.priority)
+      .slice(0, 3);
+  }, [pillars]);
+
+  if (items.length === 0) return null;
+
+  const priorityLabel = (i: number) => (i === 0 ? "Máxima" : "Alta");
+
+  return (
+    <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🌊</span>
+          <h2 className="text-lg font-bold">Seus pilares de maior impacto agora</h2>
+        </div>
+        <Link
+          to="/impactos"
+          className="text-xs font-semibold text-[color:var(--primary)] hover:underline"
+        >
+          Ver Mapa de Impactos →
+        </Link>
+      </div>
+      <div className="overflow-hidden rounded-xl border border-border/60">
+        <table className="w-full text-sm">
+          <thead className="bg-secondary/60 text-xs uppercase tracking-wider text-muted-foreground">
+            <tr>
+              <th className="px-3 py-2 text-left font-semibold">Pilar</th>
+              <th className="px-3 py-2 text-left font-semibold">Nota</th>
+              <th className="px-3 py-2 text-left font-semibold">Impacta</th>
+              <th className="px-3 py-2 text-left font-semibold">Influência</th>
+              <th className="px-3 py-2 text-left font-semibold">Prioridade</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((it, idx) => (
+              <tr key={it.impact.systemPillarId} className="border-t border-border/60">
+                <td className="px-3 py-2">
+                  <Link
+                    to="/impactos"
+                    search={{ pillar: it.impact.systemPillarId }}
+                    className="font-medium hover:underline"
+                  >
+                    {it.impact.icon} {it.impact.displayName}
+                  </Link>
+                </td>
+                <td className="px-3 py-2 font-semibold">{it.score.toFixed(1)}</td>
+                <td className="px-3 py-2">{it.impact.directCount} pilares</td>
+                <td className="px-3 py-2 text-muted-foreground">{influenceLabel(it.impact.influence)}</td>
+                <td className="px-3 py-2">
+                  <span className="rounded-full bg-[color:var(--critical-soft)] text-[color:var(--critical)] px-2 py-0.5 text-[11px] font-semibold">
+                    {priorityLabel(idx)}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Esses pilares têm notas baixas e alto poder de influência. Ao melhorá-los, você gera
+        efeito positivo em várias áreas da vida.
+      </p>
+    </section>
   );
 }
 
