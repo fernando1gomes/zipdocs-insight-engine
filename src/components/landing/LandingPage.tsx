@@ -129,8 +129,9 @@ function HeroWheel() {
 
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[420px]">
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[color:var(--landing-bg-soft)] to-transparent blur-2xl" />
+      <div className="hero-wheel-halo absolute inset-6 rounded-full bg-gradient-to-br from-[color:var(--landing-bg-soft)] via-[color:var(--landing-bg-soft)] to-transparent blur-2xl" />
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="relative h-full w-full">
+        <g className="hero-wheel-rotate">
         {PILLAR_DEFAULTS.map((p, i) => {
           const a0 = -90 - segDeg / 2 + i * segDeg;
           const a1 = a0 + segDeg;
@@ -153,18 +154,23 @@ function HeroWheel() {
           const nx = CX + numR * Math.cos(midR);
           const ny = CY + numR * Math.sin(midR);
           return (
-            <g key={p.id}>
+            <g key={p.id} className="hero-wheel-seg" style={{ animationDelay: `${i * 0.18}s` }}>
               <path d={d} fill={STATUS_FILL[status]} fillOpacity={0.9} stroke="white" strokeWidth={2} />
+              <g className="hero-wheel-counter">
               <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill="white">
                 {p.id}
               </text>
               <text x={ix} y={iy + 6} textAnchor="middle" dominantBaseline="middle" fontSize="18">
                 {p.icon}
               </text>
+              </g>
             </g>
           );
         })}
+        </g>
+        <g className="hero-wheel-hub">
         <circle cx={CX} cy={CY} r={R_INNER - 4} fill="white" stroke="var(--primary)" strokeOpacity={0.35} strokeWidth={2} />
+        </g>
         <text x={CX} y={CY - 16} textAnchor="middle" fontSize="12" fill="var(--landing-ink-soft)" fontWeight="500">
           Equilíbrio Geral
         </text>
