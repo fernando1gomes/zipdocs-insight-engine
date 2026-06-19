@@ -169,3 +169,57 @@
     letter-spacing: -0.02em;
   }
 }
+
+/* ============================================================
+   Landing page tokens (scoped — do not affect authenticated app)
+   Palette: Sereno e introspectivo
+   ============================================================ */
+.landing-root {
+  --landing-bg: #F5F1EA;
+  --landing-bg-soft: #FBF8F2;
+  --landing-ink: #1B2A41;
+  --landing-ink-soft: #3E5C76;
+  --landing-muted: #7A8AA0;
+  --landing-gold: #C9A86A;
+  --landing-gold-deep: #A8884A;
+  --landing-line: rgba(27, 42, 65, 0.08);
+  background: var(--landing-bg);
+  color: var(--landing-ink);
+  font-family: var(--font-sans);
+}
+.landing-root h1, .landing-root h2, .landing-root h3 {
+  font-family: var(--font-display);
+  color: var(--landing-ink);
+  letter-spacing: -0.025em;
+}
+.landing-cta {
+  background: var(--landing-ink);
+  color: #FBF8F2;
+  border-radius: 999px;
+  padding: 0.85rem 1.6rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 10px 30px -12px rgba(27,42,65,0.4);
+}
+.landing-cta:hover { background: #2A3E5C; transform: translateY(-1px); }
+.landing-cta-gold {
+  background: var(--landing-gold);
+  color: #1B2A41;
+  box-shadow: 0 10px 30px -12px rgba(201,168,106,0.6);
+}
+.landing-cta-gold:hover { background: var(--landing-gold-deep); color: #FBF8F2; }
+.landing-cta-ghost {
+  background: transparent;
+  color: var(--landing-ink);
+  border: 1px solid var(--landing-line);
+}
+.landing-cta-ghost:hover { background: rgba(27,42,65,0.04); }
+.landing-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--landing-gold) 30%, var(--landing-gold) 70%, transparent);
+  opacity: .45;
+}
