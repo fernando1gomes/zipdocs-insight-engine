@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,17 @@ type PillarState = {
 function AutoAvaliacao() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [restored, setRestored] = useState(false);
+  const hydratedRef = useRef(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) setUserId(data.user.id);
+    });
+  }, []);
+
+  const storageKey = userId ? `autoavaliacao:draft:${userId}` : null;
 
   const { data: pillars, isLoading: pl } = useQuery({
     queryKey: ["pillars-active"],
@@ -55,6 +66,51 @@ function AutoAvaliacao() {
   const [state, setState] = useState<Record<number, PillarState>>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+
+  // Restore draft once user + storage key are known
+  useEffect(() => {
+    if (!storageKey || hydratedRef.current) return;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          if (typeof parsed.step === "number") setStep(parsed.step);
+          if (parsed.state && typeof parsed.state === "object") setState(parsed.state);
+          setRestored(true);
+        }
+      }
+    } catch {
+      // ignore corrupted draft
+    }
+    hydratedRef.current = true;
+  }, [storageKey]);
+
+  // Persist draft on every change
+  useEffect(() => {
+    if (!storageKey || !hydratedRef.current || done) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ step, state }));
+    } catch {
+      // storage full / unavailable — ignore
+    }
+  }, [storageKey, step, state, done]);
+
+  function clearDraft() {
+    if (!storageKey) return;
+    try {
+      localStorage.removeItem(storageKey);
+    } catch {
+      // ignore
+    }
+  }
+
+  function resetAll() {
+    setStep(0);
+    setState({});
+    setRestored(false);
+    clearDraft();
+  }
 
   const byPillar = useMemo(() => {
     const m = new Map<number, Criterion[]>();
@@ -152,6 +208,7 @@ function AutoAvaliacao() {
     qc.invalidateQueries({ queryKey: ["user_pillars"] });
     qc.invalidateQueries({ queryKey: ["alerts"] });
     setDone(true);
+    clearDraft();
     setTimeout(() => navigate({ to: "/dashboard" }), 1200);
   }
 
@@ -167,6 +224,15 @@ function AutoAvaliacao() {
         <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
           ← Voltar ao dashboard
         </Link>
+
+        {restored && (
+          <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-secondary/40 px-4 py-2 text-sm">
+            <span>Continuamos de onde você parou. Seu progresso é salvo automaticamente neste dispositivo.</span>
+            <Button variant="ghost" size="sm" onClick={resetAll}>
+              Recomeçar do zero
+            </Button>
+          </div>
+        )}
 
         <div className="mt-4 rounded-3xl bg-card border border-border/60 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
