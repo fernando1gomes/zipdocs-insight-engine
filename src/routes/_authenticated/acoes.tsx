@@ -16,7 +16,8 @@ export const Route = createFileRoute("/_authenticated/acoes")({
 
 function ActionsPage() {
   const qc = useQueryClient();
-  const { pillars } = usePillars();
+  const { data: pillarsData } = usePillars();
+  const pillars = pillarsData?.pillars;
   const [filter, setFilter] = useState<"all" | "pending" | "completed">("pending");
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
