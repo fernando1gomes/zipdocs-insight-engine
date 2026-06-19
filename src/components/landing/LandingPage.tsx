@@ -156,14 +156,12 @@ function HeroWheel() {
           return (
             <g key={p.id} className="hero-wheel-seg" style={{ animationDelay: `${i * 0.18}s` }}>
               <path d={d} fill={STATUS_FILL[status]} fillOpacity={0.9} stroke="white" strokeWidth={2} />
-              <g className="hero-wheel-counter">
               <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill="white">
                 {p.id}
               </text>
               <text x={ix} y={iy + 6} textAnchor="middle" dominantBaseline="middle" fontSize="18">
                 {p.icon}
               </text>
-              </g>
             </g>
           );
         })}
