@@ -45,6 +45,9 @@ export function AppHeader() {
         <Link to="/acoes" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
           Ações
         </Link>
+        <Link to="/plano-acao" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
+          Plano
+        </Link>
         <Link to="/checkin" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
           Check-in
         </Link>
