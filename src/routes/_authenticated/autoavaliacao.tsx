@@ -95,6 +95,7 @@ function AutoAvaliacao() {
   }
 
   async function submitAll() {
+    if (!pillars) return;
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) {
