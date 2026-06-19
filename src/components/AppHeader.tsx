@@ -1,12 +1,15 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { MessageCircle } from "lucide-react";
 import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
 
 export function AppHeader() {
   const navigate = useNavigate();
   const router = useRouter();
   const [displayName, setDisplayName] = useState<string>("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -20,11 +23,37 @@ export function AppHeader() {
     });
   }, []);
 
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
   async function signOut() {
     await supabase.auth.signOut();
     router.invalidate();
     navigate({ to: "/auth", replace: true });
   }
+
+  const initials = (displayName || "SM")
+    .split(/\s+/)
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "SM";
+
+  const navItems: Array<{ to: string; label: string }> = [
+    { to: "/dashboard", label: "DASHBOARD" },
+    { to: "/autoavaliacao", label: "AUTOAVALIAÇÃO" },
+    { to: "/impactos", label: "PROGRESSO" },
+    { to: "/autorresponsabilidade", label: "ACOMPANHAMENTOS" },
+    { to: "/plano-acao", label: "PLANO" },
+    { to: "/acoes", label: "AÇÕES" },
+    { to: "/checkin", label: "CHECK-INS" },
+  ];
 
   return (
     <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -35,43 +64,54 @@ export function AppHeader() {
           className="h-12 w-12 rounded-2xl object-contain bg-card shadow-sm"
         />
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[color:var(--focus)]">Vida em Eixo</h1>
-          <p className="text-xs text-muted-foreground">
-            {displayName ? `Olá, ${displayName}` : "Uma visão integrada da sua evolução"}
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-[0.08em] uppercase text-[color:var(--focus)]" style={{ fontFamily: "var(--font-display)" }}>
+            Vida em Eixo
+          </h1>
+          <p className="text-[10px] uppercase tracking-[0.32em] text-[color:var(--primary)] font-semibold">
+            Coaching &amp; PNL
           </p>
         </div>
       </Link>
-      <nav className="flex items-center gap-2 text-sm">
-        <Link to="/dashboard" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Dashboard
-        </Link>
-        <Link to="/autoavaliacao" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Autoavaliação
-        </Link>
-        <Link to="/impactos" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Impactos
-        </Link>
-        <Link to="/autorresponsabilidade" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Autorresponsabilidade
-        </Link>
-        <Link to="/plano-acao" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Plano
-        </Link>
-        <Link to="/acoes" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Ações
-        </Link>
-        <Link to="/checkin" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          Check-in
-        </Link>
-        <Link to="/orientadora" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
-          💬 IA
-        </Link>
-        <button
-          onClick={signOut}
-          className="ml-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-secondary transition"
+      <nav className="flex items-center gap-1 text-[11px] font-semibold tracking-[0.12em]">
+        {navItems.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="rounded-full px-3 py-2 text-foreground/70 hover:text-foreground hover:bg-secondary transition"
+            activeProps={{ className: "rounded-full px-3 py-2 bg-primary text-primary-foreground" }}
+          >
+            {item.label}
+          </Link>
+        ))}
+        <Link
+          to="/orientadora"
+          className="ml-2 relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground/70 hover:bg-secondary transition"
+          aria-label="Orientadora IA"
         >
-          Sair
-        </button>
+          <MessageCircle className="h-4 w-4" />
+          <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[color:var(--accent)] px-1 text-[9px] font-bold text-white">
+            4
+          </span>
+        </Link>
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--primary)] text-[11px] font-bold text-primary-foreground tracking-wider"
+            aria-label="Menu do usuário"
+          >
+            {initials}
+          </button>
+          {menuOpen && (
+            <div className="absolute right-0 top-11 z-20 w-40 rounded-xl border border-border bg-card p-1 shadow-lg">
+              <button
+                onClick={signOut}
+                className="w-full rounded-lg px-3 py-2 text-left text-xs font-semibold text-foreground hover:bg-secondary"
+              >
+                Sair
+              </button>
+            </div>
+          )}
+        </div>
       </nav>
     </header>
   );

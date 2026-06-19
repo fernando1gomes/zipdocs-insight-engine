@@ -31,9 +31,24 @@ export const PILLARS = PILLAR_DEFAULTS;
 
 export function messageForScore(score: number, shortName: string): string {
   if (score <= 0) return "Sem dados — avalie este pilar";
-  if (score < 6) return `Crítico, priorize ${shortName.toLowerCase()}`;
-  if (score < 7) return `Atenção, fortalecer ${shortName.toLowerCase()}`;
-  return `Equilibrado, manter ${shortName.toLowerCase()}`;
+  if (score < 6) return `Crítico: priorizar atenção`;
+  if (score < 7) return `Atenção: melhorar ${shortName.toLowerCase()}`;
+  return `Equilíbrio e estabilidade`;
+}
+
+export type ImpactLabel = "Positivo" | "Importante" | "Crítico" | "—";
+export function impactLabelFromScore(score: number): ImpactLabel {
+  if (score <= 0) return "—";
+  if (score < 6) return "Crítico";
+  if (score < 7.5) return "Importante";
+  return "Positivo";
+}
+
+export type PriorityLabel = "Crítica" | "Alta" | "Média";
+export function priorityFromScore(score: number): PriorityLabel {
+  if (score < 5) return "Crítica";
+  if (score < 6.5) return "Alta";
+  return "Média";
 }
 
 /** Merge DB user_pillars rows with the static defaults to produce the Pillar shape used by UI. */

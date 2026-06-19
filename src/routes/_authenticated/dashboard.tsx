@@ -4,7 +4,7 @@ import { LifeWheel } from "@/components/LifeWheel";
 import { PillarCard } from "@/components/PillarCard";
 import { RadialWheel } from "@/components/RadialWheel";
 import { AppHeader } from "@/components/AppHeader";
-import { overallBalance, statusFromScore, type Pillar } from "@/lib/pillars";
+import { overallBalance, statusFromScore, priorityFromScore, type Pillar } from "@/lib/pillars";
 import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -113,14 +113,16 @@ function ImpactPrioritiesBlock({ pillars }: { pillars: Pillar[] }) {
     <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🌊</span>
-          <h2 className="text-lg font-bold">Seus pilares de maior impacto agora</h2>
+          <span className="text-lg">🌿</span>
+          <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">
+            Seus Pilares de Maior Impacto Agora
+          </h2>
         </div>
         <Link
           to="/impactos"
-          className="text-xs font-semibold text-[color:var(--primary)] hover:underline"
+          className="text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--primary)] hover:underline"
         >
-          Ver Mapa de Impactos →
+          Ver Mapa de Impacto →
         </Link>
       </div>
       <div className="overflow-hidden rounded-xl border border-border/60">
@@ -150,9 +152,21 @@ function ImpactPrioritiesBlock({ pillars }: { pillars: Pillar[] }) {
                 <td className="px-3 py-2">{it.impact.directCount} pilares</td>
                 <td className="px-3 py-2 text-muted-foreground">{influenceLabel(it.impact.influence)}</td>
                 <td className="px-3 py-2">
-                  <span className="rounded-full bg-[color:var(--critical-soft)] text-[color:var(--critical)] px-2 py-0.5 text-[11px] font-semibold">
-                    {priorityLabel(idx)}
-                  </span>
+                  {(() => {
+                    const label = priorityLabel(idx);
+                    const styles =
+                      label === "Máxima"
+                        ? { bg: "var(--attention-soft)", fg: "var(--attention)" }
+                        : { bg: "var(--balanced-soft)", fg: "var(--primary)" };
+                    return (
+                      <span
+                        className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                        style={{ background: styles.bg, color: styles.fg }}
+                      >
+                        {label}
+                      </span>
+                    );
+                  })()}
                 </td>
               </tr>
             ))}
@@ -192,18 +206,24 @@ function AlertsPanel() {
   return (
     <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
-        <span className="text-lg">🔔</span>
-        <h2 className="text-lg font-bold">Alertas</h2>
+        <span className="text-lg text-[color:var(--accent)]">🔔</span>
+        <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Alertas</h2>
         <span className="text-xs text-muted-foreground">({alerts.length})</span>
       </div>
       <ul className="flex flex-col gap-2">
         {alerts.map((a) => (
-          <li key={a.id} className="flex items-start justify-between gap-3 rounded-lg border border-border/60 px-3 py-2">
-            <div className="min-w-0">
-              <div className="text-sm font-semibold truncate">{a.title}</div>
-              <div className="text-xs text-muted-foreground">{a.message}</div>
+          <li key={a.id} className="flex items-start justify-between gap-3 rounded-lg border border-border/60 px-3 py-2.5">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-[color:var(--accent)]" />
+              <div className="min-w-0">
+                <div className="text-sm font-semibold truncate">{a.title}</div>
+                <div className="text-xs text-muted-foreground">{a.message}</div>
+              </div>
             </div>
-            <button onClick={() => resolve(a.id)} className="shrink-0 rounded-md border border-border bg-background px-2 py-1 text-xs hover:bg-secondary">
+            <button
+              onClick={() => resolve(a.id)}
+              className="shrink-0 rounded-md border border-[color:var(--primary)]/40 bg-card px-3 py-1 text-xs font-semibold text-[color:var(--primary)] hover:bg-[color:var(--balanced-soft)]/30"
+            >
               Resolver
             </button>
           </li>
@@ -215,15 +235,15 @@ function AlertsPanel() {
 
 function Legend() {
   const items = [
-    { label: "Equilibrado", color: "var(--balanced)" },
+    { label: "Excelente", color: "var(--primary)" },
+    { label: "Bom", color: "var(--balanced-soft)" },
     { label: "Atenção", color: "var(--attention)" },
     { label: "Crítico", color: "var(--critical)" },
     { label: "Sem dados", color: "var(--empty)" },
-    { label: "Foco estratégico", color: "var(--focus)" },
   ];
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
-      <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Legenda</div>
+      <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Legenda</div>
       <div className="flex flex-wrap gap-x-5 gap-y-2">
         {items.map((it) => (
           <div key={it.label} className="flex items-center gap-2 text-xs text-foreground">
@@ -231,6 +251,10 @@ function Legend() {
             {it.label}
           </div>
         ))}
+        <div className="flex items-center gap-2 text-xs text-foreground">
+          <span className="inline-block w-6 border-t-2 border-dashed border-[color:var(--empty)]" />
+          Pouca influência
+        </div>
       </div>
     </div>
   );
@@ -255,7 +279,7 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <span className="text-lg">🎯</span>
-        <h2 className="text-lg font-bold">Prioridades da semana</h2>
+        <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Prioridades da Semana</h2>
       </div>
       {priorities.length === 0 ? (
         <p className="text-sm text-muted-foreground">
@@ -275,10 +299,12 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
                 {i + 1}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-foreground truncate">Cuidar de {p.shortName}</div>
-                <div className="text-xs text-muted-foreground truncate">Score atual: {p.score.toFixed(1)}</div>
+                <div className="text-sm font-semibold text-foreground truncate">Cuidar de {p.shortName}</div>
+                <div className="text-xs text-muted-foreground truncate">Prioridade: {priorityFromScore(p.score)}</div>
               </div>
-              <span className="text-lg">{p.icon}</span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color:var(--balanced-soft)]/40 text-lg">
+                {p.icon}
+              </span>
             </li>
           ))}
         </ol>
@@ -286,16 +312,16 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
       <div className="mt-4 flex flex-col gap-2">
         <Link
           to="/checkin"
-          className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 transition flex items-center justify-between"
+          className="w-full rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground shadow-sm hover:opacity-95 transition flex items-center justify-between"
         >
-          <span className="flex items-center gap-2">📅 Novo check-in</span>
+          <span className="flex items-center gap-2">+ Novo Check-in</span>
           <span>›</span>
         </Link>
         <Link
           to="/acoes"
-          className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary transition flex items-center justify-between"
+          className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-foreground hover:bg-secondary transition flex items-center justify-between"
         >
-          <span className="flex items-center gap-2">⚡ Minhas ações</span>
+          <span className="flex items-center gap-2">🌿 Minhas Ações</span>
           <span>›</span>
         </Link>
       </div>
@@ -322,21 +348,21 @@ function NextActionCard() {
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-bold">Próxima melhor ação</h2>
+        <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Próxima Melhor Ação</h2>
         <span className="text-[color:var(--attention)]">★</span>
       </div>
       <div className="rounded-xl bg-[color:var(--primary)]/5 p-4">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">⏰</div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--balanced-soft)]/50 text-lg">🏠</div>
           <p className="text-sm font-medium text-foreground leading-snug">
-            {data?.title ?? "Você ainda não criou nenhuma ação. Defina um passo concreto."}
+            {data?.title ?? "Conectar-se com a família"}
           </p>
         </div>
         <Link
           to="/acoes"
-          className="mt-4 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-95 transition flex items-center justify-center gap-2"
+          className="mt-4 w-full rounded-xl bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground shadow-sm hover:opacity-95 transition flex items-center justify-center gap-2"
         >
-          {data ? "Ver minhas ações" : "Criar primeira ação"} <span>›</span>
+          {data ? "Ver Minhas Ações" : "Criar Primeira Ação"} <span>›</span>
         </Link>
       </div>
     </div>

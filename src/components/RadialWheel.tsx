@@ -171,8 +171,16 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
 
         {/* Center hub */}
         <circle cx={CX} cy={CY} r={R_INNER - 4} fill="white" stroke="var(--primary)" strokeOpacity={0.35} strokeWidth={2} />
-        <text x={CX} y={CY - 18} textAnchor="middle" fontSize="14" fill="var(--muted-foreground)" fontWeight="500">
-          Equilíbrio Geral
+        <text
+          x={CX}
+          y={CY - 22}
+          textAnchor="middle"
+          fontSize="11"
+          fill="var(--muted-foreground)"
+          fontWeight="600"
+          letterSpacing="2"
+        >
+          AVALIAÇÃO GERAL
         </text>
         <text
           x={CX}
@@ -181,11 +189,11 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
           fontSize="42"
           fontWeight="800"
           fill="var(--foreground)"
-          style={{ fontFamily: "Plus Jakarta Sans" }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
           {balance}%
         </text>
-        <text x={CX} y={CY + 46} textAnchor="middle" fontSize="16">⚖️</text>
+        <text x={CX} y={CY + 46} textAnchor="middle" fontSize="16">🌱</text>
       </svg>
 
       {/* Cards positioned with explicit anchors per the reference layout */}
