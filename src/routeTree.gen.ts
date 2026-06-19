@@ -16,6 +16,7 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedPlanoAcaoRouteImport } from './routes/_authenticated/plano-acao'
 import { Route as AuthenticatedOrientadoraRouteImport } from './routes/_authenticated/orientadora'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedImpactosRouteImport } from './routes/_authenticated/impactos'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
 import { Route as AuthenticatedAutorresponsabilidadeRouteImport } from './routes/_authenticated/autorresponsabilidade'
@@ -57,6 +58,11 @@ const AuthenticatedOrientadoraRoute =
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedImpactosRoute = AuthenticatedImpactosRouteImport.update({
+  id: '/impactos',
+  path: '/impactos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/autorresponsabilidade': typeof AuthenticatedAutorresponsabilidadeRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/impactos': typeof AuthenticatedImpactosRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/orientadora': typeof AuthenticatedOrientadoraRoute
   '/plano-acao': typeof AuthenticatedPlanoAcaoRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/autorresponsabilidade': typeof AuthenticatedAutorresponsabilidadeRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/impactos': typeof AuthenticatedImpactosRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/orientadora': typeof AuthenticatedOrientadoraRoute
   '/plano-acao': typeof AuthenticatedPlanoAcaoRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/_authenticated/autorresponsabilidade': typeof AuthenticatedAutorresponsabilidadeRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/impactos': typeof AuthenticatedImpactosRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/orientadora': typeof AuthenticatedOrientadoraRoute
   '/_authenticated/plano-acao': typeof AuthenticatedPlanoAcaoRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/autorresponsabilidade'
     | '/checkin'
     | '/dashboard'
+    | '/impactos'
     | '/onboarding'
     | '/orientadora'
     | '/plano-acao'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/autorresponsabilidade'
     | '/checkin'
     | '/dashboard'
+    | '/impactos'
     | '/onboarding'
     | '/orientadora'
     | '/plano-acao'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/_authenticated/autorresponsabilidade'
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/impactos'
     | '/_authenticated/onboarding'
     | '/_authenticated/orientadora'
     | '/_authenticated/plano-acao'
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/impactos': {
+      id: '/_authenticated/impactos'
+      path: '/impactos'
+      fullPath: '/impactos'
+      preLoaderRoute: typeof AuthenticatedImpactosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -310,6 +329,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAutorresponsabilidadeRoute: typeof AuthenticatedAutorresponsabilidadeRoute
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedImpactosRoute: typeof AuthenticatedImpactosRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedOrientadoraRoute: typeof AuthenticatedOrientadoraRoute
   AuthenticatedPlanoAcaoRoute: typeof AuthenticatedPlanoAcaoRoute
@@ -324,6 +344,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAutorresponsabilidadeRoute,
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedImpactosRoute: AuthenticatedImpactosRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedOrientadoraRoute: AuthenticatedOrientadoraRoute,
   AuthenticatedPlanoAcaoRoute: AuthenticatedPlanoAcaoRoute,

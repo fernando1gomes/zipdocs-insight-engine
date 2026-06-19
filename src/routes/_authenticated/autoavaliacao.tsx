@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getImpactBySystemId, influenceLabel } from "@/lib/impacts";
 
 export const Route = createFileRoute("/_authenticated/autoavaliacao")({
   component: AutoAvaliacao,
@@ -258,6 +259,8 @@ function AutoAvaliacao() {
             </div>
           </div>
 
+          <PillarImpactHint pillarId={pillar.id} />
+
           <div className="mt-6">
             <h3 className="text-sm font-semibold mb-2">Critérios objetivos</h3>
             {list.length === 0 ? (
@@ -369,6 +372,38 @@ function AutoAvaliacao() {
             </button>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PillarImpactHint({ pillarId }: { pillarId: number }) {
+  const impact = getImpactBySystemId(pillarId);
+  if (!impact) return null;
+  const top = impact.impacts
+    .filter((i) => i.intensity === "forte")
+    .slice(0, 4)
+    .map((i) => i.target);
+  const list = top.length ? top : impact.impacts.slice(0, 4).map((i) => i.target);
+  return (
+    <div className="mt-4 rounded-xl border border-border/60 bg-secondary/30 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Impacto deste pilar
+          </div>
+          <p className="mt-1 text-sm">
+            Este pilar impacta diretamente <strong>{impact.directCount} áreas</strong> da sua vida
+            (influência {influenceLabel(impact.influence).toLowerCase()}), especialmente {list.join(", ")}.
+          </p>
+        </div>
+        <Link
+          to="/impactos"
+          search={{ pillar: pillarId }}
+          className="shrink-0 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-secondary transition"
+        >
+          Ver impactos →
+        </Link>
       </div>
     </div>
   );
