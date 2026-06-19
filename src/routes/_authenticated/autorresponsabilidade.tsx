@@ -8,6 +8,11 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/autorresponsabilidade")({
+  validateSearch: (raw: Record<string, unknown>): { pillarId?: number } => {
+    const v = raw?.pillarId;
+    const n = typeof v === "number" ? v : typeof v === "string" ? Number(v) : NaN;
+    return Number.isFinite(n) && n > 0 ? { pillarId: n } : {};
+  },
   head: () => ({
     meta: [
       { title: "Autorresponsabilidade — Roda da Vida Viva" },
