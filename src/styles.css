@@ -69,8 +69,8 @@
   --color-focus-soft: var(--focus-soft);
   --color-empty: var(--empty);
   --color-empty-soft: var(--empty-soft);
-  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-sans: "Lato", system-ui, sans-serif;
 }
 
 :root {

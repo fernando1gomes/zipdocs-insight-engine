@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
 
 export function AppHeader() {
   const navigate = useNavigate();
@@ -28,11 +29,13 @@ export function AppHeader() {
   return (
     <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
       <Link to="/dashboard" className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--focus)] text-white text-xl shadow-md">
-          🌱
-        </div>
+        <img
+          src={logoAsset.url}
+          alt="Vida em Eixo"
+          className="h-12 w-12 rounded-2xl object-contain bg-card shadow-sm"
+        />
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Vida em Eixo</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-[color:var(--focus)]">Vida em Eixo</h1>
           <p className="text-xs text-muted-foreground">
             {displayName ? `Olá, ${displayName}` : "Uma visão integrada da sua evolução"}
           </p>
