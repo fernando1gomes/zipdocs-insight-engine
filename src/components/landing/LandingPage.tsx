@@ -262,7 +262,7 @@ function Differentiators() {
           {DIFFERENTIATORS.map((d) => (
             <div key={d.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
               <span className="text-3xl">{d.icon}</span>
-              <h3 className="mt-4 text-lg font-semibold text-white">{d.title}</h3>
+              <h3 className="mt-4 text-lg font-semibold !text-white">{d.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-white/70">{d.text}</p>
             </div>
           ))}
