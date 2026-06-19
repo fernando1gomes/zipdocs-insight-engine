@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/plano-acao_/$pillarId")({
 type Suggested = { title: string; description: string; effort: string };
 
 function PlanoAcaoWizard() {
-  const { pillarId } = useParams({ from: "/_authenticated/plano-acao/$pillarId" });
+  const { pillarId } = Route.useParams();
   const pid = Number(pillarId);
   const navigate = useNavigate();
   const qc = useQueryClient();
