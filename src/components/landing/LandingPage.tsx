@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { PILLAR_DEFAULTS, statusFromScore, overallBalance } from "@/lib/pillars";
+import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
 import {
   Accordion,
   AccordionContent,
