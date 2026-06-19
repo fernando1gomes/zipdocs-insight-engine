@@ -173,6 +173,77 @@ export type Database = {
           },
         ]
       }
+      autorresponsabilidade_sessions: {
+        Row: {
+          action_24h: string | null
+          behaviors: string[] | null
+          behaviors_reflection: string | null
+          broken_text: string | null
+          commitment: string | null
+          completed_at: string | null
+          created_at: string
+          current_score: number | null
+          excuse: string | null
+          excuse_decision: string | null
+          id: string
+          misplaced_text: string | null
+          missing_text: string | null
+          pillar_id: number
+          result_text: string | null
+          score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_24h?: string | null
+          behaviors?: string[] | null
+          behaviors_reflection?: string | null
+          broken_text?: string | null
+          commitment?: string | null
+          completed_at?: string | null
+          created_at?: string
+          current_score?: number | null
+          excuse?: string | null
+          excuse_decision?: string | null
+          id?: string
+          misplaced_text?: string | null
+          missing_text?: string | null
+          pillar_id: number
+          result_text?: string | null
+          score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_24h?: string | null
+          behaviors?: string[] | null
+          behaviors_reflection?: string | null
+          broken_text?: string | null
+          commitment?: string | null
+          completed_at?: string | null
+          created_at?: string
+          current_score?: number | null
+          excuse?: string | null
+          excuse_decision?: string | null
+          id?: string
+          misplaced_text?: string | null
+          missing_text?: string | null
+          pillar_id?: number
+          result_text?: string | null
+          score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "autorresponsabilidade_sessions_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pillar_action_logs: {
         Row: {
           action_id: string
