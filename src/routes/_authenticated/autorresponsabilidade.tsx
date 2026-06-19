@@ -122,6 +122,7 @@ function Chip({
 
 function AutorresponsabilidadePage() {
   const navigate = useNavigate();
+  const searchParams = Route.useSearch();
   const [step, setStep] = useState(0); // 0 = intro, 1..7
   const [pillarId, setPillarId] = useState<number | null>(null);
   const [resultText, setResultText] = useState("");
@@ -135,6 +136,15 @@ function AutorresponsabilidadePage() {
   const [commitment, setCommitment] = useState("");
   const [action24h, setAction24h] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Pre-select pillar coming via ?pillarId= and auto-advance to step 1
+  useEffect(() => {
+    if (searchParams.pillarId && pillarId == null) {
+      setPillarId(searchParams.pillarId);
+      if (step === 0) setStep(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.pillarId]);
 
   const { data: pillars } = useQuery({
     queryKey: ["autorresp-pillars"],
