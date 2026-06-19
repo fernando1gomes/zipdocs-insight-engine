@@ -22,7 +22,7 @@ export const PILLAR_DEFAULTS: Pillar[] = [
   { id: 7, name: "Financeiro", shortName: "Financeiro", icon: "💵", score: 5.2, message: "Atenção, organizar", impact: 3, impactPillars: ["Emocional", "Relacionamento", "Segurança"] },
   { id: 8, name: "Intelectual e aprendizado", shortName: "Intelectual", icon: "📖", score: 7.8, message: "Equilibrado, aprofundar", impact: 3, impactPillars: ["Profissional", "Carreira", "Confiança"] },
   { id: 9, name: "Espiritualidade e sentido", shortName: "Espiritualidade", icon: "🧘", score: 4.9, message: "Crítico, reconectar sentido", impact: 3, impactPillars: ["Propósito", "Paz", "Decisões"] },
-  { id: 10, name: "Lazer e prazer", shortName: "Lazer", icon: "📚", score: 6.3, message: "Atenção, reservar tempo", impact: 3, impactPillars: ["Descanso", "Criatividade", "Saúde"] },
+  { id: 10, name: "Lazer e prazer", shortName: "Lazer", icon: "🎵", score: 6.3, message: "Atenção, reservar tempo", impact: 3, impactPillars: ["Descanso", "Criatividade", "Saúde"] },
   { id: 11, name: "Saúde e disposição", shortName: "Saúde", icon: "🏃", score: 6.2, message: "Atenção, fortalecer rotina", impact: 3, impactPillars: ["Energia", "Emocional", "Profissional"] },
 ];
 

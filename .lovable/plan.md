@@ -1,88 +1,72 @@
 
-# Rebranding: "Vida em Eixo"
+# Aplicar Identidade Visual "Vida em Eixo"
 
-Renomear o SaaS de "Roda da Vida Viva" para **Vida em Eixo** e aplicar a nova paleta em todo o sistema (landing + área logada).
+Aplicar o guia de identidade visual enviado (paleta, tipografia, logomarca e ícones dos pilares) em todo o sistema — landing e área logada.
 
-## 1. Nome do produto
+## 1. Nova paleta de cores
 
-Substituir todas as ocorrências do nome antigo ("Roda da Vida Viva" / "Roda da Vida") pelo novo nome **Vida em Eixo** nos seguintes pontos:
+Substituir os tokens atuais em `src/styles.css` pelos hex do guia, convertidos para oklch:
 
-- Título da aba (meta `<title>`) — landing, dashboard, todas as rotas em `src/routes/_authenticated/*` e `src/routes/__root.tsx`.
-- Cabeçalho do app (`src/components/AppHeader.tsx`) — logo/wordmark.
-- Landing page (`src/components/landing/LandingPage.tsx`) — hero, headline, footer, CTAs.
-- Tela de auth (`src/routes/auth.tsx`).
-- Onboarding (`src/routes/_authenticated/onboarding.tsx`).
-- Tagline sugerida: *"Transforme equilíbrio em ação."*
+| Papel | Hex | Uso | Token |
+|---|---|---|---|
+| Verde Sálvia Profundo (Primária) | `#4A7C59` | Botões primários, headers, links | `--primary` |
+| Verde Aloe Suave (Secundária) | `#8FB996` | Acentos calmos, badges, hover | `--balanced` / `--secondary` |
+| Creme/Linho (Fundo) | `#F5F1E8` | `--background` da landing e do app | `--background` |
+| Terracota Suave (Destaque) | `#D4A574` | CTAs, check-ins, alertas de ação | `--accent` |
+| Azul Petróleo (Texto/Acento) | `#2C4A52` | Texto principal, headings | `--foreground` |
 
-Não alterar nomes técnicos (tabelas, rotas, IDs, chaves de query).
+Demais tokens derivados:
+- `--card`: branco puro (`#FFFFFF`) para contraste suave sobre o creme.
+- `--muted`: derivação clara do creme; `--muted-foreground`: azul petróleo a 65%.
+- `--border` / `--input`: tom mais escuro do creme (`color-mix` creme + azul petróleo).
+- `--ring`: terracota (`--accent`).
+- `--balanced`: verde sálvia (`#4A7C59`); `--balanced-soft`: verde aloe (`#8FB996`).
+- `--attention`: terracota mais clara; `--critical`: vermelho atual mantido para alertas críticos.
+- `--focus`: azul petróleo (`#2C4A52`); `--empty`: cinza-creme.
+- Modo escuro: fundo `#1F3036` (derivado do azul petróleo), texto creme, primária verde aloe (`#8FB996`) para contraste, acento terracota mantido.
 
-## 2. Nova paleta de cores
+### Landing (`.landing-root`)
+- `--landing-gold` → `--accent` (terracota) — preserva o destaque quente dos CTAs e da roda animada.
+- `--landing-bg` → creme; `--landing-ink` → azul petróleo. Já derivam dos tokens globais, nada a alterar manualmente.
 
-Aplicar via tokens semânticos em `src/styles.css` (sem `text-white`/`bg-[#...]` hardcoded em componentes). Tokens em **oklch** equivalentes aos hex pedidos:
+## 2. Tipografia
 
-| Papel | Hex | Token |
-|---|---|---|
-| Base / Estrutura ("Eixo") | `#1B263B` | `--primary` (modo claro: usado em headers, navegação, textos fortes) |
-| Ação / Energia | `#FB8500` | `--accent` (CTAs, check-ins, alertas de ação) |
-| Equilíbrio / Sucesso | `#2D6A4F` | `--balanced` (progresso, scores saudáveis, feedback positivo) |
-| Clareza / Fundo | `#F8F9FA` | `--background` (planos de fundo, áreas de leitura) |
-| Tinta principal | derivado de `#1B263B` | `--foreground` |
+Trocar o par atual (Plus Jakarta Sans + Inter) por **Poppins** (títulos) + **Lato** (corpo) conforme o guia:
 
-### Mapeamento detalhado (modo claro)
+- Atualizar `<link>` do Google Fonts em `src/routes/__root.tsx`:
+  `https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Lato:wght@300;400;700&display=swap`
+- Em `src/styles.css` (`@theme`): `--font-display: "Poppins"`, `--font-sans: "Lato"`.
 
-- `--background`: `#F8F9FA` (off-white).
-- `--foreground`: `#1B263B` (azul profundo) — texto principal.
-- `--primary`: `#1B263B` / `--primary-foreground`: `#F8F9FA` — botões primários, headers, links de navegação.
-- `--accent`: `#FB8500` / `--accent-foreground`: `#FFFFFF` — usado nos CTAs principais da landing e botões "Novo check-in", "Criar ação".
-- `--balanced`: `#2D6A4F` + `--balanced-soft` (verde claro derivado) — mantém o uso atual em scores/legenda da Roda da Vida.
-- `--attention`: laranja mais suave derivado do `--accent` (ex.: `#FFB266`) para diferenciar de "ação" pura.
-- `--critical`: vermelho atual (mantido) — saúde do sistema/alertas críticos não devem confundir com "ação".
-- `--focus`: variação fria do azul profundo (ex.: `#415A77`) para "foco estratégico".
-- `--muted` / `--secondary` / `--border`: tons de cinza-gelo derivados do off-white.
+## 3. Logomarca
 
-### Modo escuro
+Usar a logomarca do guia como ícone do app:
 
-- `--background`: `#0F1A2C` (azul profundo mais escuro).
-- `--foreground`: `#F8F9FA`.
-- `--primary`: tom claro do azul para contraste (ex.: `#A8C0E0`); `--primary-foreground`: `#1B263B`.
-- `--accent`: `#FB8500` mantido (alta vibração já funciona no escuro); `--accent-foreground`: `#1B263B`.
-- `--balanced`: `#52B788` (verde mais claro para legibilidade).
+- Subir o arquivo `icone.png` (anexado) como asset via `lovable-assets` → `src/assets/vida-em-eixo-logo.png.asset.json`.
+- Em `src/components/AppHeader.tsx`: exibir o ícone (32–40px) ao lado do wordmark "Vida em Eixo" (Poppins SemiBold, cor azul petróleo). Tagline opcional pequena: "11 Pilares · Equilíbrio · Transformação".
+- Em `src/components/landing/LandingPage.tsx`: substituir o logotipo/wordmark do topo pelo ícone + nome. No hero, manter a roda animada existente (já tematizada via tokens), mas o ícone aparece no header da landing.
+- Atualizar `favicon` em `src/routes/__root.tsx` para apontar para a mesma imagem (ou variante 32×32).
 
-### Landing page
+## 4. Ícones dos 11 pilares
 
-A landing usa tokens próprios em `.landing-root` (em `src/styles.css`) que já derivam de `--primary`, `--foreground`, `--background`. Como a paleta global muda, a landing se ajusta automaticamente — apenas confirmar:
+O guia sugere ícones temáticos (coração+pulso, cérebro, casa, alvo, etc.). O projeto já usa ícones `lucide-react` em `src/lib/pillars.ts`. Vou:
 
-- `--landing-gold` (hoje `var(--primary)`) passa a apontar para `--accent` (`#FB8500`) para preservar o papel visual de "destaque dourado/quente" nos CTAs e na roda animada do hero.
-- `--landing-bg`, `--landing-ink`, `--landing-line` permanecem ligados aos tokens globais.
+- Revisar o mapeamento atual em `src/lib/pillars.ts` e ajustar para se aproximar do guia (ex.: Saúde Física → `HeartPulse`, Saúde Mental → `Brain`, Relacionamentos → `Users` ou `HeartHandshake`, Família → `Home`, Carreira → `Target`, Finanças → `TrendingUp`, Desenvolvimento → `BookOpen`, Espiritualidade → `Flower2`/`Lotus`, Lazer → `Music`, Ambiente → `Home`+folha (`Sprout`), Contribuição → `HandHeart`).
+- Esses ícones já herdam a cor primária via tokens, então nenhuma cor hardcoded é necessária.
+- Não vou gerar SVGs customizados (manter Lucide para consistência com o resto do app).
 
-### Roda da Vida (interna e landing)
+## 5. Arquivos a editar
 
-A roda usa as cores semânticas (`--balanced`, `--attention`, `--critical`, `--focus`, `--empty`). Com os novos tokens, ela passa a mostrar:
-- Verde sálvia para pilares equilibrados.
-- Laranja vibrante para pilares que pedem ação.
-- Vermelho para crítico.
-- Azul profundo (`--focus`) para foco estratégico.
+- `src/styles.css` — novos valores oklch para `:root` e `.dark`; troca de `--font-display`/`--font-sans`.
+- `src/routes/__root.tsx` — link do Google Fonts (Poppins + Lato) e favicon.
+- `src/components/AppHeader.tsx` — adicionar ícone da logo ao lado do nome.
+- `src/components/landing/LandingPage.tsx` — header da landing com ícone; conferir que copy/CTAs continuam legíveis na nova paleta.
+- `src/lib/pillars.ts` — ajustar ícones Lucide para alinhar ao guia.
+- Asset novo: `src/assets/vida-em-eixo-logo.png.asset.json` (via `lovable-assets create` a partir de `/mnt/user-uploads/icone.png`).
 
-Nenhuma alteração de componente é necessária — só os valores dos tokens.
+Fora de escopo: lógica de negócio, schema, server functions, nomes técnicos, criação de SVGs customizados para os pilares.
 
-## 3. Detalhes técnicos
+## 6. Validação
 
-Arquivos a editar:
-
-- `src/styles.css` — atualizar `:root`, `.dark` e o bloco `.landing-root` (ajuste de `--landing-gold`).
-- `src/components/landing/LandingPage.tsx` — substituir nome em copy/CTAs/meta.
-- `src/components/AppHeader.tsx` — wordmark.
-- `src/routes/__root.tsx` — `<title>` e meta description padrão.
-- `src/routes/_authenticated/dashboard.tsx`, `auth.tsx`, `onboarding.tsx` e demais rotas com `head().meta.title` contendo o nome antigo — atualizar para "Vida em Eixo".
-
-Itens explicitamente fora de escopo:
-- Lógica de negócio, schema do banco, server functions.
-- Renomear classes CSS, variáveis técnicas, rotas ou tabelas.
-- Mudar tipografia (Plus Jakarta Sans + Inter mantidas).
-
-## 4. Validação
-
-Após implementar:
-1. Build automático (sem erros de Tailwind/oklch).
-2. Verificar a landing (`/`) e o dashboard (`/dashboard`) via Playwright: screenshots em desktop confirmando paleta nova, nome atualizado no header e CTAs em laranja sobre base azul profundo.
-3. Conferir contraste (texto sobre `--accent` e `--primary`).
+1. Build automático (sem erros de Tailwind/oklch nem fonte).
+2. Playwright em `/` e `/dashboard`: screenshot confirmando fundo creme, headers em azul petróleo, CTAs terracota, logo no header e tipografia Poppins/Lato.
+3. Conferir contraste WCAG do texto azul petróleo sobre creme e do branco sobre terracota/verde.
