@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { PILLAR_DEFAULTS } from "@/lib/pillars";
+import { PILLAR_DEFAULTS, statusFromScore, overallBalance } from "@/lib/pillars";
 import {
   Accordion,
   AccordionContent,
@@ -110,45 +110,75 @@ function Hero() {
 }
 
 function HeroWheel() {
-  const size = 420;
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = 160;
-  const n = PILLAR_DEFAULTS.length;
+  const SIZE = 420;
+  const CX = SIZE / 2;
+  const CY = SIZE / 2;
+  const R_OUTER = 170;
+  const R_INNER = 80;
+  const N = PILLAR_DEFAULTS.length;
+  const segDeg = 360 / N;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const balance = overallBalance(PILLAR_DEFAULTS);
+
+  const STATUS_FILL: Record<string, string> = {
+    balanced: "var(--balanced)",
+    attention: "var(--attention)",
+    critical: "var(--critical)",
+    empty: "var(--empty)",
+  };
+
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[420px]">
       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[color:var(--landing-bg-soft)] to-transparent blur-2xl" />
-      <svg viewBox={`0 0 ${size} ${size}`} className="relative">
-        <circle cx={cx} cy={cy} r={r + 30} fill="none" stroke="var(--landing-line)" strokeWidth="1" />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--landing-line)" strokeWidth="1" />
-        <circle cx={cx} cy={cy} r={r - 60} fill="none" stroke="var(--landing-line)" strokeWidth="1" />
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="relative h-full w-full">
         {PILLAR_DEFAULTS.map((p, i) => {
-          const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-          const scoreR = ((p.score / 10) * (r - 20)) + 20;
-          const x = cx + Math.cos(angle) * scoreR;
-          const y = cy + Math.sin(angle) * scoreR;
-          const lx = cx + Math.cos(angle) * (r + 30);
-          const ly = cy + Math.sin(angle) * (r + 30);
+          const a0 = -90 - segDeg / 2 + i * segDeg;
+          const a1 = a0 + segDeg;
+          const mid = (a0 + a1) / 2;
+          const midR = toRad(mid);
+          const x0o = CX + R_OUTER * Math.cos(toRad(a0));
+          const y0o = CY + R_OUTER * Math.sin(toRad(a0));
+          const x1o = CX + R_OUTER * Math.cos(toRad(a1));
+          const y1o = CY + R_OUTER * Math.sin(toRad(a1));
+          const x0i = CX + R_INNER * Math.cos(toRad(a1));
+          const y0i = CY + R_INNER * Math.sin(toRad(a1));
+          const x1i = CX + R_INNER * Math.cos(toRad(a0));
+          const y1i = CY + R_INNER * Math.sin(toRad(a0));
+          const d = `M ${x0o} ${y0o} A ${R_OUTER} ${R_OUTER} 0 0 1 ${x1o} ${y1o} L ${x0i} ${y0i} A ${R_INNER} ${R_INNER} 0 0 0 ${x1i} ${y1i} Z`;
+          const status = statusFromScore(p.score);
+          const iconR = (R_INNER + R_OUTER) / 2 + 4;
+          const ix = CX + iconR * Math.cos(midR);
+          const iy = CY + iconR * Math.sin(midR);
+          const numR = R_INNER + 14;
+          const nx = CX + numR * Math.cos(midR);
+          const ny = CY + numR * Math.sin(midR);
           return (
             <g key={p.id}>
-              <line x1={cx} y1={cy} x2={cx + Math.cos(angle) * r} y2={cy + Math.sin(angle) * r} stroke="var(--landing-line)" strokeWidth="1" />
-              <circle cx={x} cy={y} r="5" fill="var(--landing-gold)" />
-              <text x={lx} y={ly} fontSize="11" textAnchor="middle" dominantBaseline="middle" fill="var(--landing-ink-soft)" style={{ fontWeight: 500 }}>{p.icon}</text>
+              <path d={d} fill={STATUS_FILL[status]} fillOpacity={0.9} stroke="white" strokeWidth={2} />
+              <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill="white">
+                {p.id}
+              </text>
+              <text x={ix} y={iy + 6} textAnchor="middle" dominantBaseline="middle" fontSize="18">
+                {p.icon}
+              </text>
             </g>
           );
         })}
-        <polygon
-          fill="rgba(201,168,106,0.18)"
-          stroke="var(--landing-gold)"
-          strokeWidth="1.5"
-          points={PILLAR_DEFAULTS.map((p, i) => {
-            const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-            const scoreR = ((p.score / 10) * (r - 20)) + 20;
-            return `${cx + Math.cos(angle) * scoreR},${cy + Math.sin(angle) * scoreR}`;
-          }).join(" ")}
-        />
-        <circle cx={cx} cy={cy} r="38" fill="var(--landing-ink)" />
-        <text x={cx} y={cy + 5} fontSize="14" textAnchor="middle" fill="#FBF8F2" style={{ fontWeight: 600 }}>Você</text>
+        <circle cx={CX} cy={CY} r={R_INNER - 4} fill="white" stroke="var(--primary)" strokeOpacity={0.35} strokeWidth={2} />
+        <text x={CX} y={CY - 16} textAnchor="middle" fontSize="12" fill="var(--landing-ink-soft)" fontWeight="500">
+          Equilíbrio Geral
+        </text>
+        <text
+          x={CX}
+          y={CY + 16}
+          textAnchor="middle"
+          fontSize="34"
+          fontWeight="800"
+          fill="var(--landing-ink)"
+        >
+          {balance}%
+        </text>
+        <text x={CX} y={CY + 42} textAnchor="middle" fontSize="14">⚖️</text>
       </svg>
     </div>
   );
