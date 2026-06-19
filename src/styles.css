@@ -224,3 +224,48 @@
   background: linear-gradient(90deg, transparent, var(--primary) 30%, var(--focus) 70%, transparent);
   opacity: .5;
 }
+
+/* Hero wheel — gentle living motion */
+@keyframes hero-wheel-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes hero-wheel-breathe {
+  0%, 100% { transform: scale(1); opacity: .55; }
+  50%      { transform: scale(1.08); opacity: .85; }
+}
+@keyframes hero-wheel-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+@keyframes hero-seg-pulse {
+  0%, 100% { opacity: .9; }
+  50%      { opacity: 1; }
+}
+.hero-wheel-rotate {
+  transform-origin: 210px 210px;
+  transform-box: view-box;
+  animation: hero-wheel-spin 60s linear infinite;
+}
+.hero-wheel-counter {
+  transform-origin: 210px 210px;
+  transform-box: view-box;
+  animation: hero-wheel-spin 60s linear infinite reverse;
+}
+.hero-wheel-halo {
+  animation: hero-wheel-breathe 6s ease-in-out infinite;
+}
+.hero-wheel-hub {
+  transform-origin: 210px 210px;
+  transform-box: view-box;
+  animation: hero-wheel-pulse 4s ease-in-out infinite;
+}
+.hero-wheel-seg {
+  animation: hero-seg-pulse 5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-wheel-rotate,
+  .hero-wheel-counter,
+  .hero-wheel-halo,
+  .hero-wheel-hub,
+  .hero-wheel-seg { animation: none; }
+}
