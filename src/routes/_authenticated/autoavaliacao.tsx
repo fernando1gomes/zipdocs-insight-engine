@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getImpactBySystemId, influenceLabel } from "@/lib/impacts";
 
 export const Route = createFileRoute("/_authenticated/autoavaliacao")({
   component: AutoAvaliacao,
@@ -257,6 +258,8 @@ function AutoAvaliacao() {
               </p>
             </div>
           </div>
+
+          <PillarImpactHint pillarId={pillar.id} />
 
           <div className="mt-6">
             <h3 className="text-sm font-semibold mb-2">Critérios objetivos</h3>
