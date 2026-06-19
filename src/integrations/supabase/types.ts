@@ -221,6 +221,74 @@ export type Database = {
           },
         ]
       }
+      pillar_action_plans: {
+        Row: {
+          broken_text: string | null
+          created_at: string
+          how: string | null
+          how_much: string | null
+          id: string
+          misplaced_text: string | null
+          missing_text: string | null
+          pillar_id: number
+          status: string
+          updated_at: string
+          user_id: string
+          what: string | null
+          when_due: string | null
+          when_start: string | null
+          where_text: string | null
+          who_text: string | null
+          why: string | null
+        }
+        Insert: {
+          broken_text?: string | null
+          created_at?: string
+          how?: string | null
+          how_much?: string | null
+          id?: string
+          misplaced_text?: string | null
+          missing_text?: string | null
+          pillar_id: number
+          status?: string
+          updated_at?: string
+          user_id: string
+          what?: string | null
+          when_due?: string | null
+          when_start?: string | null
+          where_text?: string | null
+          who_text?: string | null
+          why?: string | null
+        }
+        Update: {
+          broken_text?: string | null
+          created_at?: string
+          how?: string | null
+          how_much?: string | null
+          id?: string
+          misplaced_text?: string | null
+          missing_text?: string | null
+          pillar_id?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+          what?: string | null
+          when_due?: string | null
+          when_start?: string | null
+          where_text?: string | null
+          who_text?: string | null
+          why?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pillar_action_plans_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pillar_actions: {
         Row: {
           action_type: string
@@ -235,6 +303,7 @@ export type Database = {
           next_due_date: string | null
           obstacle_expected: string | null
           pillar_id: number
+          plan_id: string | null
           priority: string
           required_resource: string | null
           start_date: string
@@ -256,6 +325,7 @@ export type Database = {
           next_due_date?: string | null
           obstacle_expected?: string | null
           pillar_id: number
+          plan_id?: string | null
           priority?: string
           required_resource?: string | null
           start_date?: string
@@ -277,6 +347,7 @@ export type Database = {
           next_due_date?: string | null
           obstacle_expected?: string | null
           pillar_id?: number
+          plan_id?: string | null
           priority?: string
           required_resource?: string | null
           start_date?: string
@@ -291,6 +362,13 @@ export type Database = {
             columns: ["pillar_id"]
             isOneToOne: false
             referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_actions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "pillar_action_plans"
             referencedColumns: ["id"]
           },
         ]
