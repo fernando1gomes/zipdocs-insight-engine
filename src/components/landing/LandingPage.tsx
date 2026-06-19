@@ -54,9 +54,11 @@ function LandingNav() {
   return (
     <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
       <Link to="/" className="flex items-center gap-2.5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--landing-ink)] text-lg text-white">
-          🌱
-        </div>
+        <img
+          src={logoAsset.url}
+          alt="Vida em Eixo"
+          className="h-10 w-10 rounded-2xl object-contain"
+        />
         <span className="text-lg font-semibold tracking-tight">Vida em Eixo</span>
       </Link>
       <div className="flex items-center gap-2">
