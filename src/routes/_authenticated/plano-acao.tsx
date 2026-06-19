@@ -3,7 +3,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/_authenticated/plano-acao/")({
+export const Route = createFileRoute("/_authenticated/plano-acao")({
   component: PlanoAcaoList,
 });
 
