@@ -18,6 +18,7 @@ import { Route as AuthenticatedOrientadoraRouteImport } from './routes/_authenti
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticated/checkin'
+import { Route as AuthenticatedAutorresponsabilidadeRouteImport } from './routes/_authenticated/autorresponsabilidade'
 import { Route as AuthenticatedAutoavaliacaoRouteImport } from './routes/_authenticated/autoavaliacao'
 import { Route as AuthenticatedAcoesRouteImport } from './routes/_authenticated/acoes'
 import { Route as AuthenticatedPlanoAcaoPillarIdRouteImport } from './routes/_authenticated/plano-acao_.$pillarId'
@@ -68,6 +69,12 @@ const AuthenticatedCheckinRoute = AuthenticatedCheckinRouteImport.update({
   path: '/checkin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAutorresponsabilidadeRoute =
+  AuthenticatedAutorresponsabilidadeRouteImport.update({
+    id: '/autorresponsabilidade',
+    path: '/autorresponsabilidade',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAutoavaliacaoRoute =
   AuthenticatedAutoavaliacaoRouteImport.update({
     id: '/autoavaliacao',
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/acoes': typeof AuthenticatedAcoesRoute
   '/autoavaliacao': typeof AuthenticatedAutoavaliacaoRoute
+  '/autorresponsabilidade': typeof AuthenticatedAutorresponsabilidadeRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/acoes': typeof AuthenticatedAcoesRoute
   '/autoavaliacao': typeof AuthenticatedAutoavaliacaoRoute
+  '/autorresponsabilidade': typeof AuthenticatedAutorresponsabilidadeRoute
   '/checkin': typeof AuthenticatedCheckinRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -126,6 +135,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/acoes': typeof AuthenticatedAcoesRoute
   '/_authenticated/autoavaliacao': typeof AuthenticatedAutoavaliacaoRoute
+  '/_authenticated/autorresponsabilidade': typeof AuthenticatedAutorresponsabilidadeRoute
   '/_authenticated/checkin': typeof AuthenticatedCheckinRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/acoes'
     | '/autoavaliacao'
+    | '/autorresponsabilidade'
     | '/checkin'
     | '/dashboard'
     | '/onboarding'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/acoes'
     | '/autoavaliacao'
+    | '/autorresponsabilidade'
     | '/checkin'
     | '/dashboard'
     | '/onboarding'
@@ -171,6 +183,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/acoes'
     | '/_authenticated/autoavaliacao'
+    | '/_authenticated/autorresponsabilidade'
     | '/_authenticated/checkin'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
@@ -253,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCheckinRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/autorresponsabilidade': {
+      id: '/_authenticated/autorresponsabilidade'
+      path: '/autorresponsabilidade'
+      fullPath: '/autorresponsabilidade'
+      preLoaderRoute: typeof AuthenticatedAutorresponsabilidadeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/autoavaliacao': {
       id: '/_authenticated/autoavaliacao'
       path: '/autoavaliacao'
@@ -287,6 +307,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAcoesRoute: typeof AuthenticatedAcoesRoute
   AuthenticatedAutoavaliacaoRoute: typeof AuthenticatedAutoavaliacaoRoute
+  AuthenticatedAutorresponsabilidadeRoute: typeof AuthenticatedAutorresponsabilidadeRoute
   AuthenticatedCheckinRoute: typeof AuthenticatedCheckinRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
@@ -299,6 +320,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAcoesRoute: AuthenticatedAcoesRoute,
   AuthenticatedAutoavaliacaoRoute: AuthenticatedAutoavaliacaoRoute,
+  AuthenticatedAutorresponsabilidadeRoute:
+    AuthenticatedAutorresponsabilidadeRoute,
   AuthenticatedCheckinRoute: AuthenticatedCheckinRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
