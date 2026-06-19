@@ -1,7 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useEffect, useRef } from "react";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { usePillars } from "@/lib/usePillars";
@@ -15,12 +13,12 @@ import {
   type PillarImpactData,
 } from "@/lib/impacts";
 
-const search = z.object({
-  pillar: fallback(z.number().int().optional(), undefined).optional(),
-});
-
 export const Route = createFileRoute("/_authenticated/impactos")({
-  validateSearch: zodValidator(search),
+  validateSearch: (raw: Record<string, unknown>): { pillar?: number } => {
+    const v = raw?.pillar;
+    const n = typeof v === "number" ? v : typeof v === "string" ? Number(v) : NaN;
+    return Number.isFinite(n) && n > 0 ? { pillar: n } : {};
+  },
   head: () => ({
     meta: [
       { title: "Mapa de Impacto dos Pilares — Roda da Vida Viva" },
