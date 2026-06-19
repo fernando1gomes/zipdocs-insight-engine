@@ -45,6 +45,9 @@ export function AppHeader() {
         <Link to="/autoavaliacao" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
           Autoavaliação
         </Link>
+        <Link to="/impactos" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
+          Impactos
+        </Link>
         <Link to="/autorresponsabilidade" className="rounded-lg px-3 py-2 hover:bg-secondary transition" activeProps={{ className: "rounded-lg px-3 py-2 bg-secondary font-semibold" }}>
           Autorresponsabilidade
         </Link>
