@@ -12,7 +12,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { suggestPillarActions } from "@/lib/action-plan.functions";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/plano-acao/$pillarId")({
+export const Route = createFileRoute("/_authenticated/plano-acao_/$pillarId")({
   component: PlanoAcaoWizard,
 });
 
