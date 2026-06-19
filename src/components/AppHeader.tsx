@@ -32,7 +32,7 @@ export function AppHeader() {
           🌱
         </div>
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Roda da Vida Viva</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Vida em Eixo</h1>
           <p className="text-xs text-muted-foreground">
             {displayName ? `Olá, ${displayName}` : "Uma visão integrada da sua evolução"}
           </p>

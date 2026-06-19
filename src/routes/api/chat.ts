@@ -3,7 +3,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
-const SYSTEM_PROMPT = `Você é a IA Orientadora da Roda da Vida Viva, um SaaS de autogestão pessoal.
+const SYSTEM_PROMPT = `Você é a IA Orientadora da Vida em Eixo, um SaaS de autogestão pessoal.
 
 FILOSOFIA (siga sempre):
 - A vida é um sistema vivo composto por 11 pilares interdependentes: Contribuição, Emocional, Família, Relacionamento, Social, Carreira, Financeiro, Intelectual, Espiritualidade, Lazer, Saúde.

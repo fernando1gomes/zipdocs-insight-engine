@@ -47,7 +47,7 @@ export const suggestPillarActions = createServerFn({ method: "POST" })
     const pillarName = pillar?.name ?? `Pilar ${data.pillarId}`;
     const tool = PILLAR_TOOLS[data.pillarId] ?? "";
 
-    const prompt = `Você é um coach holístico da Roda da Vida Viva.
+    const prompt = `Você é um coach holístico da Vida em Eixo.
 Pilar: ${pillarName}.
 Ferramenta principal deste pilar: ${tool}.
 Nota atual: ${up?.current_score ?? 0}/10 (desejada ${up?.desired_score ?? 10}).

@@ -10,8 +10,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar — Roda da Vida Viva" },
-      { name: "description", content: "Acesse sua conta da Roda da Vida Viva." },
+      { title: "Entrar — Vida em Eixo" },
+      { name: "description", content: "Acesse sua conta da Vida em Eixo." },
     ],
   }),
   component: AuthPage,
@@ -83,7 +83,7 @@ function AuthPage() {
             🌱
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight">Roda da Vida Viva</h1>
+            <h1 className="text-xl font-extrabold tracking-tight">Vida em Eixo</h1>
             <p className="text-xs text-muted-foreground">
               {mode === "signin" ? "Entre para continuar sua evolução" : "Crie sua conta e comece hoje"}
             </p>

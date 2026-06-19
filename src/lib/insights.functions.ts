@@ -43,7 +43,7 @@ export const generatePillarInsight = createServerFn({ method: "POST" })
       .map((h) => `- ${h.evaluation_date}: nota ${h.final_score}${h.user_comment ? ` — "${h.user_comment}"` : ""}`)
       .join("\n") || "Sem histórico ainda.";
 
-    const prompt = `Você é um coach holístico da Roda da Vida Viva. Pilar: ${pillarName}.
+    const prompt = `Você é um coach holístico da Vida em Eixo. Pilar: ${pillarName}.
 Score atual: ${up?.current_score ?? 0}/10 (desejado: ${up?.desired_score ?? 10}).
 Últimas avaliações:
 ${historyText}

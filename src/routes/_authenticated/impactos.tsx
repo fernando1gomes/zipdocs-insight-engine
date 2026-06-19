@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/impactos")({
   },
   head: () => ({
     meta: [
-      { title: "Mapa de Impacto dos Pilares — Roda da Vida Viva" },
+      { title: "Mapa de Impacto dos Pilares — Vida em Eixo" },
       {
         name: "description",
         content:

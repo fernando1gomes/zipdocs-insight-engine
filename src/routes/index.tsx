@@ -6,13 +6,13 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Roda da Vida Viva — Veja sua vida inteira em uma só imagem" },
+      { title: "Vida em Eixo — Veja sua vida inteira em uma só imagem" },
       {
         name: "description",
         content:
           "Avalie os 11 pilares da sua vida, descubra o efeito dominó entre eles e crie um plano para transformar o que mais importa. Gratuito.",
       },
-      { property: "og:title", content: "Roda da Vida Viva — Veja sua vida inteira em uma só imagem" },
+      { property: "og:title", content: "Vida em Eixo — Veja sua vida inteira em uma só imagem" },
       {
         property: "og:description",
         content: "Autoavaliação, mapa de impactos e plano de ação para os 11 pilares da sua vida.",

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/orientadora")({
   head: () => ({
-    meta: [{ title: "IA Orientadora — Roda da Vida Viva" }],
+    meta: [{ title: "IA Orientadora — Vida em Eixo" }],
   }),
   component: Orientadora,
 });

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
-  head: () => ({ meta: [{ title: "Boas-vindas — Roda da Vida Viva" }] }),
+  head: () => ({ meta: [{ title: "Boas-vindas — Vida em Eixo" }] }),
   component: Onboarding,
 });
 
@@ -65,7 +65,7 @@ function Onboarding() {
 
         {isIntro ? (
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">Vamos calibrar sua Roda da Vida Viva</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight">Vamos calibrar sua Vida em Eixo</h1>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
               Em 11 perguntas rápidas você dá uma nota inicial (0 a 10) para cada pilar da sua vida. Isso cria sua roda
               base — depois você refina aos poucos.
