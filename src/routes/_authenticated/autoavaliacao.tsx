@@ -376,3 +376,35 @@ function AutoAvaliacao() {
     </div>
   );
 }
+
+function PillarImpactHint({ pillarId }: { pillarId: number }) {
+  const impact = getImpactBySystemId(pillarId);
+  if (!impact) return null;
+  const top = impact.impacts
+    .filter((i) => i.intensity === "forte")
+    .slice(0, 4)
+    .map((i) => i.target);
+  const list = top.length ? top : impact.impacts.slice(0, 4).map((i) => i.target);
+  return (
+    <div className="mt-4 rounded-xl border border-border/60 bg-secondary/30 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Impacto deste pilar
+          </div>
+          <p className="mt-1 text-sm">
+            Este pilar impacta diretamente <strong>{impact.directCount} áreas</strong> da sua vida
+            (influência {influenceLabel(impact.influence).toLowerCase()}), especialmente {list.join(", ")}.
+          </p>
+        </div>
+        <Link
+          to="/impactos"
+          search={{ pillar: pillarId }}
+          className="shrink-0 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold hover:bg-secondary transition"
+        >
+          Ver impactos →
+        </Link>
+      </div>
+    </div>
+  );
+}
