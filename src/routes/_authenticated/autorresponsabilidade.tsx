@@ -569,7 +569,7 @@ Minha primeira ação nas próximas 24 horas será __________.`;
         {step === 7 && (
           <section className="space-y-5">
             <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm text-center space-y-2">
-              <div className="text-5xl">🏅</div>
+              <PhMedal size={48} weight="light" className="mx-auto text-[color:var(--accent)]" />
               <h2 className="text-xl font-extrabold">Selo: Eu Assumo</h2>
               <p className="text-sm text-muted-foreground">
                 Hoje você saiu da posição de vítima e entrou na posição de autor da própria

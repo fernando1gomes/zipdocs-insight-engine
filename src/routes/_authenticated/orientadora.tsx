@@ -118,7 +118,7 @@ function Chat({
   return (
     <div className="mt-4 rounded-3xl bg-card border border-border/60 shadow-sm flex flex-col h-[70vh]">
       <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2">
-        <div className="text-2xl">💬</div>
+        <PhChat size={24} weight="light" className="text-[color:var(--primary)]" />
         <div>
           <h1 className="text-lg font-bold">IA Orientadora</h1>
           <p className="text-xs text-muted-foreground">

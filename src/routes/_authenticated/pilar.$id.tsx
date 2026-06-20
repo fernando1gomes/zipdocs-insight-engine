@@ -192,7 +192,7 @@ function PillarDetail() {
           <div className="mt-5 rounded-xl border border-[color:var(--focus)]/30 bg-[color:var(--focus)]/5 p-4">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg">✨</span>
+                <PhSparkle size={18} weight="light" className="text-[color:var(--focus)]" />
                 <span className="text-sm font-semibold">Insight da IA</span>
               </div>
               <Button size="sm" variant="outline" onClick={fetchInsight} disabled={loadingInsight}>

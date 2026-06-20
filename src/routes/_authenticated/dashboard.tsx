@@ -9,7 +9,7 @@ import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts";
-import { Bell, Leaf, Lightbulb, Star, Target, Sparkles } from "lucide-react";
+import { Bell, Leaf, Lightbulb, Star, Target, Sparkle } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -114,7 +114,7 @@ function ImpactPrioritiesBlock({ pillars }: { pillars: Pillar[] }) {
     <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Leaf className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} />
+          <Leaf size={16} weight="light" className="text-[color:var(--primary)]" />
           <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">
             Seus Pilares de Maior Impacto Agora
           </h2>
@@ -207,7 +207,7 @@ function AlertsPanel() {
   return (
     <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
-        <Bell className="h-4 w-4 text-[color:var(--accent)]" strokeWidth={1.75} />
+        <Bell size={16} weight="light" className="text-[color:var(--accent)]" />
         <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Alertas</h2>
         <span className="text-xs text-muted-foreground">({alerts.length})</span>
       </div>
@@ -265,7 +265,7 @@ function TipCard() {
   return (
     <div className="rounded-2xl border border-[color:var(--attention)]/30 bg-[color:var(--attention-soft)]/40 p-4">
       <div className="flex items-start gap-3">
-        <Lightbulb className="h-5 w-5 shrink-0 text-[color:var(--accent)]" strokeWidth={1.75} />
+        <Lightbulb size={20} weight="light" className="shrink-0 text-[color:var(--accent)]" />
         <p className="text-sm text-foreground leading-relaxed">
           <span className="font-semibold">Dica:</span> pequenas ações consistentes nos pilares certos geram equilíbrio sem sobrecarga.
         </p>
@@ -279,7 +279,7 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
-        <Target className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} />
+        <Target size={16} weight="light" className="text-[color:var(--primary)]" />
         <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Prioridades da Semana</h2>
       </div>
       {priorities.length === 0 ? (
@@ -322,7 +322,7 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
           to="/acoes"
           className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-foreground hover:bg-secondary transition flex items-center justify-between"
         >
-          <span className="flex items-center gap-2"><Leaf className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} /> Minhas Ações</span>
+          <span className="flex items-center gap-2"><Leaf size={16} weight="light" className="text-[color:var(--primary)]" /> Minhas Ações</span>
           <span>›</span>
         </Link>
       </div>
@@ -350,12 +350,12 @@ function NextActionCard() {
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Próxima Melhor Ação</h2>
-        <Star className="h-4 w-4 text-[color:var(--accent)]" strokeWidth={1.75} fill="currentColor" />
+        <Star size={16} weight="fill" className="text-[color:var(--accent)]" />
       </div>
       <div className="rounded-xl bg-[color:var(--primary)]/5 p-4">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--balanced-soft)]/50">
-            <Sparkles className="h-5 w-5 text-[color:var(--primary)]" strokeWidth={1.75} />
+            <Sparkle size={20} weight="light" className="text-[color:var(--primary)]" />
           </div>
           <p className="text-sm font-medium text-foreground leading-snug">
             {data?.title ?? "Conectar-se com a família"}
