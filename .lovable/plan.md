@@ -1,93 +1,30 @@
-## Visão geral
-Criar a funcionalidade **Semana em Eixo** — calendário semanal em tela cheia onde o usuário agenda, acompanha e fecha o dia, ligando ações dos planos aos pilares, dashboard, alertas e check-in semanal.
+## Objetivo
+Permitir, na grade da **Semana em Eixo**, selecionar mais de um slot de 30 min — clicando e arrastando verticalmente dentro de uma mesma coluna do dia — para criar uma ação cuja duração já vem pré-preenchida pelo intervalo selecionado.
 
-Entrega em **três fases incrementais** (mais seguro do que migrar/criar tudo em uma única rodada). Cada fase pode ser aprovada e validada antes da próxima.
+## Comportamento
+- **Mouse / touch down** num slot vazio: marca o slot como início da seleção.
+- **Move com o botão pressionado** sobre outros slots da MESMA coluna do dia: estende a seleção, com um overlay semitransparente cobrindo do slot inicial até o slot atual (suporta arrastar para cima ou para baixo).
+- **Up**: abre o `CreateActionDialog` com:
+  - dia, hora e minuto do slot inicial (menor),
+  - duração calculada = (nº de slots selecionados) × 30 min.
+- **Clique simples** (sem arraste, mesmo slot down/up): mantém o comportamento atual — abre o dialog em 30 min.
+- **Cancelamento**: ESC ou arrastar para fora da coluna cancela a seleção sem abrir o dialog.
+- **Áreas ocupadas**: o início da seleção só funciona em slot vazio; arrastar sobre um bloco existente faz a seleção parar no último slot livre anterior.
+- Visual do overlay: usa `--primary` com baixa opacidade e uma borda tracejada, alinhado ao grid de 30 min.
 
----
+## Mudanças técnicas
+- `src/routes/_authenticated/semana.tsx`:
+  - No `DayColumn`, trocar os botões de slot por uma camada única com listeners `onPointerDown / Move / Up / Leave` que calcula o índice do slot a partir do `offsetY` (usando `SLOT_HEIGHT_PX`).
+  - Estado local `selection: { startIdx, endIdx } | null` para desenhar o overlay e detectar arraste vs clique.
+  - Propagar para o pai (`onSlotRangeSelect(day, startHour, startMinute, durationMinutes)`); o pai abre o dialog existente.
+- `CreateActionDialog`: aceitar `initialDuration` opcional e usá-la como valor padrão do campo "duração" (que continua editável).
+- Sem mudanças de servidor — `createScheduledAction` já recebe `durationMinutes` arbitrário.
+- Sem mudanças de banco.
 
-## Fase 1 — Estrutura e Calendário Semanal (MVP)
+## Acessibilidade
+- Mantém clique simples no slot para teclado/toque (cria ação de 30 min).
+- O dialog permanece a única forma de confirmação; nenhum dado é gravado só com arraste.
 
-### 1.1 Migração de banco
-Estender o que já existe — não duplicar.
-
-`pillar_actions` ganha:
-- `scheduled_start` timestamptz
-- `scheduled_end` timestamptz
-- `duration_minutes` int
-- `calendar_status` text default `'planned'` (planned | done | missed | rescheduled | cancelled)
-- `reminder_enabled` bool default false
-- `reminder_at` timestamptz
-
-`pillar_action_logs` ganha:
-- `execution_status` text (done | missed | rescheduled | cancelled)
-- `non_execution_reason` text
-- `rescheduled_from` timestamptz
-- `rescheduled_to` timestamptz
-- `daily_closing_id` uuid
-
-Novas tabelas:
-- `daily_closings` (user_id, closing_date, planned/completed/missed/rescheduled counts, user_reflection, ai_summary)
-- `daily_closing_answers` (daily_closing_id, question, answer)
-
-Todas com **GRANT** + **RLS** por `auth.uid()`.
-
-### 1.2 Server functions (`src/lib/calendar.functions.ts`)
-- `listWeekActions({ weekStart })` — retorna ações com `scheduled_start` na semana.
-- `scheduleAction({ actionId, start, end })` — agenda/move ação no calendário.
-- `createScheduledAction({ pillarId, title, ..., start, end })` — cria ação direto da grade.
-- `updateActionStatus({ actionId, status, reason?, note? })` — registra execução / não execução / cancelamento; insere log; atualiza `completed_at`, `calendar_status`; aciona `recalculate_user_pillar` + `generate_pillar_alerts`.
-- `rescheduleAction({ actionId, newStart, newEnd })` — move + log com `rescheduled_from/to`.
-
-### 1.3 UI
-- Nova rota `src/routes/_authenticated/semana.tsx` (link no `AppHeader` como “Semana em Eixo”).
-- Layout grid CSS: coluna sticky de horários 5h–23h (slots de 30 min); 7 colunas Seg–Dom; cabeçalho com navegação ‹ semana anterior › / hoje / próxima.
-- Cada ação renderizada como bloco absoluto (top = horário, height = duração) dentro da coluna do dia.
-- Bloco mostra: ícone Phosphor do pilar, título, horário, selo de status (cores suaves abaixo).
-- Cores do bloco usam a cor do pilar; **selo** sobreposto usa cor de status:
-  - planned → `--info-soft`
-  - done → `--balanced-soft`
-  - missed → `--critical-soft`
-  - rescheduled → `--attention-soft`
-  - cancelled → `--muted`
-- Adicionar tokens `--info`, `--info-soft` em `src/styles.css` se ainda não existirem.
-- Clique em bloco → `ActionDetailDialog` (shadcn Dialog) com todos os campos + botões (Executada / Não executada / Reagendar / Editar / Cancelar).
-- Clique em slot vazio → `CreateActionDialog` pré-preenche dia/horário.
-- Modal “Não executada” pede motivo via Select (lista fixa) + textarea.
-- Modal “Reagendar” = date+time pickers.
-- Linguagem acolhedora conforme o briefing (textos centralizados em `src/lib/calendar-copy.ts`).
-
-### 1.4 Responsividade
-- Desktop ≥ lg: grade completa.
-- md: scroll horizontal nas colunas.
-- < md: visão diária com tabs Seg–Dom no topo.
-
----
-
-## Fase 2 — Resumo do dia, Filtros e Fechamento do dia
-- Painel lateral “Resumo do dia” (drawer no mobile): contagens + lista de pilares cuidados/sem atenção (deriva do estado da semana, sem nova query).
-- Barra de filtros: pilar, status, prioridade, vencidas, hoje, recorrentes.
-- Botão flutuante “Fechar meu dia” aparece após 18h ou manualmente.
-- `DailyClosingDialog` com 4 perguntas (executou, não executou, dificuldade, aprendizado) → grava `daily_closings` + `daily_closing_answers`; atualiza logs do dia com `daily_closing_id`.
-
----
-
-## Fase 3 — Integração check-in / dashboard / alertas
-- Estender `weekly_checkins` (ou nova view) para puxar agregados da semana de `pillar_action_logs`: planejadas, executadas, taxa, top/bottom pilares, motivos mais frequentes.
-- Adicionar bloco “Semana em Eixo” no `dashboard.tsx`: taxa de execução semanal + atalho para `/semana`.
-- Estender `generate_pillar_alerts` para detectar 3+ `missed` consecutivos na mesma ação → novo `alert_type='action_too_hard'` com texto “Esta ação tem sido difícil de executar…”.
-- Sugestão de fechamento de semana gerada via Lovable AI Gateway no check-in.
-
----
-
-## Considerações técnicas
-- Slots de 30 min (Date manipulado em UTC e exibido com `Intl.DateTimeFormat` em pt-BR).
-- Drag-and-drop fica fora do MVP — mover ação via botão “Reagendar”. Pode entrar em fase futura usando `@dnd-kit/core` (instalar sob aprovação).
-- Reaproveitar `iconForPillar` para os ícones dos blocos.
-- Todas as mutações invalidam `queryKey: ['calendar-week', weekStart]`, `['actions']`, `['user-pillars']`, `['alerts']`.
-- Reusar `recalculate_user_pillar` e `generate_pillar_alerts` existentes — não duplicar lógica no JS.
-
----
-
-## Confirmação antes de executar
-1. Tudo bem entregar em **3 fases** (começando pelo MVP Fase 1) ou prefere uma única entrega completa?
-2. Drag-and-drop pode ficar para depois, ou é essencial já no MVP?
+## Fora do escopo
+- Redimensionar/arrastar blocos já existentes (reagendar continua pelo botão "Reagendar").
+- Seleção que cruza dias.
