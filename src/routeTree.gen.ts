@@ -24,6 +24,7 @@ import { Route as AuthenticatedCheckinRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAutorresponsabilidadeRouteImport } from './routes/_authenticated/autorresponsabilidade'
 import { Route as AuthenticatedAutoavaliacaoRouteImport } from './routes/_authenticated/autoavaliacao'
 import { Route as AuthenticatedAcoesRouteImport } from './routes/_authenticated/acoes'
+import { Route as AuthenticatedVideosAdminRouteImport } from './routes/_authenticated/videos.admin'
 import { Route as AuthenticatedPlanoAcaoPillarIdRouteImport } from './routes/_authenticated/plano-acao_.$pillarId'
 import { Route as AuthenticatedPilarIdRouteImport } from './routes/_authenticated/pilar.$id'
 
@@ -104,6 +105,12 @@ const AuthenticatedAcoesRoute = AuthenticatedAcoesRouteImport.update({
   path: '/acoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVideosAdminRoute =
+  AuthenticatedVideosAdminRouteImport.update({
+    id: '/admin',
+    path: '/admin',
+    getParentRoute: () => AuthenticatedVideosRoute,
+  } as any)
 const AuthenticatedPlanoAcaoPillarIdRoute =
   AuthenticatedPlanoAcaoPillarIdRouteImport.update({
     id: '/plano-acao_/$pillarId',
@@ -129,10 +136,11 @@ export interface FileRoutesByFullPath {
   '/orientadora': typeof AuthenticatedOrientadoraRoute
   '/plano-acao': typeof AuthenticatedPlanoAcaoRoute
   '/semana': typeof AuthenticatedSemanaRoute
-  '/videos': typeof AuthenticatedVideosRoute
+  '/videos': typeof AuthenticatedVideosRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/pilar/$id': typeof AuthenticatedPilarIdRoute
   '/plano-acao/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
+  '/videos/admin': typeof AuthenticatedVideosAdminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -147,10 +155,11 @@ export interface FileRoutesByTo {
   '/orientadora': typeof AuthenticatedOrientadoraRoute
   '/plano-acao': typeof AuthenticatedPlanoAcaoRoute
   '/semana': typeof AuthenticatedSemanaRoute
-  '/videos': typeof AuthenticatedVideosRoute
+  '/videos': typeof AuthenticatedVideosRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/pilar/$id': typeof AuthenticatedPilarIdRoute
   '/plano-acao/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
+  '/videos/admin': typeof AuthenticatedVideosAdminRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,10 +176,11 @@ export interface FileRoutesById {
   '/_authenticated/orientadora': typeof AuthenticatedOrientadoraRoute
   '/_authenticated/plano-acao': typeof AuthenticatedPlanoAcaoRoute
   '/_authenticated/semana': typeof AuthenticatedSemanaRoute
-  '/_authenticated/videos': typeof AuthenticatedVideosRoute
+  '/_authenticated/videos': typeof AuthenticatedVideosRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/pilar/$id': typeof AuthenticatedPilarIdRoute
   '/_authenticated/plano-acao_/$pillarId': typeof AuthenticatedPlanoAcaoPillarIdRoute
+  '/_authenticated/videos/admin': typeof AuthenticatedVideosAdminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/pilar/$id'
     | '/plano-acao/$pillarId'
+    | '/videos/admin'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/pilar/$id'
     | '/plano-acao/$pillarId'
+    | '/videos/admin'
   id:
     | '__root__'
     | '/'
@@ -228,6 +240,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/pilar/$id'
     | '/_authenticated/plano-acao_/$pillarId'
+    | '/_authenticated/videos/admin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAcoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/videos/admin': {
+      id: '/_authenticated/videos/admin'
+      path: '/admin'
+      fullPath: '/videos/admin'
+      preLoaderRoute: typeof AuthenticatedVideosAdminRouteImport
+      parentRoute: typeof AuthenticatedVideosRoute
+    }
     '/_authenticated/plano-acao_/$pillarId': {
       id: '/_authenticated/plano-acao_/$pillarId'
       path: '/plano-acao/$pillarId'
@@ -361,6 +381,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedVideosRouteChildren {
+  AuthenticatedVideosAdminRoute: typeof AuthenticatedVideosAdminRoute
+}
+
+const AuthenticatedVideosRouteChildren: AuthenticatedVideosRouteChildren = {
+  AuthenticatedVideosAdminRoute: AuthenticatedVideosAdminRoute,
+}
+
+const AuthenticatedVideosRouteWithChildren =
+  AuthenticatedVideosRoute._addFileChildren(AuthenticatedVideosRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAcoesRoute: typeof AuthenticatedAcoesRoute
   AuthenticatedAutoavaliacaoRoute: typeof AuthenticatedAutoavaliacaoRoute
@@ -372,7 +403,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOrientadoraRoute: typeof AuthenticatedOrientadoraRoute
   AuthenticatedPlanoAcaoRoute: typeof AuthenticatedPlanoAcaoRoute
   AuthenticatedSemanaRoute: typeof AuthenticatedSemanaRoute
-  AuthenticatedVideosRoute: typeof AuthenticatedVideosRoute
+  AuthenticatedVideosRoute: typeof AuthenticatedVideosRouteWithChildren
   AuthenticatedPilarIdRoute: typeof AuthenticatedPilarIdRoute
   AuthenticatedPlanoAcaoPillarIdRoute: typeof AuthenticatedPlanoAcaoPillarIdRoute
 }
@@ -389,7 +420,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOrientadoraRoute: AuthenticatedOrientadoraRoute,
   AuthenticatedPlanoAcaoRoute: AuthenticatedPlanoAcaoRoute,
   AuthenticatedSemanaRoute: AuthenticatedSemanaRoute,
-  AuthenticatedVideosRoute: AuthenticatedVideosRoute,
+  AuthenticatedVideosRoute: AuthenticatedVideosRouteWithChildren,
   AuthenticatedPilarIdRoute: AuthenticatedPilarIdRoute,
   AuthenticatedPlanoAcaoPillarIdRoute: AuthenticatedPlanoAcaoPillarIdRoute,
 }
