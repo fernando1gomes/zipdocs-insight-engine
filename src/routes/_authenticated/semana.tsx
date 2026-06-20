@@ -570,7 +570,7 @@ function DayColumn({
             key={a.id}
             type="button"
             onClick={() => onActionClick(a)}
-            className="absolute left-1 right-1 rounded-xl border bg-card text-left shadow-sm hover:shadow-md transition overflow-hidden"
+            className="absolute left-1 right-1 z-[3] rounded-xl border bg-card text-left shadow-sm hover:shadow-md transition overflow-hidden"
             style={{
               top,
               height,
