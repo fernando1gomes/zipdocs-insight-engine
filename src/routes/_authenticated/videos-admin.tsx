@@ -30,6 +30,7 @@ import {
 } from "@/lib/expert-videos";
 import { extractYouTubeId } from "@/lib/youtube";
 import { PILLAR_DEFAULTS } from "@/lib/pillars";
+import { PendingSuggestions } from "@/components/PendingSuggestions";
 
 export const Route = createFileRoute("/_authenticated/videos-admin")({
   component: VideosAdminPage,
@@ -175,6 +176,7 @@ function VideosAdminPage() {
         <p className="text-muted-foreground">Carregando...</p>
       ) : (
         <div className="space-y-8">
+          <PendingSuggestions />
           {PILLAR_DEFAULTS.map((pillar) => {
             const pillarVideos = (videos ?? []).filter((v) => v.pillar_id === pillar.id);
             return (
