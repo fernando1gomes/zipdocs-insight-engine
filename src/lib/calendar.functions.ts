@@ -140,24 +140,21 @@ export const updateActionStatus = createServerFn({ method: "POST" })
     if (!current) throw new Error("Ação não encontrada");
 
     const now = new Date().toISOString();
-    const updates: Record<string, unknown> = {
-      calendar_status: data.status,
-    };
-    if (data.status === "done") {
-      updates.status = "completed";
-      updates.completed_at = now;
-    } else if (data.status === "missed") {
-      updates.status = "overdue";
-    } else if (data.status === "cancelled") {
-      updates.status = "cancelled";
-    } else {
-      updates.status = "pending";
-      updates.completed_at = null;
-    }
+    const statusMap = {
+      done: { status: "completed", completed_at: now as string | null },
+      missed: { status: "overdue", completed_at: null as string | null },
+      cancelled: { status: "cancelled", completed_at: null as string | null },
+      planned: { status: "pending", completed_at: null as string | null },
+    } as const;
+    const mapped = statusMap[data.status];
 
     const { error: updErr } = await context.supabase
       .from("pillar_actions")
-      .update(updates)
+      .update({
+        calendar_status: data.status,
+        status: mapped.status,
+        completed_at: mapped.completed_at,
+      })
       .eq("id", data.actionId)
       .eq("user_id", context.userId);
     if (updErr) throw new Error(updErr.message);
