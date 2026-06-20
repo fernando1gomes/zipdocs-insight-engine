@@ -44,7 +44,7 @@ function VideosPage() {
         </div>
         {isAdmin && (
           <Link
-            to="/videos/admin"
+            to="/videos-admin"
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold hover:bg-secondary transition"
           >
             <Settings className="h-4 w-4" />
@@ -71,7 +71,7 @@ function VideosPage() {
           </p>
           {isAdmin && (
             <Link
-              to="/videos/admin"
+              to="/videos-admin"
               className="mt-4 inline-block text-sm font-semibold text-primary hover:underline"
             >
               Cadastrar o primeiro vídeo
