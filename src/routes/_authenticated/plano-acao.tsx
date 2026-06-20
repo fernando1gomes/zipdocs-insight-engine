@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { iconForPillar } from "@/lib/pillars";
 
 export const Route = createFileRoute("/_authenticated/plano-acao")({
   component: PlanoAcaoList,
@@ -72,7 +73,10 @@ function PlanoAcaoList() {
             return (
               <li key={p.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <span className="text-3xl">{p.icon}</span>
+                  {(() => {
+                    const Icon = iconForPillar(p.id);
+                    return <Icon weight="light" className="h-8 w-8 shrink-0 text-[color:var(--primary)]" />;
+                  })()}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h2 className="font-semibold truncate">{p.name}</h2>
