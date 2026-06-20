@@ -209,7 +209,10 @@ function PlanoAcaoWizard() {
 
         <div className="mt-4 rounded-3xl bg-card border border-border/60 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
-            <div className="text-4xl">{pillar?.icon ?? "•"}</div>
+            {(() => {
+              const Icon = iconForPillar(Number(pid));
+              return <Icon weight="light" className="h-10 w-10 text-[color:var(--primary)]" />;
+            })()}
             <div>
               <h1 className="text-2xl font-extrabold">{pillar?.name ?? "Pilar"}</h1>
               <p className="text-xs text-muted-foreground">Plano de ação 5W2H — etapa {step} de 3</p>
