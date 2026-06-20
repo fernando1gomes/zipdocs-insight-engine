@@ -994,6 +994,72 @@ export type Database = {
         }
         Relationships: []
       }
+      video_suggestions: {
+        Row: {
+          approved_video_id: string | null
+          created_at: string
+          description: string | null
+          expert_name: string | null
+          id: string
+          pillar_id: number
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["suggestion_status"]
+          suggested_by: string
+          title: string
+          updated_at: string
+          youtube_id: string
+        }
+        Insert: {
+          approved_video_id?: string | null
+          created_at?: string
+          description?: string | null
+          expert_name?: string | null
+          id?: string
+          pillar_id: number
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["suggestion_status"]
+          suggested_by: string
+          title: string
+          updated_at?: string
+          youtube_id: string
+        }
+        Update: {
+          approved_video_id?: string | null
+          created_at?: string
+          description?: string | null
+          expert_name?: string | null
+          id?: string
+          pillar_id?: number
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["suggestion_status"]
+          suggested_by?: string
+          title?: string
+          updated_at?: string
+          youtube_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_suggestions_approved_video_id_fkey"
+            columns: ["approved_video_id"]
+            isOneToOne: false
+            referencedRelation: "expert_videos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_suggestions_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weekly_checkin_answers: {
         Row: {
           answer: string
@@ -1101,6 +1167,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_video_suggestion: {
+        Args: { _display_order?: number; _suggestion_id: string }
+        Returns: string
+      }
       generate_pillar_alerts: { Args: { _user_id: string }; Returns: undefined }
       has_role: {
         Args: {
@@ -1116,6 +1186,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      suggestion_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1244,6 +1315,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      suggestion_status: ["pending", "approved", "rejected"],
     },
   },
 } as const
