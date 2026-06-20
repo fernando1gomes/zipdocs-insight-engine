@@ -3,6 +3,7 @@ import { useMemo, useEffect, useRef } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { usePillars } from "@/lib/usePillars";
+import { iconForPillar } from "@/lib/pillars";
 import {
   PILLAR_IMPACTS,
   getImpactBySystemId,
@@ -99,7 +100,10 @@ function ImpactosPage() {
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <div className="text-3xl leading-none">{p.icon}</div>
+                  {(() => {
+                    const Icon = iconForPillar(p.systemPillarId);
+                    return <Icon weight="light" className="h-8 w-8 shrink-0 text-[color:var(--ink,theme(colors.foreground))]" />;
+                  })()}
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold truncate">{p.displayName}</div>
                     <div className="mt-1 text-xs text-muted-foreground">
@@ -151,7 +155,10 @@ function PillarDetail({ data, currentScore }: { data: PillarImpactData; currentS
   return (
     <article className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
       <header className="flex items-start gap-4">
-        <div className="text-4xl">{data.icon}</div>
+        {(() => {
+          const Icon = iconForPillar(data.systemPillarId);
+          return <Icon weight="light" className="h-10 w-10 shrink-0 text-[color:var(--primary)]" />;
+        })()}
         <div className="flex-1">
           <h2 className="text-2xl font-extrabold">{data.displayName}</h2>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
