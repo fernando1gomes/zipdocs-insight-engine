@@ -304,7 +304,7 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
                 <div className="text-xs text-muted-foreground truncate">Prioridade: {priorityFromScore(p.score)}</div>
               </div>
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color:var(--balanced-soft)]/40">
-                <p.Icon className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} />
+                <p.Icon size={18} weight="light" className="text-[color:var(--primary)]" />
               </span>
             </li>
           ))}

@@ -1,4 +1,5 @@
 import { type Pillar, statusFromScore } from "@/lib/pillars";
+import { Plant as PhSprout } from "@phosphor-icons/react";
 
 const STATUS_FILL: Record<string, string> = {
   balanced: "var(--balanced)",
