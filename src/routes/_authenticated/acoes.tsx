@@ -95,7 +95,7 @@ function ActionsPage() {
               >
                 {PILLAR_DEFAULTS.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.icon} {p.name}
+                    {p.name}
                   </option>
                 ))}
               </select>
@@ -176,7 +176,7 @@ function ActionsPage() {
                     className="mb-3 flex items-center gap-3 border-l-4 pl-3"
                     style={{ borderColor: color }}
                   >
-                    <span className="text-3xl">{def.icon}</span>
+                    <def.Icon weight="light" className="h-8 w-8 shrink-0" style={{ color }} />
                     <div className="flex-1 min-w-0">
                       <h2 className="text-lg font-extrabold leading-tight">{def.name}</h2>
                       <div className="flex gap-2 mt-0.5">

@@ -181,7 +181,7 @@ function PillarDetail() {
 
         <div className="mt-4 rounded-3xl bg-card border border-border/60 p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="text-5xl">{def.icon}</div>
+            <def.Icon weight="light" className="h-12 w-12 text-[color:var(--primary)]" />
             <div>
               <h1 className="text-2xl font-extrabold">{def.name}</h1>
               <p className="text-sm text-muted-foreground">{def.shortName} · status: {status}</p>

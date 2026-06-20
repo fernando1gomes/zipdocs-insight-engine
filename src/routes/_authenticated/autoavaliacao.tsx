@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getImpactBySystemId, influenceLabel } from "@/lib/impacts";
+import { iconForPillar } from "@/lib/pillars";
 
 export const Route = createFileRoute("/_authenticated/autoavaliacao")({
   component: AutoAvaliacao,
@@ -250,7 +251,10 @@ function AutoAvaliacao() {
           </div>
 
           <div className="mt-6 flex items-center gap-4">
-            <div className="text-5xl">{pillar.icon ?? "•"}</div>
+            {(() => {
+              const Icon = iconForPillar(pillar.id);
+              return <Icon weight="light" className="h-12 w-12 text-[color:var(--primary)]" />;
+            })()}
             <div>
               <h2 className="text-xl font-bold">{pillar.name}</h2>
               <p className="text-xs text-muted-foreground">
@@ -368,7 +372,10 @@ function AutoAvaliacao() {
               }`}
               title={p.name}
             >
-              {p.icon ?? "•"}
+              {(() => {
+                const Icon = iconForPillar(p.id);
+                return <Icon weight="light" className="mx-auto h-5 w-5" />;
+              })()}
             </button>
           ))}
         </div>
