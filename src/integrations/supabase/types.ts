@@ -321,6 +321,50 @@ export type Database = {
         }
         Relationships: []
       }
+      expert_videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          expert_name: string | null
+          id: string
+          pillar_id: number
+          title: string
+          updated_at: string
+          youtube_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          expert_name?: string | null
+          id?: string
+          pillar_id: number
+          title: string
+          updated_at?: string
+          youtube_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          expert_name?: string | null
+          id?: string
+          pillar_id?: number
+          title?: string
+          updated_at?: string
+          youtube_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_videos_pillar_id_fkey"
+            columns: ["pillar_id"]
+            isOneToOne: false
+            referencedRelation: "pillars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pillar_action_logs: {
         Row: {
           action_id: string

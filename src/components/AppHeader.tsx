@@ -54,6 +54,7 @@ export function AppHeader() {
     { to: "/semana", label: "SEMANA" },
     { to: "/acoes", label: "AÇÕES" },
     { to: "/checkin", label: "CHECK-INS" },
+    { to: "/videos", label: "VÍDEOS" },
   ];
 
   return (
