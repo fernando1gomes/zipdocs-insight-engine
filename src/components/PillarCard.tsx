@@ -51,7 +51,7 @@ export function PillarCard({
       </div>
       <div className="flex items-end justify-between gap-3">
         <div className="flex items-center gap-2">
-          <pillar.Icon className="h-6 w-6" strokeWidth={1.75} style={{ color: meta.num }} />
+          <pillar.Icon size={24} weight="light" style={{ color: meta.num }} />
           <span className="text-3xl font-bold tabular-nums" style={{ color: meta.num, fontFamily: "var(--font-display)" }}>
             {pillar.score.toFixed(1)}
           </span>
