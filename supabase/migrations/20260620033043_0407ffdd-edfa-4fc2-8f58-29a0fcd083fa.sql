@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.approve_video_suggestion(UUID, INTEGER) FROM PUBLIC, anon;
