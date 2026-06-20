@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { suggestPillarActions } from "@/lib/action-plan.functions";
+import { iconForPillar } from "@/lib/pillars";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/plano-acao_/$pillarId")({
