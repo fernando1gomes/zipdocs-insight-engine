@@ -1,77 +1,55 @@
+# Substituir emojis por ícones de linha elegantes
 
-# Reproduzir o dashboard "Vida em Eixo"
+A referência usa ícones de linha finos, monocromáticos (verde sálvia / terracota), no estilo Lucide — não emojis coloridos. Vou trocar todos os emojis dos pilares por componentes `lucide-react` renderizados com `currentColor`, herdando a cor do contexto (verde no hub/equilibrado, terracota no atenção/crítico, branco dentro dos segmentos da roda).
 
-Ajustar o dashboard atual para bater visualmente com a imagem enviada. Mudanças apenas de UI — sem alteração de schema, server functions ou lógica de negócio.
+## 1. `src/lib/pillars.ts`
 
-## 1. Header (`src/components/AppHeader.tsx`)
+- Trocar o campo `icon: string` (emoji) por `icon: LucideIcon` importado de `lucide-react`.
+- Mapeamento por pilar (alinhado à referência):
+  1. Contribuição → `HandHeart`
+  2. Emocional → `Brain` (a referência usa cérebro para mental/emocional)
+  3. Família → `Users` / `HeartHandshake`
+  4. Relacionamento amoroso → `Heart`
+  5. Social e amizades → `Users2`
+  6. Profissional e carreira → `TrendingUp`
+  7. Financeiro → `LineChart` / `PiggyBank`
+  8. Intelectual → `BookOpen`
+  9. Espiritualidade → `Flower2` (lótus)
+  10. Lazer → `Music2`
+  11. Saúde → `HeartPulse`
+- Manter assinatura de `mergeWithDefaults` e demais helpers intactos.
 
-- Itens da nav (exatamente como na imagem, em maiúsculas):
-  `DASHBOARD · AUTOAVALIAÇÃO · PROGRESSO · ACOMPANHAMENTOS · PLANO · AÇÕES · CHECK-INS`
-  - "Progresso" e "Acompanhamentos" ainda não têm rota — apontar para `/dashboard` por enquanto (placeholder) e marcar com `disabled`/tooltip leve, OU reusar rotas existentes (`/impactos` → "Progresso", `/autorresponsabilidade` → "Acompanhamentos"). Vou usar a segunda opção para não quebrar links.
-  - Aba ativa = pílula verde sólida (bg `--primary`, texto branco) em vez do cinza atual.
-- Lado direito: substituir o botão "Sair" por
-  - ícone de balão de fala com contador (`MessageCircle` + badge "4") que abre `/orientadora`
-  - círculo do avatar com iniciais do usuário (ex.: "SM"), que abre menu com "Sair".
-- Tagline embaixo do título passa a ser fixa: "Coaching & PNL" (em uppercase, tracking largo, cor `--primary`) — alinhada ao lockup da logo na imagem.
+## 2. `src/components/PillarCard.tsx`
 
-## 2. Card de pilar (`src/components/PillarCard.tsx`)
+- Em vez de `<span className="text-2xl">{pillar.icon}</span>`, renderizar `<pillar.icon className="h-6 w-6" style={{ color: meta.num }} strokeWidth={1.75} />`.
+- Cor herdada do status (verde/terracota/vermelho) — sem mais emojis coloridos.
 
-- Título do pilar em **uppercase** com tracking largo (`text-xs font-semibold tracking-[0.14em]`).
-- Layout interno: ícone grande à esquerda + nota grande (mantém), mas a coluna direita passa a mostrar **"Impacto"** + rótulo dinâmico (`Positivo` / `Importante` / `Crítico`) derivado do status:
-  - balanced → "Positivo" (verde)
-  - attention → "Importante" (terracota)
-  - critical → "Crítico" (vermelho/terracota intensa)
-- Linha inferior: mensagem curta (`Equilíbrio e conexão`, `Atenção: Melhorar saúde`, etc.). Reaproveitar `messageForScore` mas trocar os textos para o padrão da imagem (curtos, 2–4 palavras).
-- Borda lateral colorida **apenas** quando status ≠ balanced (na imagem só cards em atenção/crítico ganham contorno terracota). Cards equilibrados ficam só com sombra suave.
+## 3. `src/components/RadialWheel.tsx`
 
-## 3. Roda central (`src/components/RadialWheel.tsx`)
+- Substituir `<text>{p.icon}</text>` dentro do segmento por um ícone SVG do Lucide. Como o `icon` agora é um componente React, renderizar **fora** do `<svg>` num overlay absoluto (mais simples) ou usar `<foreignObject>` dentro do SVG. Vou usar overlay absoluto: para cada pilar, posicionar `<div>` com o `<Icon />` nas coordenadas `(ix, iy)` já calculadas, traduzido em %.
+- Cor: branco (`text-white`) dentro do segmento, stroke 1.75.
+- Substituir o emoji 🌱 do hub por `<Sprout />` (lucide) em verde `--primary`, posicionado absolutamente sobre o hub.
+- Manter números e a estrutura da roda.
 
-- Texto do hub: "AVALIAÇÃO GERAL" (uppercase, tracking) + número grande + folha (🌱) embaixo, no lugar de "Equilíbrio Geral" + ⚖️.
-- Fonte do número grande passa a usar `var(--font-display)` (Poppins) em vez de Plus Jakarta Sans hardcoded.
+## 4. Outros pontos onde aparecem emojis de pilar
 
-## 4. Coluna direita — Prioridades & Próxima ação (`src/routes/_authenticated/dashboard.tsx`)
+Buscar e ajustar usos secundários (caso existam) em `dashboard.tsx`:
+- "Próxima melhor ação" e "Prioridades" usam `pillar.icon` — agora recebem um componente, então renderizar `<Icon className="h-5 w-5 text-[color:var(--primary)]" />` dentro do quadrado verde.
+- Sino de alertas: trocar emoji 🔔 (se houver) por `<Bell />` terracota.
+- Estrela "PRÓXIMA MELHOR AÇÃO": `<Star />` terracota.
+- 🌿 no header da tabela de impacto: `<Leaf />` verde.
 
-- **Prioridades da semana**: cada linha mostra
-  - número (badge cinza-creme)
-  - "Cuidar de {pilar}" em negrito + sub-texto "Prioridade: {Crítica|Alta|Média}" (em vez de "Score atual: x.x")
-  - ícone do pilar dentro de um quadrado arredondado verde-suave à direita.
-  - Mapear prioridade: score < 5 → Crítica; < 6.5 → Alta; resto → Média.
-- Botões "+ NOVO CHECK-IN" (verde sólido, texto branco) e "🌿 MINHAS AÇÕES" (outline creme) em uppercase com tracking.
-- **Próxima melhor ação**: card branco com título "PRÓXIMA MELHOR AÇÃO" + estrelinha terracota; corpo com ícone do pilar num círculo verde-suave + título da ação ("Conectar-se com a família" como fallback). Botão verde sólido "VER MINHAS AÇÕES ›" em uppercase.
+## 5. Arquivos a editar
 
-## 5. Legenda (`Legend` em `dashboard.tsx`)
+- `src/lib/pillars.ts` — tipo + imports lucide + mapping.
+- `src/components/PillarCard.tsx` — render do ícone.
+- `src/components/RadialWheel.tsx` — overlay de ícones nos segmentos + hub.
+- `src/routes/_authenticated/dashboard.tsx` — usos de `pillar.icon` e emojis decorativos.
+- `src/components/LifeWheel.tsx` — se usar `pillar.icon`, ajustar também.
 
-Adicionar duas entradas para bater com a imagem:
-- "Excelente" (verde escuro `--primary`)
-- "Bom" (verde claro `--balanced-soft`)
-- "Atenção" (terracota `--attention`)
-- "Crítico" (vermelho `--critical`)
-- "Sem dados" (creme `--empty`)
-- "Pouco influência" (linha tracejada cinza — usar uma small `<span>` com `border-dashed`).
+Sem mudanças em rotas, schema, server functions ou lógica.
 
-`statusFromScore` ganha um novo nível interno para a UI: score ≥ 8 → "excellent" (mesmo verde escuro). A semântica de banco continua `balanced/attention/critical/empty`; o tier "excellent" é só visual e calculado no render.
+## 6. Validação
 
-## 6. Tabela "Seus pilares de maior impacto" (já existente)
-
-- Pequenos ajustes visuais: cabeçalho em uppercase com tracking + ícone 🌿 antes do título (já tem 🌊, trocar) + linha de descrição final.
-- Badge de prioridade: cores ajustadas (`Máxima` terracota intenso, `Alta` terracota suave, `Baixa` verde-suave) em vez de sempre vermelho.
-
-## 7. Alertas
-
-- Cabeçalho "ALERTAS (n)" em uppercase com tracking + sino terracota.
-- Cada item: bullet terracota + título à esquerda + mensagem em coluna do meio + botão "Resolver" outline verde à direita (já existe — ajustar paddings/typography).
-
-## 8. Arquivos a editar
-
-- `src/components/AppHeader.tsx` — nav + avatar/chat badge.
-- `src/components/PillarCard.tsx` — novo layout (uppercase, "Impacto Positivo", borda condicional).
-- `src/components/RadialWheel.tsx` — hub central (Avaliação Geral + 🌱) e fonte.
-- `src/routes/_authenticated/dashboard.tsx` — `PrioritiesCard`, `NextActionCard`, `Legend`, `ImpactPrioritiesBlock`, `AlertsPanel`.
-- `src/lib/pillars.ts` — atualizar `messageForScore` para frases curtas no padrão da imagem; adicionar helper `priorityFromScore` (Crítica/Alta/Média) e `impactLabelFromScore` (Positivo/Importante/Crítico).
-
-Sem mudanças em rotas novas, schema, migrations ou lógica de IA.
-
-## 9. Validação
-
-1. Build automático.
-2. Playwright em `/dashboard` (viewport 1280×1800): screenshot comparando com a imagem — confere nav uppercase verde, cards com "Impacto Positivo/Importante", hub "AVALIAÇÃO GERAL 68% 🌱", legenda com 6 itens, prioridades com ícone do pilar à direita.
+- Build automático.
+- Playwright em `/dashboard` (1280×1800): screenshot conferindo que os ícones agora são de linha verde sálvia / terracota, sem emojis coloridos, alinhados ao visual da referência.

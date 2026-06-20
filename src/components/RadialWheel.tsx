@@ -1,5 +1,6 @@
 import { type Pillar, statusFromScore } from "@/lib/pillars";
 import { PillarCard } from "./PillarCard";
+import { Sprout } from "lucide-react";
 
 const STATUS_FILL: Record<string, string> = {
   balanced: "var(--balanced)",
@@ -143,15 +144,6 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
               >
                 {p.id}
               </text>
-              <text
-                x={ix}
-                y={iy + 6}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontSize="20"
-              >
-                {p.icon}
-              </text>
               {/* connector to card */}
               <line
                 x1={start.x}
@@ -193,8 +185,41 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
         >
           {balance}%
         </text>
-        <text x={CX} y={CY + 46} textAnchor="middle" fontSize="16">🌱</text>
       </svg>
+
+      {/* Lucide icons overlay inside each segment */}
+      {pillars.map((p, i) => {
+        const { mid } = segAngles(i);
+        const iconR = (R_INNER + R_OUTER) / 2 + 4;
+        const ix = CX + iconR * Math.cos(toRad(mid));
+        const iy = CY + iconR * Math.sin(toRad(mid));
+        const Icon = p.Icon;
+        return (
+          <div
+            key={`icon-${p.id}`}
+            className="pointer-events-none absolute flex items-center justify-center"
+            style={{
+              left: `${(ix / W) * 100}%`,
+              top: `${(iy / H) * 100}%`,
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
+          </div>
+        );
+      })}
+
+      {/* Hub sprout */}
+      <div
+        className="pointer-events-none absolute flex items-center justify-center"
+        style={{
+          left: `${(CX / W) * 100}%`,
+          top: `${((CY + 46) / H) * 100}%`,
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <Sprout className="h-5 w-5 text-[color:var(--primary)]" strokeWidth={1.75} />
+      </div>
 
       {/* Cards positioned with explicit anchors per the reference layout */}
       {pillars.map((p) => {

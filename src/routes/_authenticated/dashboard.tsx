@@ -9,6 +9,7 @@ import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts";
+import { Bell, Leaf, Lightbulb, Star, Target, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -113,7 +114,7 @@ function ImpactPrioritiesBlock({ pillars }: { pillars: Pillar[] }) {
     <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🌿</span>
+          <Leaf className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} />
           <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">
             Seus Pilares de Maior Impacto Agora
           </h2>
@@ -206,7 +207,7 @@ function AlertsPanel() {
   return (
     <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
-        <span className="text-lg text-[color:var(--accent)]">🔔</span>
+        <Bell className="h-4 w-4 text-[color:var(--accent)]" strokeWidth={1.75} />
         <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Alertas</h2>
         <span className="text-xs text-muted-foreground">({alerts.length})</span>
       </div>
@@ -264,7 +265,7 @@ function TipCard() {
   return (
     <div className="rounded-2xl border border-[color:var(--attention)]/30 bg-[color:var(--attention-soft)]/40 p-4">
       <div className="flex items-start gap-3">
-        <div className="text-xl">💡</div>
+        <Lightbulb className="h-5 w-5 shrink-0 text-[color:var(--accent)]" strokeWidth={1.75} />
         <p className="text-sm text-foreground leading-relaxed">
           <span className="font-semibold">Dica:</span> pequenas ações consistentes nos pilares certos geram equilíbrio sem sobrecarga.
         </p>
@@ -278,7 +279,7 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
-        <span className="text-lg">🎯</span>
+        <Target className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} />
         <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Prioridades da Semana</h2>
       </div>
       {priorities.length === 0 ? (
@@ -302,8 +303,8 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
                 <div className="text-sm font-semibold text-foreground truncate">Cuidar de {p.shortName}</div>
                 <div className="text-xs text-muted-foreground truncate">Prioridade: {priorityFromScore(p.score)}</div>
               </div>
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color:var(--balanced-soft)]/40 text-lg">
-                {p.icon}
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color:var(--balanced-soft)]/40">
+                <p.Icon className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} />
               </span>
             </li>
           ))}
@@ -321,7 +322,7 @@ function PrioritiesCard({ priorities, onHover }: { priorities: Pillar[]; onHover
           to="/acoes"
           className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-foreground hover:bg-secondary transition flex items-center justify-between"
         >
-          <span className="flex items-center gap-2">🌿 Minhas Ações</span>
+          <span className="flex items-center gap-2"><Leaf className="h-4 w-4 text-[color:var(--primary)]" strokeWidth={1.75} /> Minhas Ações</span>
           <span>›</span>
         </Link>
       </div>
@@ -349,11 +350,13 @@ function NextActionCard() {
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">Próxima Melhor Ação</h2>
-        <span className="text-[color:var(--attention)]">★</span>
+        <Star className="h-4 w-4 text-[color:var(--accent)]" strokeWidth={1.75} fill="currentColor" />
       </div>
       <div className="rounded-xl bg-[color:var(--primary)]/5 p-4">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--balanced-soft)]/50 text-lg">🏠</div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--balanced-soft)]/50">
+            <Sparkles className="h-5 w-5 text-[color:var(--primary)]" strokeWidth={1.75} />
+          </div>
           <p className="text-sm font-medium text-foreground leading-snug">
             {data?.title ?? "Conectar-se com a família"}
           </p>
