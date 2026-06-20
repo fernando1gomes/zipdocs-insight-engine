@@ -11,6 +11,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts";
 import { PILLAR_DEFAULTS } from "@/lib/pillars";
 import { Bell, Leaf, Lightbulb, Star, Target, Sparkle } from "@phosphor-icons/react";
+import { CalendarCheck } from "@phosphor-icons/react";
+import { useServerFn } from "@tanstack/react-start";
+import { getWeekSummary } from "@/lib/calendar.functions";
+import { startOfWeek, addDays } from "@/lib/calendar-utils";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -84,9 +88,67 @@ function Dashboard() {
 
         <ImpactPrioritiesBlock pillars={pillars} />
 
+        <SemanaEmEixoBlock />
+
         <AlertsPanel />
       </div>
     </div>
+  );
+}
+
+function SemanaEmEixoBlock() {
+  const fetchSummary = useServerFn(getWeekSummary);
+  const weekStart = useMemo(() => startOfWeek(new Date()), []);
+  const weekEnd = useMemo(() => addDays(weekStart, 7), [weekStart]);
+  const { data } = useQuery({
+    queryKey: ["week-summary", weekStart.toISOString()],
+    queryFn: () =>
+      fetchSummary({
+        data: { weekStart: weekStart.toISOString(), weekEnd: weekEnd.toISOString() },
+      }),
+  });
+
+  const items: Array<{ label: string; value: number; bg: string; fg: string }> = [
+    { label: "Planejadas", value: data?.planned ?? 0, bg: "var(--focus-soft)", fg: "var(--focus)" },
+    { label: "Executadas", value: data?.done ?? 0, bg: "var(--balanced-soft)", fg: "var(--balanced)" },
+    { label: "Não executadas", value: data?.missed ?? 0, bg: "var(--critical-soft)", fg: "var(--critical)" },
+    { label: "Reagendadas", value: data?.rescheduled ?? 0, bg: "var(--attention-soft)", fg: "var(--attention)" },
+  ];
+
+  return (
+    <section className="mt-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <CalendarCheck size={16} weight="light" className="text-[color:var(--primary)]" />
+          <h2 className="text-[12px] font-bold uppercase tracking-[0.18em] text-foreground">
+            Semana em Eixo
+          </h2>
+        </div>
+        <Link
+          to="/semana"
+          className="text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--primary)] hover:underline"
+        >
+          Abrir calendário →
+        </Link>
+      </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {items.map((it) => (
+          <div
+            key={it.label}
+            className="rounded-xl border px-3 py-2"
+            style={{ borderColor: it.fg, background: `color-mix(in oklab, ${it.bg} 40%, var(--card))` }}
+          >
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{it.label}</div>
+            <div className="text-2xl font-bold" style={{ color: it.fg }}>{it.value}</div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Consistência da semana:{" "}
+        <span className="font-semibold text-foreground">{data?.consistency ?? 0}%</span> das ações
+        previstas foram realizadas. Pequenas ações consistentes geram equilíbrio.
+      </p>
+    </section>
   );
 }
 

@@ -31,6 +31,7 @@ import {
   updateActionStatus,
   rescheduleAction,
   submitDailyClosing,
+  generateClosingSummary,
 } from "@/lib/calendar.functions";
 import {
   WEEK_DAYS,
@@ -903,16 +904,28 @@ function CloseDayDialog({
   onSubmitted: () => void;
 }) {
   const submitFn = useServerFn(submitDailyClosing);
+  const summaryFn = useServerFn(generateClosingSummary);
   const today = new Date().toISOString().slice(0, 10);
   const [reflection, setReflection] = useState("");
   const [answers, setAnswers] = useState<string[]>(() => DAILY_QUESTIONS.map(() => ""));
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [summarizing, setSummarizing] = useState(false);
 
   const mutate = useMutation({
     mutationFn: submitFn,
-    onSuccess: () => {
+    onSuccess: async () => {
       onSubmitted();
-      onClose();
-      toast.success("Dia fechado com leveza. Até amanhã.");
+      toast.success("Dia fechado com leveza.");
+      setSummarizing(true);
+      try {
+        const res = await summaryFn({ data: { closingDate: today } });
+        setAiSummary(res.summary);
+      } catch {
+        // sem resumo IA: fluxo continua normalmente
+        onClose();
+      } finally {
+        setSummarizing(false);
+      }
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
@@ -939,6 +952,20 @@ function CloseDayDialog({
           </DialogDescription>
         </DialogHeader>
 
+        {aiSummary ? (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[color:var(--primary)]/30 bg-[color:var(--balanced-soft)]/30 p-4">
+              <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[color:var(--primary)]">
+                Um olhar gentil sobre seu dia
+              </div>
+              <p className="text-sm leading-relaxed text-foreground/90">{aiSummary}</p>
+            </div>
+            <DialogFooter>
+              <Button onClick={onClose}>Encerrar</Button>
+            </DialogFooter>
+          </div>
+        ) : (
+          <>
         <div className="space-y-3">
           {DAILY_QUESTIONS.map((q, i) => (
             <div key={q}>
@@ -969,10 +996,12 @@ function CloseDayDialog({
 
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Agora não</Button>
-          <Button onClick={submit} disabled={mutate.isPending}>
-            {mutate.isPending ? "Salvando…" : "Encerrar o dia"}
+          <Button onClick={submit} disabled={mutate.isPending || summarizing}>
+            {summarizing ? "Gerando resumo…" : mutate.isPending ? "Salvando…" : "Encerrar o dia"}
           </Button>
         </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

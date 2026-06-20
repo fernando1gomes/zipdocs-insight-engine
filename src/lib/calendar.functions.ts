@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { generateText } from "ai";
+import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 /** Devolve as ações com `scheduled_start` dentro da semana solicitada. */
 export const listWeekActions = createServerFn({ method: "POST" })
@@ -185,6 +187,73 @@ export const submitDailyClosing = createServerFn({ method: "POST" })
     }
 
     return { ok: true, planned, done, missed, rescheduled };
+  });
+
+/** Resumo da semana atual para o dashboard. */
+export const getWeekSummary = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
+    z.object({ weekStart: z.string(), weekEnd: z.string() }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: rows, error } = await context.supabase
+      .from("pillar_actions")
+      .select("calendar_status,scheduled_start")
+      .eq("user_id", context.userId)
+      .gte("scheduled_start", data.weekStart)
+      .lt("scheduled_start", data.weekEnd);
+    if (error) throw new Error(error.message);
+    const total = rows?.length ?? 0;
+    const done = rows?.filter((r) => r.calendar_status === "done").length ?? 0;
+    const missed = rows?.filter((r) => r.calendar_status === "missed").length ?? 0;
+    const rescheduled = rows?.filter((r) => r.calendar_status === "rescheduled").length ?? 0;
+    const planned = rows?.filter((r) => (r.calendar_status ?? "planned") === "planned").length ?? 0;
+    const consistency = total > 0 ? Math.round((done / total) * 100) : 0;
+    return { total, done, missed, rescheduled, planned, consistency };
+  });
+
+/** Gera (via Lovable AI) um pequeno resumo acolhedor do fechamento do dia. */
+export const generateClosingSummary = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
+    z.object({ closingDate: z.string() }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+
+    const { data: closing } = await context.supabase
+      .from("daily_closings")
+      .select("id,planned_actions_count,completed_actions_count,not_completed_actions_count,rescheduled_actions_count,user_reflection")
+      .eq("user_id", context.userId)
+      .eq("closing_date", data.closingDate)
+      .maybeSingle();
+    if (!closing) throw new Error("Fechamento não encontrado");
+
+    const { data: answers } = await context.supabase
+      .from("daily_closing_answers")
+      .select("question,answer")
+      .eq("daily_closing_id", closing.id);
+
+    const gateway = createLovableAiGatewayProvider(key);
+    const { text } = await generateText({
+      model: gateway("google/gemini-3-flash-preview"),
+      system:
+        "Você é uma orientadora gentil do Vida em Eixo. Devolva um resumo curto (até 3 frases), acolhedor, sem julgamento, em português do Brasil. Reconheça o que foi feito, valide o que ficou difícil e sugira uma única intenção leve para amanhã. Não use emojis.",
+      prompt: [
+        `Data: ${data.closingDate}`,
+        `Ações planejadas: ${closing.planned_actions_count} · Executadas: ${closing.completed_actions_count} · Não executadas: ${closing.not_completed_actions_count} · Reagendadas: ${closing.rescheduled_actions_count}`,
+        closing.user_reflection ? `Reflexão: ${closing.user_reflection}` : "",
+        ...(answers ?? []).map((a) => `${a.question} ${a.answer}`),
+      ].filter(Boolean).join("\n"),
+    });
+
+    await context.supabase
+      .from("daily_closings")
+      .update({ ai_summary: text })
+      .eq("id", closing.id);
+
+    return { summary: text };
   });
 
 /** Atualiza status (executada, não executada, cancelada). */
