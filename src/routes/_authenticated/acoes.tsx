@@ -95,7 +95,7 @@ function ActionsPage() {
               >
                 {PILLAR_DEFAULTS.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.icon} {p.name}
+                    {p.name}
                   </option>
                 ))}
               </select>
