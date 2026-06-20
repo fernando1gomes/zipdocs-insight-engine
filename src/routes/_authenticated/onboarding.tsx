@@ -75,7 +75,7 @@ function Onboarding() {
         ) : (
           <div>
             <div className="flex items-center gap-3">
-              <div className="text-4xl">{pillar.icon}</div>
+              <pillar.Icon weight="light" className="h-10 w-10 text-[color:var(--primary)]" />
               <div>
                 <h2 className="text-xl font-bold">{pillar.name}</h2>
                 <p className="text-xs text-muted-foreground">{pillar.shortName}</p>
