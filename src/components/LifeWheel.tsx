@@ -72,9 +72,16 @@ export function LifeWheel({ pillars, balance, hovered, onHover }: Props) {
               <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="11" fontWeight="700" fill="white">
                 {p.id}
               </text>
-              <text x={lx} y={ly + 8} textAnchor="middle" dominantBaseline="middle" fontSize="16">
-                {p.icon}
-              </text>
+          {(() => {
+            const Icon = p.Icon;
+            return (
+              <foreignObject x={lx - 10} y={ly - 10} width={20} height={20}>
+                <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Icon width={16} height={16} stroke="white" strokeWidth={1.75} fill="none" />
+                </div>
+              </foreignObject>
+            );
+          })()}
             </g>
           );
         })}
