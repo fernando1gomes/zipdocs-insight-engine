@@ -244,13 +244,95 @@ export type Database = {
           },
         ]
       }
+      daily_closing_answers: {
+        Row: {
+          answer: string | null
+          created_at: string
+          daily_closing_id: string
+          id: string
+          question: string
+          user_id: string
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          daily_closing_id: string
+          id?: string
+          question: string
+          user_id: string
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          daily_closing_id?: string
+          id?: string
+          question?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_closing_answers_daily_closing_id_fkey"
+            columns: ["daily_closing_id"]
+            isOneToOne: false
+            referencedRelation: "daily_closings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_closings: {
+        Row: {
+          ai_summary: string | null
+          closing_date: string
+          completed_actions_count: number
+          created_at: string
+          id: string
+          not_completed_actions_count: number
+          planned_actions_count: number
+          rescheduled_actions_count: number
+          updated_at: string
+          user_id: string
+          user_reflection: string | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          closing_date: string
+          completed_actions_count?: number
+          created_at?: string
+          id?: string
+          not_completed_actions_count?: number
+          planned_actions_count?: number
+          rescheduled_actions_count?: number
+          updated_at?: string
+          user_id: string
+          user_reflection?: string | null
+        }
+        Update: {
+          ai_summary?: string | null
+          closing_date?: string
+          completed_actions_count?: number
+          created_at?: string
+          id?: string
+          not_completed_actions_count?: number
+          planned_actions_count?: number
+          rescheduled_actions_count?: number
+          updated_at?: string
+          user_id?: string
+          user_reflection?: string | null
+        }
+        Relationships: []
+      }
       pillar_action_logs: {
         Row: {
           action_id: string
           created_at: string
+          daily_closing_id: string | null
+          execution_status: string | null
           id: string
           log_date: string
+          non_execution_reason: string | null
           pillar_id: number
+          rescheduled_from: string | null
+          rescheduled_to: string | null
           status: string
           user_id: string
           user_note: string | null
@@ -258,9 +340,14 @@ export type Database = {
         Insert: {
           action_id: string
           created_at?: string
+          daily_closing_id?: string | null
+          execution_status?: string | null
           id?: string
           log_date?: string
+          non_execution_reason?: string | null
           pillar_id: number
+          rescheduled_from?: string | null
+          rescheduled_to?: string | null
           status: string
           user_id: string
           user_note?: string | null
@@ -268,9 +355,14 @@ export type Database = {
         Update: {
           action_id?: string
           created_at?: string
+          daily_closing_id?: string | null
+          execution_status?: string | null
           id?: string
           log_date?: string
+          non_execution_reason?: string | null
           pillar_id?: number
+          rescheduled_from?: string | null
+          rescheduled_to?: string | null
           status?: string
           user_id?: string
           user_note?: string | null
@@ -281,6 +373,13 @@ export type Database = {
             columns: ["action_id"]
             isOneToOne: false
             referencedRelation: "pillar_actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pillar_action_logs_daily_closing_id_fkey"
+            columns: ["daily_closing_id"]
+            isOneToOne: false
+            referencedRelation: "daily_closings"
             referencedColumns: ["id"]
           },
           {
@@ -363,11 +462,13 @@ export type Database = {
       pillar_actions: {
         Row: {
           action_type: string
+          calendar_status: string
           completed_at: string | null
           created_at: string
           days_overdue: number
           description: string | null
           due_date: string | null
+          duration_minutes: number | null
           frequency_type: string | null
           frequency_value: number | null
           id: string
@@ -376,7 +477,11 @@ export type Database = {
           pillar_id: number
           plan_id: string | null
           priority: string
+          reminder_at: string | null
+          reminder_enabled: boolean
           required_resource: string | null
+          scheduled_end: string | null
+          scheduled_start: string | null
           start_date: string
           status: string
           title: string
@@ -385,11 +490,13 @@ export type Database = {
         }
         Insert: {
           action_type?: string
+          calendar_status?: string
           completed_at?: string | null
           created_at?: string
           days_overdue?: number
           description?: string | null
           due_date?: string | null
+          duration_minutes?: number | null
           frequency_type?: string | null
           frequency_value?: number | null
           id?: string
@@ -398,7 +505,11 @@ export type Database = {
           pillar_id: number
           plan_id?: string | null
           priority?: string
+          reminder_at?: string | null
+          reminder_enabled?: boolean
           required_resource?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
           start_date?: string
           status?: string
           title: string
@@ -407,11 +518,13 @@ export type Database = {
         }
         Update: {
           action_type?: string
+          calendar_status?: string
           completed_at?: string | null
           created_at?: string
           days_overdue?: number
           description?: string | null
           due_date?: string | null
+          duration_minutes?: number | null
           frequency_type?: string | null
           frequency_value?: number | null
           id?: string
@@ -420,7 +533,11 @@ export type Database = {
           pillar_id?: number
           plan_id?: string | null
           priority?: string
+          reminder_at?: string | null
+          reminder_enabled?: boolean
           required_resource?: string | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
           start_date?: string
           status?: string
           title?: string
