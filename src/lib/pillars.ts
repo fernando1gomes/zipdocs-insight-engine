@@ -53,6 +53,11 @@ export const PILLAR_DEFAULTS: Pillar[] = [
 /** Backwards-compatibility alias kept so the legacy mock dashboard still renders. */
 export const PILLARS = PILLAR_DEFAULTS;
 
+/** Resolve the Phosphor icon component for a given pillar id (DB or default). */
+export function iconForPillar(id: number): PillarIcon {
+  return PILLAR_DEFAULTS.find((p) => p.id === id)?.Icon ?? Heartbeat;
+}
+
 export function messageForScore(score: number, shortName: string): string {
   if (score <= 0) return "Sem dados — avalie este pilar";
   if (score < 6) return `Crítico: priorizar atenção`;
