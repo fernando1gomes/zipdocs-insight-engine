@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { CaretLeft, CaretRight, Plus } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, Plus, Funnel, Sparkle, NotePencil } from "@phosphor-icons/react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +30,7 @@ import {
   createScheduledAction,
   updateActionStatus,
   rescheduleAction,
+  submitDailyClosing,
 } from "@/lib/calendar.functions";
 import {
   WEEK_DAYS,
@@ -89,6 +97,10 @@ function SemanaPage() {
   });
   const [detailAction, setDetailAction] = useState<ActionRow | null>(null);
   const [createSlot, setCreateSlot] = useState<{ day: Date; hour: number; minute: number } | null>(null);
+  const [filterPillar, setFilterPillar] = useState<number | "all">("all");
+  const [filterStatus, setFilterStatus] = useState<CalendarStatus | "all">("all");
+  const [summaryDay, setSummaryDay] = useState<number | null>(null);
+  const [closeDayOpen, setCloseDayOpen] = useState(false);
 
   const weekEnd = useMemo(() => addDays(weekStart, 7), [weekStart]);
 
@@ -102,18 +114,27 @@ function SemanaPage() {
   });
   const actions: ActionRow[] = (data?.actions ?? []) as ActionRow[];
 
+  const filteredActions = useMemo(() => {
+    return actions.filter((a) => {
+      if (filterPillar !== "all" && a.pillar_id !== filterPillar) return false;
+      if (filterStatus !== "all" && (a.calendar_status ?? "planned") !== filterStatus) return false;
+      return true;
+    });
+  }, [actions, filterPillar, filterStatus]);
+
   function invalidate() {
     qc.invalidateQueries({ queryKey: ["calendar-week"] });
     qc.invalidateQueries({ queryKey: ["actions"] });
     qc.invalidateQueries({ queryKey: ["user-pillars"] });
     qc.invalidateQueries({ queryKey: ["alerts"] });
+    qc.invalidateQueries({ queryKey: ["daily-closing"] });
   }
 
   const hours = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
   const totalHeight = hours.length * (60 / SLOT_MINUTES) * SLOT_HEIGHT_PX;
 
   function actionsForDay(idx: number): ActionRow[] {
-    return actions.filter(
+    return filteredActions.filter(
       (a) => a.scheduled_start && dayIndex(weekStart, a.scheduled_start) === idx,
     );
   }
@@ -155,6 +176,46 @@ function SemanaPage() {
             </span>
           </div>
         </header>
+
+        {/* Barra de filtros + resumo do dia */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Funnel size={14} weight="light" /> Filtros:
+          </div>
+          <select
+            value={filterPillar === "all" ? "all" : String(filterPillar)}
+            onChange={(e) =>
+              setFilterPillar(e.target.value === "all" ? "all" : Number(e.target.value))
+            }
+            className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+          >
+            <option value="all">Todos os pilares</option>
+            {PILLAR_DEFAULTS.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value as CalendarStatus | "all")}
+            className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+          >
+            <option value="all">Todos os status</option>
+            {(Object.keys(STATUS_LABEL) as CalendarStatus[]).map((s) => (
+              <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+            ))}
+          </select>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto gap-1.5"
+            onClick={() => {
+              const idx = dayIndex(weekStart, new Date().toISOString());
+              setSummaryDay(idx >= 0 && idx < 7 ? idx : activeDay);
+            }}
+          >
+            <Sparkle size={14} weight="light" /> Resumo de hoje
+          </Button>
+        </div>
 
         {/* Mobile: tabs de dia */}
         <div className="mb-4 flex gap-1 overflow-x-auto md:hidden">
@@ -282,6 +343,35 @@ function SemanaPage() {
           slot={createSlot}
           onClose={() => setCreateSlot(null)}
           onCreated={invalidate}
+        />
+      )}
+
+      {/* Drawer de resumo do dia */}
+      <DaySummarySheet
+        open={summaryDay !== null}
+        onClose={() => setSummaryDay(null)}
+        day={summaryDay !== null ? addDays(weekStart, summaryDay) : null}
+        actions={summaryDay !== null ? actionsForDay(summaryDay) : []}
+        onActionClick={(a) => {
+          setSummaryDay(null);
+          setDetailAction(a);
+        }}
+      />
+
+      {/* Botão flutuante "Fechar meu dia" — visível a partir das 18h */}
+      {new Date().getHours() >= 18 && (
+        <Button
+          onClick={() => setCloseDayOpen(true)}
+          className="fixed bottom-6 right-6 z-30 h-12 rounded-full shadow-lg gap-2"
+        >
+          <NotePencil size={18} weight="light" /> Fechar meu dia
+        </Button>
+      )}
+
+      {closeDayOpen && (
+        <CloseDayDialog
+          onClose={() => setCloseDayOpen(false)}
+          onSubmitted={invalidate}
         />
       )}
     </div>
