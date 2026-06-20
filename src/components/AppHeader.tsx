@@ -1,7 +1,7 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { ChatCircleDots } from "@phosphor-icons/react";
 import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
 
 export function AppHeader() {
@@ -88,7 +88,7 @@ export function AppHeader() {
           className="ml-2 relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground/70 hover:bg-secondary transition"
           aria-label="Orientadora IA"
         >
-          <MessageCircle className="h-4 w-4" />
+          <ChatCircleDots size={18} weight="light" />
           <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[color:var(--accent)] px-1 text-[9px] font-bold text-white">
             4
           </span>

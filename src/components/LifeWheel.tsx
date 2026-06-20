@@ -1,4 +1,5 @@
 import { type Pillar, statusFromScore } from "@/lib/pillars";
+import { Plant as PhSprout } from "@phosphor-icons/react";
 
 const STATUS_FILL: Record<string, string> = {
   balanced: "var(--balanced)",
@@ -77,7 +78,7 @@ export function LifeWheel({ pillars, balance, hovered, onHover }: Props) {
             return (
               <foreignObject x={lx - 10} y={ly - 10} width={20} height={20}>
                 <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Icon width={16} height={16} stroke="white" strokeWidth={1.75} fill="none" />
+                  <Icon size={16} weight="light" color="white" />
                 </div>
               </foreignObject>
             );
@@ -92,7 +93,11 @@ export function LifeWheel({ pillars, balance, hovered, onHover }: Props) {
         <text x={cx} y={cy + 16} textAnchor="middle" fontSize="38" fontWeight="800" fill="var(--foreground)" style={{ fontFamily: "Plus Jakarta Sans" }}>
           {balance}%
         </text>
-        <text x={cx} y={cy + 42} textAnchor="middle" fontSize="14">⚖️</text>
+        <foreignObject x={cx - 10} y={cy + 32} width={20} height={20}>
+          <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--primary)" }}>
+            <PhSprout size={18} weight="light" />
+          </div>
+        </foreignObject>
       </svg>
     </div>
   );

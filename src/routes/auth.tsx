@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Plant as PhPlant } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -79,8 +80,8 @@ function AuthPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[color:var(--primary)]/5 via-background to-[color:var(--focus)]/5 px-4">
       <div className="w-full max-w-md rounded-3xl border border-border/60 bg-card p-8 shadow-xl">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--focus)] text-white text-xl shadow-md">
-            🌱
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--primary)] to-[color:var(--focus)] text-white shadow-md">
+            <PhPlant size={24} weight="light" />
           </div>
           <div>
             <h1 className="text-xl font-extrabold tracking-tight">Vida em Eixo</h1>

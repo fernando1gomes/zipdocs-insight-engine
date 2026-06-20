@@ -1,3 +1,5 @@
+import { PILLAR_DEFAULTS, type PillarIcon } from "@/lib/pillars";
+
 export type Intensity = "forte" | "medio" | "leve";
 export type Influence = "muito_alto" | "alto" | "medio_alto" | "medio" | "baixo";
 
@@ -12,6 +14,7 @@ export interface PillarImpactData {
   displayName: string;
   shortDisplay: string;
   icon: string;
+  Icon?: PillarIcon;
   directCount: number;
   influence: Influence;
   influenceWeight: number;

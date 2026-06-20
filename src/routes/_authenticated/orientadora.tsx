@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
+import { ChatCircleDots as PhChat } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/_authenticated/orientadora")({
   head: () => ({
@@ -118,7 +119,7 @@ function Chat({
   return (
     <div className="mt-4 rounded-3xl bg-card border border-border/60 shadow-sm flex flex-col h-[70vh]">
       <div className="px-5 py-4 border-b border-border/60 flex items-center gap-2">
-        <div className="text-2xl">💬</div>
+        <PhChat size={24} weight="light" className="text-[color:var(--primary)]" />
         <div>
           <h1 className="text-lg font-bold">IA Orientadora</h1>
           <p className="text-xs text-muted-foreground">

@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { PILLAR_DEFAULTS, statusFromScore, overallBalance } from "@/lib/pillars";
 import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
+import { Waves, Compass, Sparkle, CheckCircle, Plant } from "@phosphor-icons/react";
+import type { ComponentType } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -15,10 +17,14 @@ const STEPS = [
   { n: "04", title: "Check-in", text: "Acompanhe sua evolução com check-ins curtos e veja a roda da sua vida girar — viva." },
 ];
 
-const DIFFERENTIATORS = [
-  { icon: "🌊", title: "Efeito dominó", text: "Nenhum pilar adoece — ou floresce — sozinho. Mostramos as conexões reais entre eles." },
-  { icon: "🧭", title: "Autorresponsabilidade ativa", text: "Não é coaching motivacional. É um espelho honesto que devolve a você o leme da sua vida." },
-  { icon: "✨", title: "IA orientadora", text: "Uma orientadora que conhece sua roda e te faz as perguntas certas no momento certo." },
+const DIFFERENTIATORS: Array<{
+  Icon: ComponentType<{ size?: number | string; weight?: "light" | "regular"; className?: string }>;
+  title: string;
+  text: string;
+}> = [
+  { Icon: Waves, title: "Efeito dominó", text: "Nenhum pilar adoece — ou floresce — sozinho. Mostramos as conexões reais entre eles." },
+  { Icon: Compass, title: "Autorresponsabilidade ativa", text: "Não é coaching motivacional. É um espelho honesto que devolve a você o leme da sua vida." },
+  { Icon: Sparkle, title: "IA orientadora", text: "Uma orientadora que conhece sua roda e te faz as perguntas certas no momento certo." },
 ];
 
 const TESTIMONIALS = [
@@ -101,9 +107,9 @@ function Hero() {
             </a>
           </div>
           <div className="mt-10 flex items-center gap-6 text-xs text-[color:var(--landing-muted)]">
-            <span>✓ 11 pilares mapeados</span>
-            <span>✓ Sem cobrança</span>
-            <span>✓ Comece em 10 min</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> 11 pilares mapeados</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> Sem cobrança</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> Comece em 10 min</span>
           </div>
         </div>
         <HeroWheel />
@@ -162,9 +168,11 @@ function HeroWheel() {
               <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill="white">
                 {p.id}
               </text>
-              <text x={ix} y={iy + 6} textAnchor="middle" dominantBaseline="middle" fontSize="18">
-                {p.icon}
-              </text>
+              <foreignObject x={ix - 10} y={iy - 10} width={20} height={20}>
+                <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <p.Icon size={16} weight="light" color="white" />
+                </div>
+              </foreignObject>
             </g>
           );
         })}
@@ -185,7 +193,11 @@ function HeroWheel() {
         >
           {balance}%
         </text>
-        <text x={CX} y={CY + 42} textAnchor="middle" fontSize="14">⚖️</text>
+        <foreignObject x={CX - 10} y={CY + 32} width={20} height={20}>
+          <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--primary)" }}>
+            <Plant size={18} weight="light" />
+          </div>
+        </foreignObject>
       </svg>
     </div>
   );
@@ -213,7 +225,7 @@ function PillarsSection() {
               className="group rounded-2xl border border-[color:var(--landing-line)] bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[color:var(--landing-line)]"
             >
               <div className="flex items-start gap-3">
-                <span className="text-2xl">{p.icon}</span>
+                <p.Icon size={24} weight="light" className="text-[color:var(--primary)] shrink-0 mt-0.5" />
                 <div>
                   <h3 className="text-base font-semibold">{p.name}</h3>
                   <p className="mt-1 text-sm text-[color:var(--landing-ink-soft)]">
@@ -264,7 +276,7 @@ function Differentiators() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {DIFFERENTIATORS.map((d) => (
             <div key={d.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-              <span className="text-3xl">{d.icon}</span>
+              <d.Icon size={32} weight="light" className="text-[color:var(--landing-gold)]" />
               <h3 className="mt-4 text-lg font-semibold !text-white">{d.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-white/70">{d.text}</p>
             </div>

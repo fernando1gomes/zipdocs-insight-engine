@@ -1,6 +1,6 @@
 import { type Pillar, statusFromScore } from "@/lib/pillars";
 import { PillarCard } from "./PillarCard";
-import { Sprout } from "lucide-react";
+import { Plant } from "@phosphor-icons/react";
 
 const STATUS_FILL: Record<string, string> = {
   balanced: "var(--balanced)",
@@ -204,7 +204,7 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
               transform: "translate(-50%, -50%)",
             }}
           >
-            <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
+            <Icon size={20} weight="light" color="white" />
           </div>
         );
       })}
@@ -218,7 +218,7 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
           transform: "translate(-50%, -50%)",
         }}
       >
-        <Sprout className="h-5 w-5 text-[color:var(--primary)]" strokeWidth={1.75} />
+        <Plant size={20} weight="light" className="text-[color:var(--primary)]" />
       </div>
 
       {/* Cards positioned with explicit anchors per the reference layout */}
