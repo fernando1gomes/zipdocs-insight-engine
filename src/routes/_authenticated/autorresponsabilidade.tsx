@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
+import { Medal as PhMedal } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/_authenticated/autorresponsabilidade")({
   validateSearch: (raw: Record<string, unknown>): { pillarId?: number } => {

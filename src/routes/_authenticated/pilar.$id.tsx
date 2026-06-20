@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { generatePillarInsight } from "@/lib/insights.functions";
+import { Sparkle as PhSparkle } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/_authenticated/pilar/$id")({
   component: PillarDetail,

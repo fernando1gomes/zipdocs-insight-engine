@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
+import { ChatCircleDots as PhChat } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/_authenticated/orientadora")({
   head: () => ({
