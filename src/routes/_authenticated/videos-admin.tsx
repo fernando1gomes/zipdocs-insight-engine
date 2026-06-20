@@ -31,7 +31,7 @@ import {
 import { extractYouTubeId } from "@/lib/youtube";
 import { PILLAR_DEFAULTS } from "@/lib/pillars";
 
-export const Route = createFileRoute("/_authenticated/videos/admin")({
+export const Route = createFileRoute("/_authenticated/videos-admin")({
   component: VideosAdminPage,
 });
 
