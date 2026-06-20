@@ -51,6 +51,7 @@ export function AppHeader() {
     { to: "/impactos", label: "PROGRESSO" },
     { to: "/autorresponsabilidade", label: "ACOMPANHAMENTOS" },
     { to: "/plano-acao", label: "PLANO" },
+    { to: "/semana", label: "SEMANA" },
     { to: "/acoes", label: "AÇÕES" },
     { to: "/checkin", label: "CHECK-INS" },
   ];
