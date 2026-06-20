@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { CaretLeft, CaretRight, Plus } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, Plus, Funnel, Sparkle, NotePencil } from "@phosphor-icons/react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +30,7 @@ import {
   createScheduledAction,
   updateActionStatus,
   rescheduleAction,
+  submitDailyClosing,
 } from "@/lib/calendar.functions";
 import {
   WEEK_DAYS,
@@ -89,6 +97,10 @@ function SemanaPage() {
   });
   const [detailAction, setDetailAction] = useState<ActionRow | null>(null);
   const [createSlot, setCreateSlot] = useState<{ day: Date; hour: number; minute: number } | null>(null);
+  const [filterPillar, setFilterPillar] = useState<number | "all">("all");
+  const [filterStatus, setFilterStatus] = useState<CalendarStatus | "all">("all");
+  const [summaryDay, setSummaryDay] = useState<number | null>(null);
+  const [closeDayOpen, setCloseDayOpen] = useState(false);
 
   const weekEnd = useMemo(() => addDays(weekStart, 7), [weekStart]);
 
@@ -102,18 +114,27 @@ function SemanaPage() {
   });
   const actions: ActionRow[] = (data?.actions ?? []) as ActionRow[];
 
+  const filteredActions = useMemo(() => {
+    return actions.filter((a) => {
+      if (filterPillar !== "all" && a.pillar_id !== filterPillar) return false;
+      if (filterStatus !== "all" && (a.calendar_status ?? "planned") !== filterStatus) return false;
+      return true;
+    });
+  }, [actions, filterPillar, filterStatus]);
+
   function invalidate() {
     qc.invalidateQueries({ queryKey: ["calendar-week"] });
     qc.invalidateQueries({ queryKey: ["actions"] });
     qc.invalidateQueries({ queryKey: ["user-pillars"] });
     qc.invalidateQueries({ queryKey: ["alerts"] });
+    qc.invalidateQueries({ queryKey: ["daily-closing"] });
   }
 
   const hours = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
   const totalHeight = hours.length * (60 / SLOT_MINUTES) * SLOT_HEIGHT_PX;
 
   function actionsForDay(idx: number): ActionRow[] {
-    return actions.filter(
+    return filteredActions.filter(
       (a) => a.scheduled_start && dayIndex(weekStart, a.scheduled_start) === idx,
     );
   }
@@ -155,6 +176,46 @@ function SemanaPage() {
             </span>
           </div>
         </header>
+
+        {/* Barra de filtros + resumo do dia */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Funnel size={14} weight="light" /> Filtros:
+          </div>
+          <select
+            value={filterPillar === "all" ? "all" : String(filterPillar)}
+            onChange={(e) =>
+              setFilterPillar(e.target.value === "all" ? "all" : Number(e.target.value))
+            }
+            className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+          >
+            <option value="all">Todos os pilares</option>
+            {PILLAR_DEFAULTS.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value as CalendarStatus | "all")}
+            className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+          >
+            <option value="all">Todos os status</option>
+            {(Object.keys(STATUS_LABEL) as CalendarStatus[]).map((s) => (
+              <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+            ))}
+          </select>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto gap-1.5"
+            onClick={() => {
+              const idx = dayIndex(weekStart, new Date().toISOString());
+              setSummaryDay(idx >= 0 && idx < 7 ? idx : activeDay);
+            }}
+          >
+            <Sparkle size={14} weight="light" /> Resumo de hoje
+          </Button>
+        </div>
 
         {/* Mobile: tabs de dia */}
         <div className="mb-4 flex gap-1 overflow-x-auto md:hidden">
@@ -282,6 +343,35 @@ function SemanaPage() {
           slot={createSlot}
           onClose={() => setCreateSlot(null)}
           onCreated={invalidate}
+        />
+      )}
+
+      {/* Drawer de resumo do dia */}
+      <DaySummarySheet
+        open={summaryDay !== null}
+        onClose={() => setSummaryDay(null)}
+        day={summaryDay !== null ? addDays(weekStart, summaryDay) : null}
+        actions={summaryDay !== null ? actionsForDay(summaryDay) : []}
+        onActionClick={(a) => {
+          setSummaryDay(null);
+          setDetailAction(a);
+        }}
+      />
+
+      {/* Botão flutuante "Fechar meu dia" — visível a partir das 18h */}
+      {new Date().getHours() >= 18 && (
+        <Button
+          onClick={() => setCloseDayOpen(true)}
+          className="fixed bottom-6 right-6 z-30 h-12 rounded-full shadow-lg gap-2"
+        >
+          <NotePencil size={18} weight="light" /> Fechar meu dia
+        </Button>
+      )}
+
+      {closeDayOpen && (
+        <CloseDayDialog
+          onClose={() => setCloseDayOpen(false)}
+          onSubmitted={invalidate}
         />
       )}
     </div>
@@ -690,6 +780,197 @@ function CreateActionDialog({
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
           <Button onClick={submit} disabled={mutate.isPending}>
             {mutate.isPending ? "Salvando…" : "Adicionar à semana"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+const DAILY_QUESTIONS = [
+  "O que funcionou bem hoje?",
+  "O que atrapalhou ou ficou difícil?",
+  "Qual aprendizado você leva para amanhã?",
+  "Como você está se sentindo agora?",
+] as const;
+
+function DaySummarySheet({
+  open,
+  onClose,
+  day,
+  actions,
+  onActionClick,
+}: {
+  open: boolean;
+  onClose: () => void;
+  day: Date | null;
+  actions: ActionRow[];
+  onActionClick: (a: ActionRow) => void;
+}) {
+  const counts = useMemo(() => {
+    const c = { planned: 0, done: 0, missed: 0, rescheduled: 0, cancelled: 0 };
+    for (const a of actions) {
+      const s = (a.calendar_status as CalendarStatus) ?? "planned";
+      c[s] = (c[s] ?? 0) + 1;
+    }
+    return c;
+  }, [actions]);
+
+  return (
+    <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Resumo do dia</SheetTitle>
+          <SheetDescription>
+            {day ? new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(day) : ""}
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+          {(Object.keys(STATUS_LABEL) as CalendarStatus[]).map((s) => {
+            const token = STATUS_TOKEN[s];
+            return (
+              <div
+                key={s}
+                className="rounded-xl border px-3 py-2"
+                style={{ borderColor: token.ring, background: `color-mix(in oklab, ${token.bg} 40%, var(--card))` }}
+              >
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {STATUS_LABEL[s]}
+                </div>
+                <div className="text-2xl font-bold" style={{ color: token.fg }}>
+                  {counts[s] ?? 0}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-6">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Ações
+          </div>
+          {actions.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Sem ações agendadas neste dia. Pequenas ações consistentes geram equilíbrio.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {actions
+                .slice()
+                .sort((a, b) => (a.scheduled_start ?? "").localeCompare(b.scheduled_start ?? ""))
+                .map((a) => {
+                  const Icon = iconForPillar(a.pillar_id);
+                  const status = (a.calendar_status as CalendarStatus) ?? "planned";
+                  const token = STATUS_TOKEN[status];
+                  return (
+                    <li key={a.id}>
+                      <button
+                        type="button"
+                        onClick={() => onActionClick(a)}
+                        className="flex w-full items-start gap-3 rounded-xl border border-border/60 bg-card p-3 text-left hover:bg-secondary/30 transition"
+                      >
+                        <Icon weight="light" className="h-5 w-5 mt-0.5 text-[color:var(--primary)]" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold truncate">{a.title}</div>
+                          <div className="text-[11px] text-muted-foreground">
+                            {formatTimeRange(a.scheduled_start ?? "", a.scheduled_end)}
+                          </div>
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+                          style={{ background: token.bg, color: token.fg }}
+                        >
+                          {STATUS_LABEL[status]}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+            </ul>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function CloseDayDialog({
+  onClose,
+  onSubmitted,
+}: {
+  onClose: () => void;
+  onSubmitted: () => void;
+}) {
+  const submitFn = useServerFn(submitDailyClosing);
+  const today = new Date().toISOString().slice(0, 10);
+  const [reflection, setReflection] = useState("");
+  const [answers, setAnswers] = useState<string[]>(() => DAILY_QUESTIONS.map(() => ""));
+
+  const mutate = useMutation({
+    mutationFn: submitFn,
+    onSuccess: () => {
+      onSubmitted();
+      onClose();
+      toast.success("Dia fechado com leveza. Até amanhã.");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
+  });
+
+  function submit() {
+    mutate.mutate({
+      data: {
+        closingDate: today,
+        reflection,
+        answers: DAILY_QUESTIONS.map((q, i) => ({ question: q, answer: answers[i] ?? "" })),
+      },
+    });
+  }
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <NotePencil size={20} weight="light" /> Fechar meu dia
+          </DialogTitle>
+          <DialogDescription>
+            Um momento curto para reconhecer o que viveu hoje — sem cobrança, com presença.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-3">
+          {DAILY_QUESTIONS.map((q, i) => (
+            <div key={q}>
+              <Label className="text-xs">{q}</Label>
+              <Textarea
+                rows={2}
+                value={answers[i]}
+                onChange={(e) =>
+                  setAnswers((arr) => {
+                    const next = arr.slice();
+                    next[i] = e.target.value;
+                    return next;
+                  })
+                }
+              />
+            </div>
+          ))}
+          <div>
+            <Label className="text-xs">Reflexão livre (opcional)</Label>
+            <Textarea
+              rows={3}
+              value={reflection}
+              onChange={(e) => setReflection(e.target.value)}
+              placeholder="Como o dia ressoou em você?"
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>Agora não</Button>
+          <Button onClick={submit} disabled={mutate.isPending}>
+            {mutate.isPending ? "Salvando…" : "Encerrar o dia"}
           </Button>
         </DialogFooter>
       </DialogContent>
