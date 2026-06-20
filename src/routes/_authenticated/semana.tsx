@@ -794,7 +794,7 @@ function CreateActionDialog({
   onClose,
   onCreated,
 }: {
-  slot: { day: Date; hour: number; minute: number };
+  slot: { day: Date; hour: number; minute: number; durationMinutes?: number };
   onClose: () => void;
   onCreated: () => void;
 }) {
@@ -802,7 +802,7 @@ function CreateActionDialog({
   const [pillarId, setPillarId] = useState<number>(PILLAR_DEFAULTS[0].id);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(slot.durationMinutes ?? 30);
   const [actionType, setActionType] = useState<"unique" | "recurring">("unique");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
 
