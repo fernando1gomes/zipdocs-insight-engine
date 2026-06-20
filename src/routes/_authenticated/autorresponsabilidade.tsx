@@ -332,7 +332,7 @@ Minha primeira ação nas próximas 24 horas será __________.`;
         <AppHeader />
 
         <div className="mb-6">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2">
             <h1 className="text-3xl font-extrabold tracking-tight">Espelho da Autorresponsabilidade</h1>
             <ConceptInfoDialog />
           </div>
