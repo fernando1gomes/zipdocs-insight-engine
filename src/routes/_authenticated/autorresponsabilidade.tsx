@@ -8,6 +8,21 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Medal as PhMedal } from "@phosphor-icons/react";
 import { iconForPillar } from "@/lib/pillars";
+import { Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/_authenticated/autorresponsabilidade")({
   validateSearch: (raw: Record<string, unknown>): { pillarId?: number } => {
