@@ -119,6 +119,74 @@ export const rescheduleAction = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/** Fecha o dia: salva reflexão + respostas e calcula contagens automaticamente. */
+export const submitDailyClosing = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
+    z.object({
+      closingDate: z.string(), // YYYY-MM-DD
+      reflection: z.string().optional().default(""),
+      answers: z.array(z.object({ question: z.string(), answer: z.string() })).default([]),
+    }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    // contagens das ações daquele dia
+    const dayStart = `${data.closingDate}T00:00:00.000Z`;
+    const dayEnd = `${data.closingDate}T23:59:59.999Z`;
+    const { data: rows, error: e1 } = await context.supabase
+      .from("pillar_actions")
+      .select("calendar_status")
+      .eq("user_id", context.userId)
+      .gte("scheduled_start", dayStart)
+      .lte("scheduled_start", dayEnd);
+    if (e1) throw new Error(e1.message);
+    const planned = rows?.length ?? 0;
+    const done = rows?.filter((r) => r.calendar_status === "done").length ?? 0;
+    const missed = rows?.filter((r) => r.calendar_status === "missed").length ?? 0;
+    const rescheduled = rows?.filter((r) => r.calendar_status === "rescheduled").length ?? 0;
+
+    const { data: closing, error: e2 } = await context.supabase
+      .from("daily_closings")
+      .upsert(
+        {
+          user_id: context.userId,
+          closing_date: data.closingDate,
+          planned_actions_count: planned,
+          completed_actions_count: done,
+          not_completed_actions_count: missed,
+          rescheduled_actions_count: rescheduled,
+          user_reflection: data.reflection || null,
+        },
+        { onConflict: "user_id,closing_date" },
+      )
+      .select("id")
+      .single();
+    if (e2) throw new Error(e2.message);
+
+    if (data.answers.length) {
+      await context.supabase
+        .from("daily_closing_answers")
+        .delete()
+        .eq("daily_closing_id", closing.id);
+      const payload = data.answers
+        .filter((a) => a.answer.trim().length > 0)
+        .map((a) => ({
+          daily_closing_id: closing.id,
+          user_id: context.userId,
+          question: a.question,
+          answer: a.answer,
+        }));
+      if (payload.length) {
+        const { error: e3 } = await context.supabase
+          .from("daily_closing_answers")
+          .insert(payload);
+        if (e3) throw new Error(e3.message);
+      }
+    }
+
+    return { ok: true, planned, done, missed, rescheduled };
+  });
+
 /** Atualiza status (executada, não executada, cancelada). */
 export const updateActionStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
