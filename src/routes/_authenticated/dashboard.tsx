@@ -9,7 +9,7 @@ import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts";
-import { Bell, Leaf, Lightbulb, Star, Target, Sparkles, Home } from "lucide-react";
+import { Bell, Leaf, Lightbulb, Star, Target, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
