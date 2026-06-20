@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -97,7 +97,12 @@ function SemanaPage() {
     return Math.max(0, Math.min(6, idx));
   });
   const [detailAction, setDetailAction] = useState<ActionRow | null>(null);
-  const [createSlot, setCreateSlot] = useState<{ day: Date; hour: number; minute: number } | null>(null);
+  const [createSlot, setCreateSlot] = useState<{
+    day: Date;
+    hour: number;
+    minute: number;
+    durationMinutes?: number;
+  } | null>(null);
   const [filterPillar, setFilterPillar] = useState<number | "all">("all");
   const [filterStatus, setFilterStatus] = useState<CalendarStatus | "all">("all");
   const [summaryDay, setSummaryDay] = useState<number | null>(null);
@@ -286,8 +291,13 @@ function SemanaPage() {
                   day={addDays(weekStart, i)}
                   actions={actionsForDay(i)}
                   totalHeight={totalHeight}
-                  onSlotClick={(hour, minute) =>
-                    setCreateSlot({ day: addDays(weekStart, i), hour, minute })
+                  onSlotRangeSelect={(hour, minute, durationMinutes) =>
+                    setCreateSlot({
+                      day: addDays(weekStart, i),
+                      hour,
+                      minute,
+                      durationMinutes,
+                    })
                   }
                   onActionClick={setDetailAction}
                 />
@@ -311,8 +321,13 @@ function SemanaPage() {
                 day={addDays(weekStart, activeDay)}
                 actions={actionsForDay(activeDay)}
                 totalHeight={totalHeight}
-                onSlotClick={(hour, minute) =>
-                  setCreateSlot({ day: addDays(weekStart, activeDay), hour, minute })
+                onSlotRangeSelect={(hour, minute, durationMinutes) =>
+                  setCreateSlot({
+                    day: addDays(weekStart, activeDay),
+                    hour,
+                    minute,
+                    durationMinutes,
+                  })
                 }
                 onActionClick={setDetailAction}
               />
@@ -387,18 +402,109 @@ function DayColumn({
   day,
   actions,
   totalHeight,
-  onSlotClick,
+  onSlotRangeSelect,
   onActionClick,
 }: {
   day: Date;
   actions: ActionRow[];
   totalHeight: number;
-  onSlotClick: (hour: number, minute: number) => void;
+  onSlotRangeSelect: (hour: number, minute: number, durationMinutes: number) => void;
   onActionClick: (a: ActionRow) => void;
 }) {
   const slotsPerHour = 60 / SLOT_MINUTES;
   const totalSlots = (HOUR_END - HOUR_START) * slotsPerHour;
   const isToday = day.toDateString() === new Date().toDateString();
+  const layerRef = useRef<HTMLDivElement | null>(null);
+  const [selection, setSelection] = useState<{ start: number; end: number } | null>(null);
+  const draggingRef = useRef(false);
+
+  // Conjunto de slots ocupados por ações existentes (para impedir início/expansão sobre blocos)
+  const occupied = useMemo(() => {
+    const set = new Set<number>();
+    for (const a of actions) {
+      if (!a.scheduled_start) continue;
+      const d = new Date(a.scheduled_start);
+      const startIdx =
+        (d.getHours() - HOUR_START) * slotsPerHour + Math.floor(d.getMinutes() / SLOT_MINUTES);
+      const slots = Math.max(1, Math.ceil((a.duration_minutes ?? SLOT_MINUTES) / SLOT_MINUTES));
+      for (let k = 0; k < slots; k++) set.add(startIdx + k);
+    }
+    return set;
+  }, [actions, slotsPerHour]);
+
+  function slotFromEvent(e: React.PointerEvent<HTMLDivElement>): number | null {
+    const el = layerRef.current;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const idx = Math.floor(y / SLOT_HEIGHT_PX);
+    if (idx < 0 || idx >= totalSlots) return null;
+    return idx;
+  }
+
+  function clampRange(start: number, end: number): { start: number; end: number } {
+    const lo = Math.min(start, end);
+    const hi = Math.max(start, end);
+    // Limita expansão se cruzar slot ocupado
+    let clampedLo = lo;
+    let clampedHi = hi;
+    if (end >= start) {
+      for (let k = start + 1; k <= hi; k++) {
+        if (occupied.has(k)) { clampedHi = k - 1; break; }
+      }
+    } else {
+      for (let k = start - 1; k >= lo; k--) {
+        if (occupied.has(k)) { clampedLo = k + 1; break; }
+      }
+    }
+    return { start: clampedLo, end: clampedHi };
+  }
+
+  function commit(start: number, end: number) {
+    const lo = Math.min(start, end);
+    const hi = Math.max(start, end);
+    const slots = hi - lo + 1;
+    const hour = HOUR_START + Math.floor(lo / slotsPerHour);
+    const minute = (lo % slotsPerHour) * SLOT_MINUTES;
+    onSlotRangeSelect(hour, minute, slots * SLOT_MINUTES);
+  }
+
+  function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.button !== 0 && e.pointerType === "mouse") return;
+    const idx = slotFromEvent(e);
+    if (idx === null) return;
+    if (occupied.has(idx)) return;
+    draggingRef.current = true;
+    setSelection({ start: idx, end: idx });
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+  }
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!draggingRef.current || !selection) return;
+    const idx = slotFromEvent(e);
+    if (idx === null) return;
+    const next = clampRange(selection.start, idx);
+    if (next.start !== selection.start || next.end !== selection.end) {
+      setSelection(next);
+    }
+  }
+
+  function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    if (!draggingRef.current || !selection) {
+      draggingRef.current = false;
+      return;
+    }
+    draggingRef.current = false;
+    const sel = selection;
+    setSelection(null);
+    (e.currentTarget as Element).releasePointerCapture?.(e.pointerId);
+    commit(sel.start, sel.end);
+  }
+
+  function handlePointerCancel() {
+    draggingRef.current = false;
+    setSelection(null);
+  }
 
   return (
     <div
@@ -407,24 +513,49 @@ function DayColumn({
       }`}
       style={{ height: totalHeight }}
     >
-      {/* slots clicáveis */}
+      {/* linhas guia dos slots */}
       {Array.from({ length: totalSlots }).map((_, i) => {
-        const hour = HOUR_START + Math.floor(i / slotsPerHour);
-        const minute = (i % slotsPerHour) * SLOT_MINUTES;
-        const onHour = minute === 0;
+        const onHour = i % slotsPerHour === 0;
         return (
-          <button
+          <div
             key={i}
-            type="button"
-            onClick={() => onSlotClick(hour, minute)}
+            aria-hidden
             className={`absolute left-0 right-0 border-t ${
               onHour ? "border-border/50" : "border-border/20"
-            } hover:bg-[color:var(--primary)]/5 transition`}
+            }`}
             style={{ top: i * SLOT_HEIGHT_PX, height: SLOT_HEIGHT_PX }}
-            aria-label={`Criar ação em ${formatHour(hour)}:${String(minute).padStart(2, "0")}`}
           />
         );
       })}
+
+      {/* camada de seleção por arraste */}
+      <div
+        ref={layerRef}
+        role="grid"
+        aria-label={`Selecionar horário em ${formatDayHeader(day)} (arraste para cobrir mais tempo)`}
+        className="absolute inset-0 z-[1] touch-none cursor-cell hover:bg-[color:var(--primary)]/5"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+      />
+
+      {/* overlay da seleção atual */}
+      {selection && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1 right-1 z-[2] rounded-lg border border-dashed border-[color:var(--primary)] bg-[color:var(--primary)]/15"
+          style={{
+            top: Math.min(selection.start, selection.end) * SLOT_HEIGHT_PX,
+            height:
+              (Math.abs(selection.end - selection.start) + 1) * SLOT_HEIGHT_PX,
+          }}
+        >
+          <div className="px-2 py-1 text-[10px] font-semibold text-[color:var(--primary)]">
+            {(Math.abs(selection.end - selection.start) + 1) * SLOT_MINUTES} min
+          </div>
+        </div>
+      )}
 
       {/* blocos de ação */}
       {actions.map((a) => {
@@ -439,7 +570,7 @@ function DayColumn({
             key={a.id}
             type="button"
             onClick={() => onActionClick(a)}
-            className="absolute left-1 right-1 rounded-xl border bg-card text-left shadow-sm hover:shadow-md transition overflow-hidden"
+            className="absolute left-1 right-1 z-[3] rounded-xl border bg-card text-left shadow-sm hover:shadow-md transition overflow-hidden"
             style={{
               top,
               height,
@@ -663,7 +794,7 @@ function CreateActionDialog({
   onClose,
   onCreated,
 }: {
-  slot: { day: Date; hour: number; minute: number };
+  slot: { day: Date; hour: number; minute: number; durationMinutes?: number };
   onClose: () => void;
   onCreated: () => void;
 }) {
@@ -671,7 +802,7 @@ function CreateActionDialog({
   const [pillarId, setPillarId] = useState<number>(PILLAR_DEFAULTS[0].id);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(slot.durationMinutes ?? 30);
   const [actionType, setActionType] = useState<"unique" | "recurring">("unique");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
 
