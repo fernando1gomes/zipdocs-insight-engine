@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -97,7 +97,12 @@ function SemanaPage() {
     return Math.max(0, Math.min(6, idx));
   });
   const [detailAction, setDetailAction] = useState<ActionRow | null>(null);
-  const [createSlot, setCreateSlot] = useState<{ day: Date; hour: number; minute: number } | null>(null);
+  const [createSlot, setCreateSlot] = useState<{
+    day: Date;
+    hour: number;
+    minute: number;
+    durationMinutes?: number;
+  } | null>(null);
   const [filterPillar, setFilterPillar] = useState<number | "all">("all");
   const [filterStatus, setFilterStatus] = useState<CalendarStatus | "all">("all");
   const [summaryDay, setSummaryDay] = useState<number | null>(null);
@@ -286,8 +291,13 @@ function SemanaPage() {
                   day={addDays(weekStart, i)}
                   actions={actionsForDay(i)}
                   totalHeight={totalHeight}
-                  onSlotClick={(hour, minute) =>
-                    setCreateSlot({ day: addDays(weekStart, i), hour, minute })
+                  onSlotRangeSelect={(hour, minute, durationMinutes) =>
+                    setCreateSlot({
+                      day: addDays(weekStart, i),
+                      hour,
+                      minute,
+                      durationMinutes,
+                    })
                   }
                   onActionClick={setDetailAction}
                 />
@@ -311,8 +321,13 @@ function SemanaPage() {
                 day={addDays(weekStart, activeDay)}
                 actions={actionsForDay(activeDay)}
                 totalHeight={totalHeight}
-                onSlotClick={(hour, minute) =>
-                  setCreateSlot({ day: addDays(weekStart, activeDay), hour, minute })
+                onSlotRangeSelect={(hour, minute, durationMinutes) =>
+                  setCreateSlot({
+                    day: addDays(weekStart, activeDay),
+                    hour,
+                    minute,
+                    durationMinutes,
+                  })
                 }
                 onActionClick={setDetailAction}
               />
