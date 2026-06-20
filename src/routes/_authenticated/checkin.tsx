@@ -86,7 +86,7 @@ function CheckinPage() {
               className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
             >
               {PILLAR_DEFAULTS.map((p) => (
-                <option key={p.id} value={p.id}>{p.icon} {p.name}</option>
+                <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
           </div>
@@ -98,7 +98,7 @@ function CheckinPage() {
               className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
             >
               {PILLAR_DEFAULTS.map((p) => (
-                <option key={p.id} value={p.id}>{p.icon} {p.name}</option>
+                <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
           </div>
