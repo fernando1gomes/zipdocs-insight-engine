@@ -8,6 +8,21 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { Medal as PhMedal } from "@phosphor-icons/react";
 import { iconForPillar } from "@/lib/pillars";
+import { Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/_authenticated/autorresponsabilidade")({
   validateSearch: (raw: Record<string, unknown>): { pillarId?: number } => {
@@ -317,7 +332,10 @@ Minha primeira ação nas próximas 24 horas será __________.`;
         <AppHeader />
 
         <div className="mb-6">
-          <h1 className="text-3xl font-extrabold tracking-tight">Espelho da Autorresponsabilidade</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-extrabold tracking-tight">Espelho da Autorresponsabilidade</h1>
+            <ConceptInfoDialog />
+          </div>
           <p className="text-sm text-muted-foreground mt-1">
             Pare de culpar. Comece a transformar.
           </p>
@@ -653,5 +671,258 @@ Minha primeira ação nas próximas 24 horas será __________.`;
         )}
       </div>
     </div>
+  );
+}
+
+function ConceptInfoDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0"
+          aria-label="Entenda o conceito: quebrado, faltando ou fora do lugar"
+        >
+          <Info className="h-5 w-5 text-[color:var(--primary)]" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Quebrado, faltando ou fora do lugar</DialogTitle>
+          <DialogDescription>
+            Uma forma simples e poderosa de identificar onde o caos entrou em uma área da vida.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 text-sm leading-relaxed">
+          <p>
+            Sempre que existe dor, desordem, sofrimento ou resultado ruim em um pilar da vida,
+            provavelmente existe algo quebrado, algo faltando ou algo fora do lugar. A ideia
+            aparece quando Paulo explica que a paz, ou “Shalom”, representa uma vida sem nada
+            quebrado, nada faltando e nada fora do lugar — ou seja, uma vida em ordem, inteira e
+            funcional.
+          </p>
+
+          <Accordion type="multiple" className="w-full">
+            <AccordionItem value="broken">
+              <AccordionTrigger>1. O que está quebrado?</AccordionTrigger>
+              <AccordionContent className="space-y-3">
+                <p>
+                  É algo que existia, mas foi danificado. Pode ser uma confiança, uma rotina, uma
+                  aliança, uma autoestima, uma disciplina, uma saúde, uma comunicação ou uma
+                  conexão.
+                </p>
+                <div className="rounded-lg border border-border/60 bg-secondary/50 p-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="font-medium">Casamento</div>
+                    <div>Confiança quebrada</div>
+                    <div className="font-medium">Família</div>
+                    <div>Diálogo quebrado</div>
+                    <div className="font-medium">Saúde</div>
+                    <div>Rotina quebrada</div>
+                    <div className="font-medium">Finanças</div>
+                    <div>Controle financeiro quebrado</div>
+                    <div className="font-medium">Emocional</div>
+                    <div>Autoestima quebrada</div>
+                    <div className="font-medium">Profissional</div>
+                    <div>Compromisso quebrado</div>
+                    <div className="font-medium">Espiritual</div>
+                    <div>Fé enfraquecida ou quebrada</div>
+                  </div>
+                </div>
+                <p>
+                  <span className="font-medium">Pergunta poderosa:</span> O que foi danificado
+                  nessa área da minha vida e precisa ser restaurado?
+                </p>
+                <p className="text-muted-foreground">
+                  Exemplo prático: No casamento, talvez o que esteja quebrado seja a confiança. Não
+                  adianta criar uma viagem romântica se a confiança continua quebrada. Primeiro
+                  precisa restaurar aquilo que foi ferido.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="missing">
+              <AccordionTrigger>2. O que está faltando?</AccordionTrigger>
+              <AccordionContent className="space-y-3">
+                <p>
+                  É algo necessário que não está presente. Não está necessariamente danificado —
+                  simplesmente não existe, não foi colocado, não foi desenvolvido ou não está sendo
+                  praticado.
+                </p>
+                <div className="rounded-lg border border-border/60 bg-secondary/50 p-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="font-medium">Saúde</div>
+                    <div>Exercício, sono, exames, alimentação</div>
+                    <div className="font-medium">Finanças</div>
+                    <div>Reserva, planejamento, orçamento</div>
+                    <div className="font-medium">Família</div>
+                    <div>Presença, tempo de qualidade, escuta</div>
+                    <div className="font-medium">Relacionamento</div>
+                    <div>Carinho, diálogo, admiração</div>
+                    <div className="font-medium">Carreira</div>
+                    <div>Estudo, capacitação, estratégia</div>
+                    <div className="font-medium">Emocional</div>
+                    <div>Autoconhecimento, perdão, regulação</div>
+                    <div className="font-medium">Espiritual</div>
+                    <div>Oração, silêncio, comunhão, fé prática</div>
+                  </div>
+                </div>
+                <p>
+                  <span className="font-medium">Pergunta poderosa:</span> O que está ausente
+                  nessa área e precisa ser reposto ou desenvolvido?
+                </p>
+                <p className="text-muted-foreground">
+                  Exemplo prático: Na vida financeira, talvez não exista uma reserva de emergência.
+                  Então não é apenas “ganhar mais dinheiro”. O que está faltando é planejamento,
+                  organização e reserva.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="misplaced">
+              <AccordionTrigger>3. O que está fora do lugar?</AccordionTrigger>
+              <AccordionContent className="space-y-3">
+                <p>
+                  É algo que até existe, mas está ocupando a posição errada, com prioridade errada,
+                  intensidade errada ou função errada.
+                </p>
+                <div className="rounded-lg border border-border/60 bg-secondary/50 p-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="font-medium">Família</div>
+                    <div>Trabalho acima dos filhos</div>
+                    <div className="font-medium">Casamento</div>
+                    <div>Orgulho acima do amor</div>
+                    <div className="font-medium">Saúde</div>
+                    <div>Prazer imediato acima do cuidado</div>
+                    <div className="font-medium">Finanças</div>
+                    <div>Aparência acima da realidade</div>
+                    <div className="font-medium">Emocional</div>
+                    <div>Medo acima da fé</div>
+                    <div className="font-medium">Profissional</div>
+                    <div>Urgência acima do propósito</div>
+                    <div className="font-medium">Espiritual</div>
+                    <div>Discurso acima da prática</div>
+                    <div className="font-medium">Social</div>
+                    <div>Opinião dos outros acima da identidade</div>
+                  </div>
+                </div>
+                <p>
+                  <span className="font-medium">Pergunta poderosa:</span> O que existe nessa
+                  área, mas está ocupando um lugar que não deveria ocupar?
+                </p>
+                <p className="text-muted-foreground">
+                  Exemplo prático: A pessoa ama a família, mas colocou o trabalho em primeiro
+                  lugar absoluto. O trabalho não é ruim. O problema é que ele está fora do lugar.
+                  Ele virou dono da agenda, dono da energia e dono da presença.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="apply">
+              <AccordionTrigger>4. Como aplicar em cada pilar da vida</AccordionTrigger>
+              <AccordionContent className="space-y-4">
+                <div className="space-y-1">
+                  <div className="font-medium">Saúde e disposição</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: sono, rotina, metabolismo, disciplina.</li>
+                    <li>Faltando: exercício, água, exames, descanso.</li>
+                    <li>Fora do lugar: prazer imediato acima da saúde.</li>
+                  </ul>
+                  <p className="text-xs italic">
+                    O que estou fazendo com meu corpo que mostra falta de cuidado comigo?
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-medium">Equilíbrio emocional</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: autoestima, segurança, paz interior.</li>
+                    <li>Faltando: autoconhecimento, perdão, domínio emocional.</li>
+                    <li>Fora do lugar: emoção mandando na razão.</li>
+                  </ul>
+                  <p className="text-xs italic">Que emoção tem governado minhas decisões?</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-medium">Recursos financeiros</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: controle financeiro, crédito, confiança com dinheiro.</li>
+                    <li>Faltando: orçamento, reserva, educação financeira.</li>
+                    <li>Fora do lugar: consumo acima da realidade.</li>
+                  </ul>
+                  <p className="text-xs italic">
+                    Onde eu estou tentando parecer próspero antes de ser organizado?
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-medium">Família</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: diálogo, respeito, confiança.</li>
+                    <li>Faltando: presença, afeto, escuta, perdão.</li>
+                    <li>Fora do lugar: celular, trabalho ou orgulho acima da conexão.</li>
+                  </ul>
+                  <p className="text-xs italic">
+                    O que minha família mais precisa de mim e eu não tenho entregue?
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-medium">Relacionamento amoroso</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: admiração, intimidade, confiança.</li>
+                    <li>Faltando: conversa, carinho, parceria, verdade.</li>
+                    <li>Fora do lugar: razão acima da conexão, orgulho acima do amor.</li>
+                  </ul>
+                  <p className="text-xs italic">Eu quero resolver ou quero vencer?</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-medium">Carreira e profissão</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: motivação, reputação, compromisso, performance.</li>
+                    <li>Faltando: capacitação, estratégia, constância, mentoria.</li>
+                    <li>Fora do lugar: reclamação acima do preparo.</li>
+                  </ul>
+                  <p className="text-xs italic">
+                    O que eu ainda não aprendi, mas continuo usando como desculpa para não crescer?
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-medium">Espiritualidade</div>
+                  <ul className="list-disc pl-4 text-muted-foreground">
+                    <li>Quebrado: fé, coerência, confiança.</li>
+                    <li>Faltando: oração, prática, gratidão, serviço.</li>
+                    <li>Fora do lugar: medo acima da fé, discurso acima da prática.</li>
+                  </ul>
+                  <p className="text-xs italic">
+                    Minha fé está aparecendo nas minhas escolhas ou só nas minhas palavras?
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="summary">
+              <AccordionTrigger>5. Resumo simples</AccordionTrigger>
+              <AccordionContent>
+                <div className="rounded-lg border border-border/60 bg-secondary/50 p-3">
+                  <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+                    <div className="font-medium">Quebrado</div>
+                    <div>Algo foi danificado → O que precisa ser restaurado?</div>
+                    <div className="font-medium">Faltando</div>
+                    <div>Algo necessário está ausente → O que precisa ser reposto?</div>
+                    <div className="font-medium">Fora do lugar</div>
+                    <div>Algo está em posição errada → O que precisa ser reorganizado?</div>
+                  </div>
+                </div>
+                <p className="mt-3 text-muted-foreground">
+                  A força dessa ferramenta é que tira a pessoa da reclamação genérica. Em vez de
+                  dizer “Minha vida financeira está ruim”, ela começa a dizer: “Meu controle
+                  financeiro está quebrado, está faltando orçamento e meus gastos por aparência
+                  estão fora do lugar.” Agora existe clareza. E onde existe clareza, pode existir
+                  ação.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
