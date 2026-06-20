@@ -9,6 +9,7 @@ import { usePillars } from "@/lib/usePillars";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PILLAR_IMPACTS, INFLUENCE_WEIGHT, influenceLabel } from "@/lib/impacts";
+import { PILLAR_DEFAULTS } from "@/lib/pillars";
 import { Bell, Leaf, Lightbulb, Star, Target, Sparkle } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -144,9 +145,13 @@ function ImpactPrioritiesBlock({ pillars }: { pillars: Pillar[] }) {
                   <Link
                     to="/impactos"
                     search={{ pillar: it.impact.systemPillarId }}
-                    className="font-medium hover:underline"
+                    className="inline-flex items-center gap-2 font-medium hover:underline"
                   >
-                    {it.impact.icon} {it.impact.displayName}
+                    {(() => {
+                      const Icon = PILLAR_DEFAULTS.find((p) => p.id === it.impact.systemPillarId)?.Icon;
+                      return Icon ? <Icon size={16} weight="light" className="text-[color:var(--primary)]" /> : null;
+                    })()}
+                    {it.impact.displayName}
                   </Link>
                 </td>
                 <td className="px-3 py-2 font-semibold">{it.score.toFixed(1)}</td>

@@ -14,7 +14,7 @@ export interface PillarImpactData {
   displayName: string;
   shortDisplay: string;
   icon: string;
-  Icon: PillarIcon;
+  Icon?: PillarIcon;
   directCount: number;
   influence: Influence;
   influenceWeight: number;
