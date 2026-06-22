@@ -282,3 +282,40 @@
   .hero-wheel-hub,
   .hero-wheel-seg { animation: none; }
 }
+
+/* Radial wheel — connector flow + hub breathing */
+@keyframes wheel-connector-flow {
+  to { stroke-dashoffset: -28; }
+}
+@keyframes wheel-connector-pulse {
+  0%, 100% { opacity: .5; }
+  50%      { opacity: .9; }
+}
+@keyframes wheel-node-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+@keyframes wheel-hub-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.025); }
+}
+.wheel-connector {
+  animation: wheel-connector-flow 4s linear infinite,
+             wheel-connector-pulse 3s ease-in-out infinite;
+}
+.wheel-node-origin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-node-pulse 2.5s ease-in-out infinite;
+}
+.wheel-node-end {
+  animation: wheel-connector-pulse 2.8s ease-in-out infinite;
+}
+.wheel-hub {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-hub-breathe 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wheel-connector, .wheel-node-origin, .wheel-node-end, .wheel-hub { animation: none; }
+}
