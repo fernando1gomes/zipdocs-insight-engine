@@ -260,7 +260,7 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
       </div>
 
       {/* Cards positioned with explicit anchors per the reference layout */}
-      {pillars.map((p) => {
+      {pillars.map((p, i) => {
         const pos = CARD_POS[p.id];
         if (!pos) return null;
         return (
@@ -276,7 +276,12 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
               maxWidth: 240,
             }}
           >
-            <PillarCard pillar={p} hovered={hovered === p.id} onHover={onHover} />
+            <div
+              className="wheel-card-float"
+              style={{ animationDelay: `${(i % 11) * 0.35}s` }}
+            >
+              <PillarCard pillar={p} hovered={hovered === p.id} onHover={onHover} />
+            </div>
           </div>
         );
       })}
