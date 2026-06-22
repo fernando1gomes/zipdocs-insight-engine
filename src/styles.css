@@ -69,44 +69,43 @@
   --color-focus-soft: var(--focus-soft);
   --color-empty: var(--empty);
   --color-empty-soft: var(--empty-soft);
-  --font-display: "Poppins", system-ui, sans-serif;
-  --font-sans: "Lato", system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.625rem;
-  /* Vida em Eixo — Identidade Visual
-     Sálvia #4A7C59 · Aloe #8FB996 · Creme #F5F1E8 ·
-     Terracota #D4A574 · Petróleo #2C4A52 */
-  --background: oklch(0.96 0.012 85);
-  --foreground: oklch(0.34 0.04 215);
+  /* Vida em Eixo — Premium Editorial
+     Verde-azulado profundo #1A3A3A · Dourado #C9A227 · Off-white #F8F6F1 */
+  --background: oklch(0.965 0.008 80);     /* #F8F6F1 */
+  --foreground: oklch(0.28 0.012 200);     /* #2D3436 */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.34 0.04 215);
+  --card-foreground: oklch(0.28 0.012 200);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.34 0.04 215);
-  --primary: oklch(0.52 0.08 145);
-  --primary-foreground: oklch(0.98 0.01 85);
-  --secondary: oklch(0.92 0.025 145);
-  --secondary-foreground: oklch(0.34 0.04 215);
-  --muted: oklch(0.93 0.012 85);
-  --muted-foreground: oklch(0.5 0.03 215);
-  --accent: oklch(0.75 0.08 70);
-  --accent-foreground: oklch(0.28 0.04 215);
+  --popover-foreground: oklch(0.28 0.012 200);
+  --primary: oklch(0.33 0.035 180);        /* #1A3A3A verde-azulado profundo */
+  --primary-foreground: oklch(0.97 0.008 80);
+  --secondary: oklch(0.93 0.012 80);
+  --secondary-foreground: oklch(0.28 0.012 200);
+  --muted: oklch(0.94 0.008 80);
+  --muted-foreground: oklch(0.48 0.012 220); /* #636E72 */
+  --accent: oklch(0.74 0.13 85);            /* #C9A227 dourado */
+  --accent-foreground: oklch(0.22 0.02 200);
   --destructive: oklch(0.58 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 85);
-  --border: oklch(0.88 0.018 90);
-  --input: oklch(0.88 0.018 90);
-  --ring: oklch(0.75 0.08 70);
-  --balanced: oklch(0.52 0.08 145);
-  --balanced-soft: oklch(0.74 0.06 145);
-  --attention: oklch(0.75 0.08 70);
-  --attention-soft: oklch(0.92 0.04 75);
+  --destructive-foreground: oklch(0.97 0.008 80);
+  --border: oklch(0.9 0.008 80);            /* #E8E4DD */
+  --input: oklch(0.9 0.008 80);
+  --ring: oklch(0.74 0.13 85);
+  --balanced: oklch(0.45 0.06 165);
+  --balanced-soft: oklch(0.78 0.05 165);
+  --attention: oklch(0.74 0.13 85);
+  --attention-soft: oklch(0.92 0.05 85);
   --critical: oklch(0.58 0.2 25);
   --critical-soft: oklch(0.93 0.06 30);
-  --focus: oklch(0.34 0.04 215);
-  --focus-soft: oklch(0.88 0.025 215);
-  --empty: oklch(0.78 0.01 90);
-  --empty-soft: oklch(0.93 0.012 85);
+  --focus: oklch(0.33 0.035 180);
+  --focus-soft: oklch(0.88 0.02 180);
+  --empty: oklch(0.82 0.008 80);
+  --empty-soft: oklch(0.93 0.008 80);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -189,14 +188,18 @@
    para manter coerência visual com o interior do produto.
    ============================================================ */
 .landing-root {
-  --landing-bg: var(--background);
-  --landing-bg-soft: color-mix(in oklab, var(--primary) 5%, var(--background));
-  --landing-ink: var(--foreground);
-  --landing-ink-soft: color-mix(in oklab, var(--foreground) 70%, var(--background));
-  --landing-muted: var(--muted-foreground);
-  --landing-gold: var(--accent);
-  --landing-gold-deep: color-mix(in oklab, var(--accent) 80%, var(--foreground));
-  --landing-line: var(--border);
+  --landing-bg: #F8F6F1;
+  --landing-bg-soft: #F1EDE4;
+  --landing-ink: #2D3436;
+  --landing-ink-soft: #636E72;
+  --landing-muted: #8A8F92;
+  --landing-deep: #1A3A3A;
+  --landing-deep-soft: #244848;
+  --landing-gold: #C9A227;
+  --landing-gold-soft: #D4B450;
+  --landing-gold-deep: #A8861B;
+  --landing-line: #E8E4DD;
+  --landing-line-dark: rgba(255,255,255,0.14);
   background: var(--landing-bg);
   color: var(--landing-ink);
   font-family: var(--font-sans);
@@ -204,34 +207,62 @@
 .landing-root h1, .landing-root h2, .landing-root h3 {
   font-family: var(--font-display);
   color: var(--landing-ink);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.015em;
+  font-weight: 500;
+}
+.landing-root .font-display { font-family: var(--font-display); }
+.landing-root .eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--landing-gold-deep);
+  font-weight: 500;
+}
+.landing-rule {
+  display: inline-block;
+  width: 56px;
+  height: 2px;
+  background: var(--landing-gold);
 }
 .landing-cta {
-  background: var(--landing-ink);
-  color: var(--background);
-  border-radius: 999px;
-  padding: 0.85rem 1.6rem;
-  font-weight: 600;
-  font-size: 0.95rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
-  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--foreground) 40%, transparent);
+  border-radius: 2px;
+  padding: 0.95rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: all .25s ease;
 }
-.landing-cta:hover { background: color-mix(in oklab, var(--foreground) 85%, var(--primary)); transform: translateY(-1px); }
-.landing-cta-gold {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--primary) 55%, transparent);
-}
-.landing-cta-gold:hover { background: color-mix(in oklab, var(--primary) 85%, var(--foreground)); }
-.landing-cta-ghost {
+.landing-cta-gold-outline {
   background: transparent;
-  color: var(--landing-ink);
-  border: 1px solid var(--landing-line);
+  color: var(--landing-gold);
+  border: 1.5px solid var(--landing-gold);
 }
-.landing-cta-ghost:hover { background: color-mix(in oklab, var(--foreground) 5%, transparent); }
+.landing-cta-gold-outline:hover {
+  background: var(--landing-gold);
+  color: var(--landing-deep);
+}
+.landing-cta-solid {
+  background: var(--landing-deep);
+  color: #F8F6F1;
+  border: 1.5px solid var(--landing-deep);
+}
+.landing-cta-solid:hover {
+  background: var(--landing-deep-soft);
+  border-color: var(--landing-deep-soft);
+}
+.landing-cta-gold {
+  background: var(--landing-gold);
+  color: var(--landing-deep);
+  border: 1.5px solid var(--landing-gold);
+}
+.landing-cta-gold:hover { background: var(--landing-gold-deep); border-color: var(--landing-gold-deep); }
 .landing-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--primary) 30%, var(--focus) 70%, transparent);
