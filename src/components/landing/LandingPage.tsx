@@ -152,13 +152,11 @@ function Hero() {
 
         {/* Right — dashboard preview */}
         <div className="relative">
-          <div className="relative mx-auto w-full max-w-[640px] rounded-[18px] bg-white p-[10px] shadow-[0_30px_60px_-25px_rgba(26,77,77,0.22)]">
-            <img
-              src={pcModeloAsset.url}
-              alt="Dashboard Vida em Eixo mostrando progresso geral, foco do dia e pilares da vida"
-              className="w-full rounded-[10px]"
-            />
-          </div>
+          <img
+            src={pcModeloAsset.url}
+            alt="Dashboard Vida em Eixo mostrando progresso geral, foco do dia e pilares da vida"
+            className="relative mx-auto w-full max-w-[680px] rounded-[16px] shadow-[0_30px_60px_-25px_rgba(26,77,77,0.22)]"
+          />
         </div>
       </div>
     </section>
