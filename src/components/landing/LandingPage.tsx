@@ -218,6 +218,52 @@ function HeroWheel() {
   );
 }
 
+const DEMO_PILLARS: Pillar[] = [
+  { id: 1,  name: "Contribuição",  shortName: "Contribuição",  icon: "🤝", Icon: HandHeart,   score: 8.2, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 2,  name: "Emocional",     shortName: "Emocional",     icon: "❤️", Icon: Brain,       score: 6.4, message: "Exemplo: atenção",            impact: 3, impactPillars: [] },
+  { id: 3,  name: "Família",       shortName: "Família",       icon: "🏠", Icon: House,       score: 7.6, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 4,  name: "Relacionamento",shortName: "Relacionamento",icon: "💕", Icon: Heart,       score: 4.9, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
+  { id: 5,  name: "Social",        shortName: "Social",        icon: "👥", Icon: UsersThree,  score: 7.1, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 6,  name: "Carreira",      shortName: "Carreira",      icon: "🎯", Icon: Target,      score: 6.2, message: "Exemplo: atenção",            impact: 4, impactPillars: [], focus: true },
+  { id: 7,  name: "Financeiro",    shortName: "Financeiro",    icon: "💵", Icon: ChartLineUp, score: 8.5, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 8,  name: "Intelectual",   shortName: "Intelectual",   icon: "📖", Icon: BookOpen,    score: 7.8, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 9,  name: "Espiritualidade",shortName:"Espiritualidade",icon:"🧘", Icon: FlowerLotus, score: 5.3, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
+  { id: 10, name: "Lazer",         shortName: "Lazer",         icon: "🎵", Icon: MusicNotes,  score: 6.8, message: "Exemplo: atenção",            impact: 3, impactPillars: [] },
+  { id: 11, name: "Saúde",         shortName: "Saúde",         icon: "🏃", Icon: Heartbeat,   score: 4.3, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
+];
+
+function DashboardPreview() {
+  return (
+    <section className="relative overflow-hidden border-y border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--landing-line)] bg-[color:var(--background)] px-3 py-1 text-xs font-medium tracking-wide text-[color:var(--landing-ink-soft)] uppercase">
+            Prévia do painel
+          </span>
+          <h2 className="mt-5 text-3xl font-bold leading-tight md:text-4xl">
+            Sua vida inteira, viva e em movimento
+          </h2>
+          <p className="mt-4 text-[color:var(--landing-ink-soft)]">
+            Uma amostra ilustrativa do painel — os números abaixo são fictícios,
+            só para você sentir como a Roda da Vida ganha vida com os seus dados.
+          </p>
+        </div>
+        <div className="mt-12 hidden md:block">
+          <RadialWheel
+            pillars={DEMO_PILLARS}
+            balance={68}
+            hovered={null}
+            onHover={() => {}}
+          />
+          <p className="mt-4 text-center text-xs italic text-[color:var(--landing-muted)]">
+            * dados ilustrativos
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PillarsSection() {
   return (
     <section className="bg-[color:var(--landing-bg-soft)] py-20">
