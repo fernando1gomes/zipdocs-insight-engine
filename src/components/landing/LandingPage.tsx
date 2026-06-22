@@ -150,7 +150,7 @@ function Hero() {
 
         {/* Right: live RadialWheel */}
         <div className="relative">
-          <div className="hidden rounded-3xl border border-[color:var(--landing-gold)]/30 bg-[color:var(--landing-bg)] p-4 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.45)] sm:block">
+          <div className="hidden sm:block">
             <RadialWheel
               pillars={DEMO_PILLARS}
               balance={68}
@@ -159,14 +159,14 @@ function Hero() {
             />
           </div>
           {/* mobile fallback */}
-          <div className="rounded-2xl border border-[color:var(--landing-gold)]/30 bg-[color:var(--landing-bg)]/95 p-8 text-center sm:hidden">
+          <div className="rounded-2xl border border-[color:var(--landing-gold)]/30 bg-[color:var(--landing-green)]/40 p-8 text-center backdrop-blur-sm sm:hidden">
             <p
-              className="text-[color:var(--landing-green)] text-xl"
+              className="text-xl text-white"
               style={{ fontFamily: "var(--font-display)", fontWeight: 600 }}
             >
               Roda da Vida
             </p>
-            <p className="mt-2 text-sm text-[color:var(--landing-ink-soft)]">
+            <p className="mt-2 text-sm text-white/80">
               Visualize seus 11 pilares ao acessar o painel.
             </p>
           </div>
