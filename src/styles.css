@@ -285,37 +285,51 @@
 
 /* Radial wheel — connector flow + hub breathing */
 @keyframes wheel-connector-flow {
-  to { stroke-dashoffset: -28; }
+  to { stroke-dashoffset: -40; }
 }
 @keyframes wheel-connector-pulse {
-  0%, 100% { opacity: .5; }
-  50%      { opacity: .9; }
+  0%, 100% { opacity: .35; }
+  50%      { opacity: 1; }
 }
 @keyframes wheel-node-pulse {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.18); }
+  50%      { transform: scale(1.6); }
 }
 @keyframes wheel-hub-breathe {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.025); }
+  50%      { transform: scale(1.05); }
+}
+@keyframes wheel-hub-halo {
+  0%, 100% { opacity: .2; transform: scale(1); }
+  50%      { opacity: .55; transform: scale(1.12); }
 }
 .wheel-connector {
-  animation: wheel-connector-flow 4s linear infinite,
-             wheel-connector-pulse 3s ease-in-out infinite;
+  stroke: var(--primary) !important;
+  stroke-width: 2 !important;
+  animation: wheel-connector-flow 2.2s linear infinite,
+             wheel-connector-pulse 2.4s ease-in-out infinite;
 }
 .wheel-node-origin {
   transform-box: fill-box;
   transform-origin: center;
-  animation: wheel-node-pulse 2.5s ease-in-out infinite;
+  animation: wheel-node-pulse 2s ease-in-out infinite;
 }
 .wheel-node-end {
-  animation: wheel-connector-pulse 2.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-node-pulse 2.4s ease-in-out infinite,
+             wheel-connector-pulse 2.4s ease-in-out infinite;
 }
 .wheel-hub {
   transform-box: fill-box;
   transform-origin: center;
-  animation: wheel-hub-breathe 6s ease-in-out infinite;
+  animation: wheel-hub-breathe 4s ease-in-out infinite;
+}
+.wheel-hub-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-hub-halo 4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .wheel-connector, .wheel-node-origin, .wheel-node-end, .wheel-hub { animation: none; }
+  .wheel-connector, .wheel-node-origin, .wheel-node-end, .wheel-hub, .wheel-hub-halo { animation: none; }
 }
