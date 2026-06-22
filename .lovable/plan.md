@@ -1,59 +1,88 @@
-## Sugestão de vídeos com aprovação
+## Objetivo
 
-Permitir que qualquer usuário autenticado sugira vídeos do YouTube para um pilar. As sugestões ficam pendentes até um admin aprovar ou recusar. Quando aprovada, a sugestão vira um vídeo público em `/videos`.
+Animar o **círculo central e as linhas conectoras** que ligam a roda aos cards no `RadialWheel` (dashboard `/dashboard`), **sem mexer no formato, posição ou estilo dos cards** nem no layout dos segmentos.
 
-### Banco de dados
+## Escopo
 
-Nova tabela `video_suggestions`:
-- `pillar_id`, `title`, `youtube_id`, `expert_name`, `description`
-- `suggested_by` (uuid do usuário)
-- `status`: `pending` | `approved` | `rejected` (default `pending`)
-- `reviewed_by`, `reviewed_at`, `rejection_reason`
-- `approved_video_id` (referência ao registro criado em `expert_videos` quando aprovado)
-- `created_at`, `updated_at`
+Arquivos afetados:
+- `src/components/RadialWheel.tsx` — adicionar classes nas linhas/pontos conectores e no hub central.
+- `src/styles.css` — novas `@keyframes` e classes utilitárias para a animação dos conectores.
 
-RLS:
-- Usuário autenticado pode `INSERT` (com `suggested_by = auth.uid()`).
-- Usuário vê apenas as **próprias** sugestões (`SELECT WHERE suggested_by = auth.uid()`).
-- Admin vê **todas** e pode `UPDATE` (aprovar/recusar).
+Nada muda em:
+- `PillarCard.tsx`, posições `CARD_POS`, tamanhos, ancoragens.
+- Segmentos da roda (paths coloridos), ícones, números, valor central `{balance}%`.
 
-GRANTs apropriados para `authenticated` e `service_role`.
+## O que será animado
 
-### Fluxo do usuário
+1. **Linhas conectoras (`<line>` tracejadas)**
+   - Animar `stroke-dashoffset` em loop para criar efeito de "fluxo de energia" correndo do centro até o card (~4s, linear, infinito).
+   - Opacidade pulsando suavemente entre 0.5 e 0.85.
 
-Na página `/videos`:
-- Botão **"Sugerir vídeo"** (visível para todos os autenticados, ao lado do filtro).
-- Abre um modal com: pilar, URL do YouTube, título, especialista (opcional), descrição (opcional).
-- Validações: URL válida do YouTube, título obrigatório, limites de caracteres.
-- Após enviar: toast de confirmação e a sugestão aparece numa aba "Minhas sugestões" com status.
+2. **Ponto de origem no segmento (`<circle>` branco com borda colorida)**
+   - Pulso sutil (scale 1 → 1.15, 2.5s ease-in-out infinito) sincronizado com o fluxo da linha.
 
-Nova seção/aba **"Minhas sugestões"** em `/videos` mostrando o status de cada uma (pendente, aprovada, recusada com motivo).
+3. **Ponto de destino no card (`<circle>` pequeno)**
+   - Halo leve (opacidade 0.6 → 1, 2.5s) para indicar "recebimento".
 
-### Fluxo do admin
+4. **Hub central (círculo branco com o `{balance}%`)**
+   - "Respiração" lenta: scale 1 → 1.025 (6s ease-in-out infinito) — bem discreto, só dá sensação de vida.
+   - Halo externo opcional (anel `<circle>` extra atrás do hub) com opacidade pulsando.
 
-Em `/videos-admin`, adicionar uma seção no topo: **"Sugestões pendentes"** com badge de contagem.
-- Lista cada sugestão com preview da thumbnail, dados e quem sugeriu.
-- Botões **Aprovar** e **Recusar** (com campo opcional de motivo).
-- **Aprovar**: cria registro em `expert_videos` com os dados da sugestão e marca a sugestão como `approved` com `approved_video_id` preenchido. Tudo em uma transação (RPC `approve_video_suggestion`).
-- **Recusar**: marca como `rejected` com `rejection_reason` e `reviewed_by/at`.
+5. **Respeito a `prefers-reduced-motion`**
+   - Todas as animações desligadas via media query, como já é feito em `.hero-wheel-*`.
 
-### Detalhes técnicos
+## Detalhes técnicos
 
-- Nova função SQL `approve_video_suggestion(suggestion_id, display_order)` (`SECURITY DEFINER`) que valida `has_role(auth.uid(), 'admin')`, insere em `expert_videos` e atualiza a sugestão atomicamente.
-- Novos hooks em `src/lib/video-suggestions.ts`: `useMySuggestions`, `usePendingSuggestions`, `useCreateSuggestion`, `useApproveSuggestion`, `useRejectSuggestion`.
-- Reaproveitar `extractYouTubeId` e `youtubeThumbnail` de `src/lib/youtube.ts`.
-- Novo componente `SuggestVideoDialog` reutilizável.
+Em `src/styles.css`, adicionar bloco similar ao `hero-wheel-*` existente:
 
-### Arquivos a criar/editar
+```css
+@keyframes wheel-connector-flow {
+  to { stroke-dashoffset: -28; }
+}
+@keyframes wheel-connector-pulse {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: .9; }
+}
+@keyframes wheel-node-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15); }
+}
+@keyframes wheel-hub-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.025); }
+}
 
-- `supabase/migrations/...` — tabela `video_suggestions`, RLS, GRANTs, função `approve_video_suggestion`.
-- `src/lib/video-suggestions.ts` (novo) — hooks Query/Mutation.
-- `src/components/SuggestVideoDialog.tsx` (novo).
-- `src/routes/_authenticated/videos.tsx` — botão "Sugerir vídeo" + aba "Minhas sugestões".
-- `src/routes/_authenticated/videos-admin.tsx` — seção "Sugestões pendentes" com aprovar/recusar.
+.wheel-connector {
+  animation: wheel-connector-flow 4s linear infinite,
+             wheel-connector-pulse 3s ease-in-out infinite;
+}
+.wheel-node-origin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-node-pulse 2.5s ease-in-out infinite;
+}
+.wheel-node-end {
+  animation: wheel-connector-pulse 2.5s ease-in-out infinite;
+}
+.wheel-hub {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheel-hub-breathe 6s ease-in-out infinite;
+}
 
-### Fora de escopo (a confirmar depois, se quiser)
+@media (prefers-reduced-motion: reduce) {
+  .wheel-connector, .wheel-node-origin, .wheel-node-end, .wheel-hub { animation: none; }
+}
+```
 
-- Notificação ao usuário quando a sugestão é aprovada/recusada (e-mail ou in-app).
-- Limite de quantas sugestões pendentes um usuário pode ter ao mesmo tempo.
-- Edição da sugestão pelo admin antes de aprovar.
+Em `src/components/RadialWheel.tsx`:
+- Adicionar `className="wheel-connector"` no `<line>` (mantendo `strokeDasharray="3 4"`).
+- Adicionar `className="wheel-node-origin"` no `<circle>` de origem e `className="wheel-node-end"` no de destino.
+- Adicionar `className="wheel-hub"` no `<circle>` central (`r={R_INNER - 4}`).
+- Em hover de um segmento, aumentar opacidade base da linha correspondente (já existe `isHover` no escopo) — opcional, posso pausar a animação no segmento hovered para destacá-lo.
+
+## Não-objetivos (do que **não** vou fazer)
+
+- Não vou aplicar `card-animations.css` (flutuação rotacionada dos cards) — o pedido foi explicitamente **sem alterar o formato atual dos cards**.
+- Não vou trocar para `framer-motion` nem adicionar dependências.
+- Não vou substituir a roda pelo `OrganismVisualization` (canvas) nem pelo `IntegratedOrganismDashboard`.
