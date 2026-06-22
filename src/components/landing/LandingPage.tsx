@@ -101,7 +101,7 @@ function LandingNav() {
 /* ---------- Hero ---------- */
 function Hero() {
   return (
-    <section className="bg-[color:var(--landing-bg)]">
+    <section className="bg-[color:var(--landing-hero-bg)]">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-6 pb-24 pt-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:pb-32 lg:pt-16">
         {/* Left */}
         <div>
