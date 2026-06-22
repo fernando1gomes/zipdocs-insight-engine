@@ -414,7 +414,7 @@ function FinalCTA() {
           <div className="text-white">
             <h2
               className="font-display text-[1.7rem] leading-[1.2] md:text-[2.2rem]"
-              style={{ fontWeight: 600 }}
+              style={{ fontWeight: 600, color: "#F4EFE2" }}
             >
               Pronto para transformar sua vida?
             </h2>
