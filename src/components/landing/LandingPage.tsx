@@ -306,22 +306,98 @@ function DashboardPreview() {
 
 function Method() {
   return (
-    <section id="metodo" className="px-6 py-20 md:py-28">
+    <section
+      id="metodo"
+      className="px-6 py-20 md:py-28"
+      style={{ background: "var(--ve-primary)", color: "#fff" }}
+    >
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-[700px] text-center">
-          <span className="ve-eyebrow">Como funciona</span>
-          <h2 className="mt-4">
-            Quatro passos, <em>uma vida clareada.</em>
+          <span className="ve-eyebrow" style={{ color: "rgba(255,255,255,.7)" }}>
+            Como funciona
+          </span>
+          <h2 className="mt-4" style={{ color: "#fff" }}>
+            Quatro passos, <em style={{ color: "var(--ve-accent)" }}>uma vida clareada.</em>
           </h2>
         </div>
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
-            <article key={s.n} className="ve-card">
-              <div style={{ fontSize: 13, color: "var(--ve-muted)" }}>{s.n}</div>
-              <h3 className="mt-3" style={{ fontSize: 20 }}>{s.title}</h3>
-              <p className="mt-3 text-[15px]" style={{ color: "var(--ve-ink-soft)" }}>{s.text}</p>
+            <article
+              key={s.n}
+              className="ve-card"
+              style={{
+                background: "rgba(255,255,255,.04)",
+                border: "0.5px solid rgba(255,255,255,.12)",
+                borderLeft: "2px solid var(--ve-accent)",
+              }}
+            >
+              <div style={{ fontSize: 13, color: "var(--ve-accent)" }}>{s.n}</div>
+              <h3 className="mt-3" style={{ fontSize: 20, color: "#fff" }}>{s.title}</h3>
+              <p className="mt-3 text-[15px]" style={{ color: "rgba(255,255,255,.78)" }}>{s.text}</p>
             </article>
           ))}
+        </div>
+        <div className="mt-12 text-center">
+          <Link
+            to="/auth"
+            className="ve-btn"
+            style={{ background: "var(--ve-accent)", color: "var(--ve-primary)", borderColor: "var(--ve-accent)" }}
+          >
+            Comece agora
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedSection() {
+  const benefits = [
+    "Clareza sobre as prioridades reais",
+    "Foco em transformação sustentável",
+    "Uma comunidade de pessoas como você",
+  ];
+  return (
+    <section className="px-6 py-20 md:py-28" style={{ background: "var(--ve-accent)" }}>
+      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[1.1fr_1fr]">
+        <div className="overflow-hidden" style={{ borderRadius: "var(--ve-radius-lg)", boxShadow: "var(--ve-shadow-lg)" }}>
+          <img
+            src={featuredImg}
+            alt="Pessoa meditando em luz natural"
+            loading="lazy"
+            width={1024}
+            height={1280}
+            className="block h-full w-full object-cover"
+            style={{ aspectRatio: "4 / 5" }}
+          />
+        </div>
+        <div>
+          <span className="ve-eyebrow" style={{ color: "var(--ve-primary)" }}>Transformação real</span>
+          <h2 className="mt-4" style={{ color: "var(--ve-primary)" }}>
+            De fragmentado <em style={{ color: "var(--ve-primary)" }}>para integrado.</em>
+          </h2>
+          <p className="mt-5" style={{ color: "var(--ve-primary)", opacity: 0.85 }}>
+            A maioria das pessoas não sabe por onde começar. A Vida em Eixo mostra
+            o caminho — não com fórmulas prontas, mas com um espelho honesto da
+            sua vida inteira.
+          </p>
+          <ul className="mt-7 space-y-3">
+            {benefits.map((b) => (
+              <li key={b} className="flex items-start gap-3" style={{ color: "var(--ve-primary)" }}>
+                <Check size={20} weight="bold" style={{ marginTop: 2, flexShrink: 0 }} />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8">
+            <Link
+              to="/auth"
+              className="ve-btn"
+              style={{ background: "var(--ve-primary)", color: "#fff", borderColor: "var(--ve-primary)" }}
+            >
+              Descubra seu panorama
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -402,11 +478,24 @@ function Testimonials() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((t) => (
             <figure key={t.name} className="ve-card">
-              <span style={{ color: "var(--ve-accent)", fontSize: 36, lineHeight: 1, fontStyle: "italic" }}>“</span>
-              <blockquote className="mt-2 text-[15px]" style={{ color: "var(--ve-ink)", lineHeight: 1.7 }}>
+              <div className="flex items-center gap-0.5" style={{ color: "var(--ve-accent)" }}>
+                {[0,1,2,3,4].map((i) => <Star key={i} size={14} weight="fill" />)}
+              </div>
+              <blockquote className="mt-4 text-[15px]" style={{ color: "var(--ve-ink)", lineHeight: 1.7 }}>
                 {t.quote}
               </blockquote>
-              <figcaption className="mt-5 text-sm" style={{ color: "var(--ve-muted)" }}>— {t.name}</figcaption>
+              <figcaption className="mt-5 flex items-center gap-3">
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium"
+                  style={{ background: "var(--ve-bg-soft)", color: "var(--ve-primary)" }}
+                >
+                  {t.name[0]}
+                </div>
+                <div className="text-sm leading-tight">
+                  <div style={{ color: "var(--ve-primary)", fontWeight: 500 }}>{t.name}</div>
+                  <div style={{ color: "var(--ve-muted)" }}>{t.role}</div>
+                </div>
+              </figcaption>
             </figure>
           ))}
         </div>
@@ -415,32 +504,141 @@ function Testimonials() {
   );
 }
 
-function CentralCTA() {
+function Pricing() {
   return (
-    <section className="px-6 py-20 md:py-28">
-      <div
-        className="mx-auto max-w-5xl text-center"
-        style={{
-          background: "var(--ve-primary)",
-          color: "#fff",
-          borderRadius: "var(--ve-radius-lg)",
-          padding: "4rem 2rem",
-        }}
-      >
-        <h2 style={{ color: "#fff" }}>
-          Nenhum pilar muda sozinho. <em style={{ color: "rgba(255,255,255,.75)" }}>Comece o seu efeito dominó hoje.</em>
-        </h2>
-        <p className="mx-auto mt-5 max-w-[560px]" style={{ color: "rgba(255,255,255,.8)" }}>
-          Em menos de quinze minutos você terá a primeira imagem honesta da sua vida inteira.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            to="/auth"
-            className="ve-btn"
-            style={{ background: "#fff", color: "var(--ve-primary)", borderColor: "#fff" }}
+    <section id="planos" className="px-6 py-20 md:py-28" style={{ background: "var(--ve-primary)", color: "#fff" }}>
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[700px] text-center">
+          <span className="ve-eyebrow" style={{ color: "rgba(255,255,255,.7)" }}>Escolha seu caminho</span>
+          <h2 className="mt-4" style={{ color: "#fff" }}>
+            Comece de graça. <em style={{ color: "var(--ve-accent)" }}>Vá mais fundo quando quiser.</em>
+          </h2>
+        </div>
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {PLANS.map((p) => (
+            <article
+              key={p.name}
+              className="relative flex flex-col"
+              style={{
+                background: p.featured ? "#fff" : "rgba(255,255,255,.04)",
+                color: p.featured ? "var(--ve-ink)" : "#fff",
+                border: p.featured ? "2px solid var(--ve-accent)" : "0.5px solid rgba(255,255,255,.14)",
+                borderRadius: "var(--ve-radius-lg)",
+                padding: "2rem",
+              }}
+            >
+              {p.featured && (
+                <span
+                  className="absolute right-4 top-4 rounded-full px-3 py-1 text-[11px]"
+                  style={{ background: "var(--ve-accent)", color: "var(--ve-primary)", fontWeight: 500 }}
+                >
+                  Popular
+                </span>
+              )}
+              <h3 style={{ fontSize: 20, color: p.featured ? "var(--ve-primary)" : "#fff" }}>{p.name}</h3>
+              <div className="mt-4 flex items-baseline gap-2">
+                <span style={{ fontSize: 36, fontWeight: 500, lineHeight: 1, color: p.featured ? "var(--ve-primary)" : "#fff" }}>
+                  {p.price}
+                </span>
+                <span className="text-sm" style={{ color: p.featured ? "var(--ve-muted)" : "rgba(255,255,255,.7)" }}>
+                  / {p.period}
+                </span>
+              </div>
+              <p className="mt-3 text-[14px]" style={{ color: p.featured ? "var(--ve-ink-soft)" : "rgba(255,255,255,.78)" }}>
+                {p.description}
+              </p>
+              <ul className="mt-6 flex-1 space-y-2.5 text-[14px]">
+                {p.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <Check size={16} weight="bold" style={{ marginTop: 3, flexShrink: 0, color: p.featured ? "var(--ve-primary)" : "var(--ve-accent)" }} />
+                    <span style={{ color: p.featured ? "var(--ve-ink)" : "rgba(255,255,255,.88)" }}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/auth"
+                className="ve-btn mt-8"
+                style={
+                  p.featured
+                    ? { background: "var(--ve-accent)", color: "var(--ve-primary)", borderColor: "var(--ve-accent)" }
+                    : { background: "transparent", color: "#fff", border: "0.5px solid rgba(255,255,255,.5)" }
+                }
+              >
+                {p.cta}
+              </Link>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Newsletter() {
+  return (
+    <section className="px-6 py-20 md:py-28" style={{ background: "var(--ve-accent)" }}>
+      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
+        <div className="order-2 overflow-hidden md:order-1"
+             style={{ borderRadius: "var(--ve-radius-lg)", boxShadow: "var(--ve-shadow-lg)" }}>
+          <img
+            src={newsletterImg}
+            alt="Pessoa escrevendo no diário com laptop ao lado"
+            loading="lazy"
+            width={1280}
+            height={1024}
+            className="block h-full w-full object-cover"
+            style={{ aspectRatio: "5 / 4" }}
+          />
+        </div>
+        <div className="order-1 md:order-2">
+          <span className="ve-eyebrow" style={{ color: "var(--ve-primary)" }}>Guia gratuito</span>
+          <h3 className="mt-4" style={{ fontSize: 32, fontWeight: 500, color: "var(--ve-primary)", lineHeight: 1.2 }}>
+            Receba 7 dias de <em>insights profundos.</em>
+          </h3>
+          <p className="mt-4" style={{ color: "var(--ve-primary)", opacity: 0.85 }}>
+            Um e-mail por dia, com exercícios práticos para começar a enxergar a sua vida inteira — sem custo.
+          </p>
+          <form
+            className="mt-6 flex flex-col gap-3 sm:flex-row"
+            onSubmit={(e) => e.preventDefault()}
           >
-            Crie a sua roda gratuita
-          </Link>
+            <input
+              type="text"
+              required
+              placeholder="Seu nome"
+              aria-label="Seu nome"
+              className="flex-1 px-4 py-3 text-[15px]"
+              style={{
+                background: "#fff",
+                border: "0.5px solid rgba(0,0,0,.08)",
+                borderRadius: "var(--ve-radius-md)",
+                color: "var(--ve-ink)",
+              }}
+            />
+            <input
+              type="email"
+              required
+              placeholder="seu@email.com"
+              aria-label="Seu e-mail"
+              className="flex-1 px-4 py-3 text-[15px]"
+              style={{
+                background: "#fff",
+                border: "0.5px solid rgba(0,0,0,.08)",
+                borderRadius: "var(--ve-radius-md)",
+                color: "var(--ve-ink)",
+              }}
+            />
+            <button
+              type="submit"
+              className="ve-btn"
+              style={{ background: "var(--ve-primary)", color: "#fff", borderColor: "var(--ve-primary)" }}
+            >
+              Enviar guia
+            </button>
+          </form>
+          <p className="mt-3 text-xs" style={{ color: "var(--ve-primary)", opacity: 0.7 }}>
+            Sem spam. Seu e-mail é seguro com a gente.
+          </p>
         </div>
       </div>
     </section>
@@ -482,15 +680,52 @@ function FAQSection() {
 }
 
 function LandingFooter() {
+  const year = new Date().getFullYear();
   return (
     <footer
-      className="px-6 py-10"
-      style={{ borderTop: "0.5px solid var(--ve-line)" }}
+      className="px-6 pt-16 pb-10"
+      style={{ background: "var(--ve-primary)", color: "rgba(255,255,255,.78)" }}
     >
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm"
-           style={{ color: "var(--ve-muted)" }}>
-        <p>© {new Date().getFullYear()} Vida em Eixo. Para quem quer ver a vida inteira.</p>
-        <Link to="/auth" className="ve-nav-link">Entrar ou criar conta</Link>
+      <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <img src={logoAsset.url} alt="Vida em Eixo" className="h-8 w-8 rounded-lg object-contain" />
+            <span className="text-[15px]" style={{ color: "#fff", fontWeight: 500 }}>Vida em Eixo</span>
+          </div>
+          <p className="mt-4 text-sm max-w-[260px]">
+            Um espelho honesto dos onze pilares que sustentam você.
+          </p>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wider mb-4" style={{ color: "var(--ve-accent)" }}>Conteúdo</div>
+          <ul className="space-y-2 text-sm">
+            <li><a href="#metodo" className="hover:text-white">Como funciona</a></li>
+            <li><a href="#pilares" className="hover:text-white">Pilares</a></li>
+            <li><a href="#planos" className="hover:text-white">Planos</a></li>
+            <li><a href="#perguntas" className="hover:text-white">Perguntas</a></li>
+          </ul>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wider mb-4" style={{ color: "var(--ve-accent)" }}>Conta</div>
+          <ul className="space-y-2 text-sm">
+            <li><Link to="/auth" className="hover:text-white">Entrar</Link></li>
+            <li><Link to="/auth" className="hover:text-white">Criar conta</Link></li>
+          </ul>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wider mb-4" style={{ color: "var(--ve-accent)" }}>Legal</div>
+          <ul className="space-y-2 text-sm">
+            <li><a href="#" className="hover:text-white">Privacidade</a></li>
+            <li><a href="#" className="hover:text-white">Termos</a></li>
+            <li><a href="#" className="hover:text-white">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div
+        className="mx-auto mt-12 max-w-6xl pt-6 text-xs"
+        style={{ borderTop: "0.5px solid rgba(255,255,255,.14)", color: "rgba(255,255,255,.6)" }}
+      >
+        © {year} Vida em Eixo. Para quem quer ver a vida inteira.
       </div>
     </footer>
   );
