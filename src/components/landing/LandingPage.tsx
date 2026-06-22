@@ -57,12 +57,12 @@ function LandingNav() {
     { label: "Sobre", href: "#sobre" },
   ];
   return (
-    <header className="sticky top-0 z-30 bg-[color:var(--landing-bg)]/95 backdrop-blur">
+    <header className="sticky top-0 z-30 bg-[color:var(--landing-deep)] shadow-[0_1px_0_0_rgba(255,255,255,0.08)]">
       <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3" aria-label="Vida em Eixo — início">
-          <img src={logoAsset.url} alt="" className="h-11 w-11 object-contain" />
+          <img src={logoAsset.url} alt="" className="h-11 w-11 object-contain brightness-0 invert" />
           <span
-            className="font-display leading-[1.05] text-[color:var(--landing-deep)]"
+            className="font-display leading-[1.05] text-white/95"
             style={{ fontSize: "1.05rem", fontWeight: 600 }}
           >
             Vida<br />em Eixo
@@ -73,7 +73,7 @@ function LandingNav() {
             <a
               key={l.label}
               href={l.href}
-              className="text-[0.95rem] text-[color:var(--landing-ink-soft)] transition hover:text-[color:var(--landing-deep)]"
+              className="text-[0.95rem] text-white/75 transition hover:text-white"
             >
               {l.label}
             </a>
@@ -82,13 +82,13 @@ function LandingNav() {
         <div className="flex items-center gap-5">
           <Link
             to="/auth"
-            className="hidden text-[0.95rem] text-[color:var(--landing-ink-soft)] transition hover:text-[color:var(--landing-deep)] sm:inline"
+            className="hidden text-[0.95rem] text-white/85 transition hover:text-white sm:inline"
           >
             Entrar
           </Link>
           <Link
             to="/auth"
-            className="rounded-full bg-[color:var(--landing-gold)] px-5 py-2.5 text-[0.92rem] font-semibold text-white shadow-[0_8px_20px_-10px_rgba(201,162,39,0.6)] transition hover:bg-[color:var(--landing-gold-deep)]"
+            className="rounded-full bg-[color:var(--landing-gold)] px-5 py-2.5 text-[0.92rem] font-semibold text-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.25)] transition hover:bg-[color:var(--landing-gold-deep)]"
           >
             Começar agora
           </Link>
