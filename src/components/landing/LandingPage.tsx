@@ -3,11 +3,13 @@ import { useState } from "react";
 import {
   HandHeart, Brain, House, Heart, UsersThree, Target,
   ChartLineUp, BookOpen, FlowerLotus, MusicNotes, Heartbeat,
-  List, X,
+  List, X, Star, Check,
 } from "@phosphor-icons/react";
 import { RadialWheel } from "@/components/RadialWheel";
 import { PILLAR_DEFAULTS, type Pillar } from "@/lib/pillars";
 import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
+import featuredImg from "@/assets/featured-meditation.jpg";
+import newsletterImg from "@/assets/newsletter-learning.jpg";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -15,6 +17,7 @@ import {
 const NAV_LINKS = [
   { href: "#metodo", label: "Como funciona" },
   { href: "#pilares", label: "Pilares" },
+  { href: "#planos", label: "Planos" },
   { href: "#depoimentos", label: "Depoimentos" },
   { href: "#perguntas", label: "Perguntas" },
 ];
@@ -37,17 +40,64 @@ const STEPS = [
 ];
 
 const TESTIMONIALS = [
-  { name: "Marina, 34", quote: "Eu achava que o problema era trabalho. A roda me mostrou que era o emocional puxando tudo pra baixo. Em seis semanas, mudei o que importava." },
-  { name: "Rafael, 41", quote: "Nunca tinha visto minha vida assim — inteira. É desconfortável e libertador ao mesmo tempo." },
-  { name: "Júlia, 28", quote: "O que mais me ajudou foi entender o efeito dominó. Parei de tentar consertar dez coisas ao mesmo tempo." },
+  { name: "Marina", role: "Designer, 34", quote: "Eu achava que o problema era trabalho. A roda me mostrou que era o emocional puxando tudo pra baixo. Em seis semanas, mudei o que importava." },
+  { name: "Rafael", role: "Empreendedor, 41", quote: "Nunca tinha visto minha vida assim — inteira. É desconfortável e libertador ao mesmo tempo." },
+  { name: "Júlia", role: "Psicóloga, 28", quote: "O que mais me ajudou foi entender o efeito dominó. Parei de tentar consertar dez coisas ao mesmo tempo." },
+];
+
+const PLANS = [
+  {
+    name: "Início",
+    price: "Grátis",
+    period: "para sempre",
+    description: "Tudo que você precisa para ver a sua vida inteira.",
+    cta: "Comece grátis",
+    featured: false,
+    features: [
+      "Autoavaliação dos 11 pilares",
+      "Roda viva e interativa",
+      "Mapa de impactos entre pilares",
+      "Check-ins semanais",
+    ],
+  },
+  {
+    name: "Pro",
+    price: "R$ 39",
+    period: "por mês",
+    description: "Para quem quer ir mais fundo, com acompanhamento e IA orientadora.",
+    cta: "Inicie o Pro",
+    featured: true,
+    features: [
+      "Tudo do Início",
+      "IA orientadora ilimitada",
+      "Planos de ação personalizados",
+      "Histórico completo de evolução",
+      "Biblioteca de vídeos curados",
+    ],
+  },
+  {
+    name: "VIP",
+    price: "Sob consulta",
+    period: "1:1 com coach",
+    description: "Acompanhamento individual com coach humano e a sua roda no centro.",
+    cta: "Fale com a gente",
+    featured: false,
+    features: [
+      "Tudo do Pro",
+      "Sessões 1:1 quinzenais",
+      "Plano sob medida",
+      "Suporte direto pelo WhatsApp",
+    ],
+  },
 ];
 
 const FAQ = [
-  { q: "É gratuito?", a: "Sim. Você cria sua conta, faz a sua roda completa e usa todas as áreas — autoavaliação, impactos, plano, check-in e IA — sem custo." },
+  { q: "Posso começar de graça?", a: "Sim. O plano Início é gratuito para sempre e inclui a roda completa, autoavaliação, impactos e check-ins. Os planos Pro e VIP são para quem quer ir mais fundo com IA orientadora e acompanhamento 1:1." },
   { q: "Quanto tempo leva para começar?", a: "A autoavaliação inicial leva entre 8 e 15 minutos. Você pode pausar e voltar quando quiser." },
   { q: "Preciso fazer tudo de uma vez?", a: "Não. A roda é um processo vivo. Comece pela autoavaliação e o sistema te guia pelos próximos passos no seu ritmo." },
   { q: "Como a IA me ajuda?", a: "Ela enxerga a sua roda inteira — pontuações, impactos, plano — e conversa com você fazendo perguntas que ajudam a clarear escolhas." },
   { q: "Meus dados são privados?", a: "Sim. Sua roda é só sua. Não compartilhamos suas avaliações, planos ou conversas com ninguém." },
+  { q: "Funciona para qualquer fase da vida?", a: "Sim. Os 11 pilares cobrem áreas universais — emocional, família, carreira, saúde, espiritualidade — e o sistema se adapta ao seu momento atual." },
 ];
 
 const DEMO_PILLARS: Pillar[] = [
@@ -72,10 +122,12 @@ export function LandingPage() {
       <StatsStrip />
       <DashboardPreview />
       <Method />
+      <FeaturedSection />
       <Pillars />
       <Differentiators />
       <Testimonials />
-      <CentralCTA />
+      <Pricing />
+      <Newsletter />
       <FAQSection />
       <LandingFooter />
     </div>
@@ -129,18 +181,23 @@ function Hero() {
     <section className="px-6 py-20 md:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-[1.05fr_1fr]">
         <div>
-          <span className="ve-eyebrow">Autoconhecimento integrado</span>
+          <span className="ve-eyebrow">Coaching de vida inteligente</span>
           <h1 className="mt-5">
             Veja sua vida inteira <em>em uma só imagem.</em>
           </h1>
           <p className="mt-6 max-w-[560px]" style={{ color: "var(--ve-ink-soft)" }}>
-            A Vida em Eixo é um espelho honesto dos onze pilares que sustentam você.
-            Você avalia, vê o efeito dominó entre eles e descobre exatamente
-            onde mexer primeiro para mudar tudo.
+            Mapeie seus 11 pilares. Descubra desequilíbrios reais.
+            Comece sua transformação com clareza — não com mais uma lista de hábitos.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link to="/auth" className="ve-btn">Inicie sua jornada</Link>
             <a href="#metodo" className="ve-btn-outline">Ver como funciona</a>
+          </div>
+          <div className="mt-8 flex items-center gap-3 text-sm" style={{ color: "var(--ve-ink-soft)" }}>
+            <div className="flex items-center gap-0.5" style={{ color: "var(--ve-accent)" }}>
+              {[0,1,2,3,4].map((i) => <Star key={i} size={16} weight="fill" />)}
+            </div>
+            <span><strong style={{ color: "var(--ve-ink)" }}>4.9/5</strong> · confiado por +500 pessoas</span>
           </div>
         </div>
         <div className="ve-card" style={{ padding: "1.5rem", boxShadow: "var(--ve-shadow-md)" }}>
