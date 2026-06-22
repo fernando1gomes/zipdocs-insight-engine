@@ -41,17 +41,17 @@ const toRad = (d: number) => (d * Math.PI) / 180;
 // Coordinates are in container units (W × H); anchor controls translate.
 type Anchor = "tl" | "tc" | "tr" | "cl" | "cr" | "bl" | "br";
 const CARD_POS: Record<number, { x: number; y: number; anchor: Anchor }> = {
-  1:  { x: 560, y: 16,   anchor: "tc" },
-  2:  { x: 870, y: 80,   anchor: "tl" },
-  3:  { x: 910, y: 250,  anchor: "cl" },
-  4:  { x: 910, y: 410,  anchor: "cl" },
-  5:  { x: 870, y: 580,  anchor: "bl" },
-  6:  { x: 600, y: 744,  anchor: "bl" },
-  7:  { x: 520, y: 744,  anchor: "br" },
-  8:  { x: 250, y: 580,  anchor: "br" },
-  9:  { x: 210, y: 410,  anchor: "cr" },
-  10: { x: 210, y: 250,  anchor: "cr" },
-  11: { x: 250, y: 80,   anchor: "tr" },
+  1:  { x: 560, y: 8,   anchor: "tc" },
+  2:  { x: 900, y: 60,  anchor: "tl" },
+  3:  { x: 940, y: 250, anchor: "cl" },
+  4:  { x: 940, y: 410, anchor: "cl" },
+  5:  { x: 900, y: 600, anchor: "bl" },
+  6:  { x: 600, y: 752, anchor: "bl" },
+  7:  { x: 520, y: 752, anchor: "br" },
+  8:  { x: 220, y: 600, anchor: "br" },
+  9:  { x: 180, y: 410, anchor: "cr" },
+  10: { x: 180, y: 250, anchor: "cr" },
+  11: { x: 220, y: 60,  anchor: "tr" },
 };
 
 function anchorTranslate(a: Anchor): string {
@@ -66,12 +66,8 @@ function anchorTranslate(a: Anchor): string {
   }
 }
 
-// Card dimensions (reduced for a tighter layout)
-const CARD_W = 170;
-const CARD_H = 95;
-
 // Connector terminates near the card edge facing the wheel.
-function connectorEnd(pos: { x: number; y: number; anchor: Anchor }, cardW = CARD_W, cardH = CARD_H) {
+function connectorEnd(pos: { x: number; y: number; anchor: Anchor }, cardW = 220, cardH = 130) {
   const { x, y, anchor } = pos;
   switch (anchor) {
     case "tc": return { x, y: y + cardH }; // line meets bottom-center of top card
@@ -210,7 +206,7 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
           y={CY - 22}
           textAnchor="middle"
           fontSize="11"
-          fill="white"
+          fill="var(--muted-foreground)"
           fontWeight="600"
           letterSpacing="2"
         >
@@ -222,7 +218,7 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
           textAnchor="middle"
           fontSize="42"
           fontWeight="800"
-          fill="white"
+          fill="var(--foreground)"
           style={{ fontFamily: "var(--font-display)" }}
         >
           {balance}%
@@ -275,9 +271,9 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
               left: `${(pos.x / W) * 100}%`,
               top: `${(pos.y / H) * 100}%`,
               transform: anchorTranslate(pos.anchor),
-              width: `${(CARD_W / W) * 100}%`,
-              minWidth: 154,
-              maxWidth: 190,
+              width: `${(220 / W) * 100}%`,
+              minWidth: 200,
+              maxWidth: 240,
             }}
           >
             <div
