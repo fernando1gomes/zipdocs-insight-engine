@@ -296,12 +296,12 @@
   50%      { transform: scale(1.25); }
 }
 @keyframes wheel-hub-breathe {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.035); }
+  0%, 100% { r: 81px;  stroke-opacity: .35; stroke-width: 2; }
+  50%      { r: 86px;  stroke-opacity: .75; stroke-width: 3; }
 }
 @keyframes wheel-hub-halo {
-  0%, 100% { opacity: .15; transform: scale(1); }
-  50%      { opacity: .4;  transform: scale(1.08); }
+  0%, 100% { r: 91px;  opacity: .15; }
+  50%      { r: 102px; opacity: .5; }
 }
 @keyframes wheel-card-float {
   0%, 100% { transform: translateY(0); }
