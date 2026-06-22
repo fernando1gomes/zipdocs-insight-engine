@@ -21,7 +21,7 @@ import {
   CaretLeft,
   CaretRight,
 } from "@phosphor-icons/react";
-import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
+import iconeAsset from "@/assets/vida-em-eixo-icone.png.asset.json";
 import pcModeloAsset from "@/assets/pc-modelo.png.asset.json";
 import type { ComponentType } from "react";
 
@@ -60,7 +60,7 @@ function LandingNav() {
     <header className="sticky top-0 z-30 bg-[color:var(--landing-deep)] shadow-[0_1px_0_0_rgba(255,255,255,0.08)]">
       <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3" aria-label="Vida em Eixo — início">
-          <img src={logoAsset.url} alt="" className="h-11 w-11 object-contain brightness-0 invert" />
+          <img src={iconeAsset.url} alt="" className="h-11 w-11 object-contain" />
           <span
             className="font-display leading-[1.05] text-white/95"
             style={{ fontSize: "1.05rem", fontWeight: 600 }}
@@ -105,16 +105,6 @@ function Hero() {
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-6 pb-24 pt-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:pb-32 lg:pt-16">
         {/* Left */}
         <div>
-        <div className="inline-flex items-center gap-3 rounded-full bg-[color:var(--landing-deep)] px-4 py-2">
-          <img
-            src={logoAsset.url}
-            alt=""
-            className="h-8 w-8 object-contain brightness-0 invert"
-          />
-          <span className="font-display text-[1rem] font-semibold tracking-[-0.01em] text-white/95">
-            Vida em Eixo
-          </span>
-        </div>
           <h1
             className="font-display mt-7 text-[3rem] leading-[1.05] tracking-[-0.02em] text-[color:var(--landing-deep)] sm:text-[3.6rem] lg:text-[4.4rem]"
             style={{ fontWeight: 700 }}
