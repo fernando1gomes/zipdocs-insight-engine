@@ -184,58 +184,158 @@
 }
 
 /* ============================================================
-   Landing page tokens (scoped — alinhados ao tema do app)
-   Mapeiam para as variáveis globais (primary, foreground, etc.)
-   para manter coerência visual com o interior do produto.
+   Landing — Vida em Eixo design system (premium, clean)
+   Verde #2b5a4a · Coral #d4806d · Neutros sofisticados
+   Sentence case, 2 pesos (400/500), 0.5px borders, radius 12.
    ============================================================ */
 .landing-root {
-  --landing-bg: var(--background);
-  --landing-bg-soft: color-mix(in oklab, var(--primary) 5%, var(--background));
-  --landing-ink: var(--foreground);
-  --landing-ink-soft: color-mix(in oklab, var(--foreground) 70%, var(--background));
-  --landing-muted: var(--muted-foreground);
-  --landing-gold: var(--accent);
-  --landing-gold-deep: color-mix(in oklab, var(--accent) 80%, var(--foreground));
-  --landing-line: var(--border);
-  background: var(--landing-bg);
-  color: var(--landing-ink);
-  font-family: var(--font-sans);
+  --ve-primary:      #2b5a4a;
+  --ve-primary-deep: #214538;
+  --ve-accent:       #d4806d;
+  --ve-ink:          #2c2c2a;
+  --ve-ink-soft:     #5f5e5a;
+  --ve-muted:        #888780;
+  --ve-bg:           #ffffff;
+  --ve-bg-soft:      #f8f8f6;
+  --ve-line:         #d3d1c7;
+  --ve-shadow-sm: 0 2px 4px rgba(0,0,0,.06);
+  --ve-shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --ve-shadow-lg: 0 8px 24px rgba(0,0,0,.10);
+  --ve-radius-md: 8px;
+  --ve-radius-lg: 12px;
+  --ve-ease: cubic-bezier(.2,.7,.2,1);
+
+  /* Legacy aliases so any unmigrated class keeps working */
+  --landing-bg: var(--ve-bg);
+  --landing-bg-soft: var(--ve-bg-soft);
+  --landing-ink: var(--ve-ink);
+  --landing-ink-soft: var(--ve-ink-soft);
+  --landing-muted: var(--ve-muted);
+  --landing-line: var(--ve-line);
+  --landing-gold: var(--ve-accent);
+  --landing-gold-deep: var(--ve-primary);
+
+  background: var(--ve-bg);
+  color: var(--ve-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
-.landing-root h1, .landing-root h2, .landing-root h3 {
-  font-family: var(--font-display);
-  color: var(--landing-ink);
-  letter-spacing: -0.025em;
+.dark .landing-root {
+  --ve-primary:      #5a9d86;
+  --ve-primary-deep: #4a8a74;
+  --ve-accent:       #e09b87;
+  --ve-ink:          #ececea;
+  --ve-ink-soft:     #b8b6af;
+  --ve-muted:        #8a8980;
+  --ve-bg:           #14161a;
+  --ve-bg-soft:      #1b1e22;
+  --ve-line:         #2a2d32;
+  --ve-shadow-sm: 0 2px 4px rgba(0,0,0,.4);
+  --ve-shadow-md: 0 4px 12px rgba(0,0,0,.5);
+  --ve-shadow-lg: 0 8px 24px rgba(0,0,0,.6);
 }
-.landing-cta {
-  background: var(--landing-ink);
-  color: var(--background);
-  border-radius: 999px;
-  padding: 0.85rem 1.6rem;
-  font-weight: 600;
-  font-size: 0.95rem;
+.landing-root h1, .landing-root h2, .landing-root h3, .landing-root h4 {
+  font-family: inherit;
+  font-weight: 500;
+  color: var(--ve-ink);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.landing-root h1 { font-size: clamp(36px, 5.2vw, 52px); line-height: 1.08; }
+.landing-root h2 { font-size: clamp(28px, 3.6vw, 36px); line-height: 1.2; }
+.landing-root h3 { font-size: 24px; line-height: 1.3; }
+.landing-root em { font-style: italic; color: var(--ve-ink-soft); }
+.landing-root strong { font-weight: 500; }
+.landing-root :focus-visible {
+  outline: 2px solid var(--ve-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Buttons */
+.ve-btn, .ve-btn-outline {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
-  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--foreground) 40%, transparent);
+  justify-content: center;
+  gap: .5rem;
+  padding: 14px 32px;
+  border-radius: var(--ve-radius-lg);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .25s var(--ve-ease), color .25s var(--ve-ease),
+              border-color .25s var(--ve-ease), transform .15s var(--ve-ease);
+  white-space: nowrap;
 }
-.landing-cta:hover { background: color-mix(in oklab, var(--foreground) 85%, var(--primary)); transform: translateY(-1px); }
-.landing-cta-gold {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--primary) 55%, transparent);
+.ve-btn {
+  background: var(--ve-primary);
+  color: #fff;
+  border: 0.5px solid var(--ve-primary);
+  box-shadow: var(--ve-shadow-sm);
 }
-.landing-cta-gold:hover { background: color-mix(in oklab, var(--primary) 85%, var(--foreground)); }
-.landing-cta-ghost {
+.ve-btn:hover { background: var(--ve-primary-deep); border-color: var(--ve-primary-deep); }
+.ve-btn:active { transform: scale(0.98); }
+.ve-btn-outline {
   background: transparent;
-  color: var(--landing-ink);
-  border: 1px solid var(--landing-line);
+  color: var(--ve-primary);
+  border: 0.5px solid var(--ve-primary);
 }
-.landing-cta-ghost:hover { background: color-mix(in oklab, var(--foreground) 5%, transparent); }
+.dark .landing-root .ve-btn-outline { color: var(--ve-ink); border-color: var(--ve-line); }
+.ve-btn-outline:hover { background: color-mix(in oklab, var(--ve-primary) 8%, transparent); }
+.ve-btn-outline:active { transform: scale(0.98); }
+
+/* Cards */
+.ve-card {
+  background: var(--ve-bg);
+  border: 0.5px solid var(--ve-line);
+  border-radius: var(--ve-radius-lg);
+  padding: 1.5rem;
+  transition: box-shadow .25s var(--ve-ease), transform .25s var(--ve-ease), border-color .25s var(--ve-ease);
+}
+.ve-card:hover { box-shadow: var(--ve-shadow-md); }
+
+/* Eyebrow / subtitle */
+.ve-eyebrow {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ve-muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Sticky nav */
+.ve-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in oklab, var(--ve-bg) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 0.5px solid var(--ve-line);
+}
+.ve-nav-link {
+  font-size: 14px;
+  color: var(--ve-ink-soft);
+  transition: color .2s var(--ve-ease);
+}
+.ve-nav-link:hover { color: var(--ve-ink); }
+
+/* Legacy CTAs — remap to new buttons so any leftover usage stays on-brand */
+.landing-cta { @apply ve-btn; }
+.landing-cta-gold { @apply ve-btn; }
+.landing-cta-ghost { @apply ve-btn-outline; }
 .landing-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary) 30%, var(--focus) 70%, transparent);
-  opacity: .5;
+  height: 0.5px;
+  background: var(--ve-line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ve-btn, .ve-btn-outline, .ve-card, .ve-nav-link { transition: none; }
 }
 
 /* Hero wheel — gentle living motion */
