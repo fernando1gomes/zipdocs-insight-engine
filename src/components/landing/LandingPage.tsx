@@ -21,7 +21,7 @@ import {
   CaretLeft,
   CaretRight,
 } from "@phosphor-icons/react";
-import iconeAsset from "@/assets/vida-em-eixo-icone.png.asset.json";
+import iconeAsset from "@/assets/vida-em-eixo-icone-verde.png.asset.json";
 import pcModeloAsset from "@/assets/pc-modelo.png.asset.json";
 import type { ComponentType } from "react";
 
