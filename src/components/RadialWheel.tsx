@@ -192,6 +192,15 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
           strokeWidth={2}
           className="wheel-hub"
         />
+        <circle
+          cx={CX}
+          cy={CY}
+          r={R_INNER + 6}
+          fill="none"
+          stroke="var(--primary)"
+          strokeWidth={1.5}
+          className="wheel-hub-halo"
+        />
         <text
           x={CX}
           y={CY - 22}
