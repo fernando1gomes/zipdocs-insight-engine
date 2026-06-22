@@ -1,88 +1,32 @@
 ## Objetivo
 
-Animar o **círculo central e as linhas conectoras** que ligam a roda aos cards no `RadialWheel` (dashboard `/dashboard`), **sem mexer no formato, posição ou estilo dos cards** nem no layout dos segmentos.
+Na página `/` (landing), adicionar a mesma composição visual do `/dashboard` — roda central com conectores tracejados, 11 cards ao redor, hub respirando, conectores fluindo e cards flutuando — usando **dados fictícios de demonstração**, sem buscar nada do backend.
 
-## Escopo
+## Onde colocar
 
-Arquivos afetados:
-- `src/components/RadialWheel.tsx` — adicionar classes nas linhas/pontos conectores e no hub central.
-- `src/styles.css` — novas `@keyframes` e classes utilitárias para a animação dos conectores.
+- Substituir o `<HeroWheel />` atual dentro do hero do `LandingPage.tsx` por uma nova seção `<HeroRadialDemo />` que renderiza o componente `RadialWheel` já existente, em modo "showcase".
+- Mantém todo o resto da landing inalterado (textos, CTAs, demais seções, footer).
 
-Nada muda em:
-- `PillarCard.tsx`, posições `CARD_POS`, tamanhos, ancoragens.
-- Segmentos da roda (paths coloridos), ícones, números, valor central `{balance}%`.
+## Como
 
-## O que será animado
+1. **Reaproveitar `RadialWheel`** (sem fork): ele já tem todas as animações (`wheel-connector`, `wheel-node-*`, `wheel-hub`, `wheel-hub-halo`, `wheel-card-float`).
+2. **Dataset fictício** dentro do `LandingPage.tsx`: array `DEMO_PILLARS: Pillar[]` com 11 itens, scores variados (alguns balanced, alguns attention, alguns critical) para que as cores da roda mostrem a paleta inteira. Nomes/mensagens neutros e claramente ilustrativos (ex.: "Saúde", "Carreira", "Família" etc., com `message` curto tipo "exemplo").
+3. **Equilíbrio fictício**: passar `balance={72}` fixo.
+4. **Hover desativado**: passar `hovered={null}` e `onHover={() => {}}` (sem estado), já que é decorativo.
+5. **Wrapper responsivo**: a `RadialWheel` usa largura máxima 1120px e aspect 1120/760. Na landing, envolver em um container que limita a largura ao slot do hero (ex.: `max-w-[680px]` em telas grandes) preservando o aspect ratio nativo do componente para os cards continuarem nas posições corretas.
 
-1. **Linhas conectoras (`<line>` tracejadas)**
-   - Animar `stroke-dashoffset` em loop para criar efeito de "fluxo de energia" correndo do centro até o card (~4s, linear, infinito).
-   - Opacidade pulsando suavemente entre 0.5 e 0.85.
+## Pontos de atenção
 
-2. **Ponto de origem no segmento (`<circle>` branco com borda colorida)**
-   - Pulso sutil (scale 1 → 1.15, 2.5s ease-in-out infinito) sincronizado com o fluxo da linha.
+- O `RadialWheel` posiciona cards com coordenadas absolutas baseadas em um canvas 1120×760, então ele já é responsivo (tudo em %). Só precisa de um container com largura razoável; em telas muito estreitas vai ficar apertado — aceitável para landing desktop. Para mobile vou esconder o demo (`hidden md:block`) e manter o atual `HeroWheel` simples como fallback mobile.
+- Nenhuma chamada ao Supabase: dados 100% locais, fixos no módulo.
+- Sem mudanças de CSS — as animações já existem em `src/styles.css`.
 
-3. **Ponto de destino no card (`<circle>` pequeno)**
-   - Halo leve (opacidade 0.6 → 1, 2.5s) para indicar "recebimento".
+## Arquivos afetados
 
-4. **Hub central (círculo branco com o `{balance}%`)**
-   - "Respiração" lenta: scale 1 → 1.025 (6s ease-in-out infinito) — bem discreto, só dá sensação de vida.
-   - Halo externo opcional (anel `<circle>` extra atrás do hub) com opacidade pulsando.
+- `src/components/landing/LandingPage.tsx` — adicionar `DEMO_PILLARS`, novo componente `HeroRadialDemo`, e trocar o uso de `HeroWheel` por `HeroRadialDemo` no slot do hero (com fallback mobile para `HeroWheel`).
 
-5. **Respeito a `prefers-reduced-motion`**
-   - Todas as animações desligadas via media query, como já é feito em `.hero-wheel-*`.
+## Não-objetivos
 
-## Detalhes técnicos
-
-Em `src/styles.css`, adicionar bloco similar ao `hero-wheel-*` existente:
-
-```css
-@keyframes wheel-connector-flow {
-  to { stroke-dashoffset: -28; }
-}
-@keyframes wheel-connector-pulse {
-  0%, 100% { opacity: .55; }
-  50%      { opacity: .9; }
-}
-@keyframes wheel-node-pulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.15); }
-}
-@keyframes wheel-hub-breathe {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.025); }
-}
-
-.wheel-connector {
-  animation: wheel-connector-flow 4s linear infinite,
-             wheel-connector-pulse 3s ease-in-out infinite;
-}
-.wheel-node-origin {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: wheel-node-pulse 2.5s ease-in-out infinite;
-}
-.wheel-node-end {
-  animation: wheel-connector-pulse 2.5s ease-in-out infinite;
-}
-.wheel-hub {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: wheel-hub-breathe 6s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wheel-connector, .wheel-node-origin, .wheel-node-end, .wheel-hub { animation: none; }
-}
-```
-
-Em `src/components/RadialWheel.tsx`:
-- Adicionar `className="wheel-connector"` no `<line>` (mantendo `strokeDasharray="3 4"`).
-- Adicionar `className="wheel-node-origin"` no `<circle>` de origem e `className="wheel-node-end"` no de destino.
-- Adicionar `className="wheel-hub"` no `<circle>` central (`r={R_INNER - 4}`).
-- Em hover de um segmento, aumentar opacidade base da linha correspondente (já existe `isHover` no escopo) — opcional, posso pausar a animação no segmento hovered para destacá-lo.
-
-## Não-objetivos (do que **não** vou fazer)
-
-- Não vou aplicar `card-animations.css` (flutuação rotacionada dos cards) — o pedido foi explicitamente **sem alterar o formato atual dos cards**.
-- Não vou trocar para `framer-motion` nem adicionar dependências.
-- Não vou substituir a roda pelo `OrganismVisualization` (canvas) nem pelo `IntegratedOrganismDashboard`.
+- Não mexer em outras seções da landing.
+- Não criar nova rota, não tocar no backend, não alterar `RadialWheel` nem `PillarCard`.
+- Não alterar as animações existentes.
