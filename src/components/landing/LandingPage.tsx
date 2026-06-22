@@ -105,13 +105,13 @@ function Hero() {
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-6 pb-24 pt-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:pb-32 lg:pt-16">
         {/* Left */}
         <div>
-        <div className="flex items-center gap-3">
+        <div className="inline-flex items-center gap-3 rounded-full bg-[color:var(--landing-deep)] px-4 py-2">
           <img
             src={logoAsset.url}
             alt=""
-            className="h-10 w-10 object-contain"
+            className="h-8 w-8 object-contain brightness-0 invert"
           />
-          <span className="font-display text-[1.15rem] font-semibold tracking-[-0.01em] text-[color:var(--landing-deep)]">
+          <span className="font-display text-[1rem] font-semibold tracking-[-0.01em] text-white/95">
             Vida em Eixo
           </span>
         </div>
