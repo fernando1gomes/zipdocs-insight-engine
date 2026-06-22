@@ -286,8 +286,8 @@ function Tools() {
             Inteligência Artificial a seu favor
           </p>
           <h2
-            className="font-display mx-auto mt-4 max-w-3xl text-[2.1rem] leading-[1.15] text-white md:text-[2.8rem]"
-            style={{ fontWeight: 700 }}
+            className="font-display mx-auto mt-4 max-w-3xl text-[2.1rem] leading-[1.15] md:text-[2.8rem]"
+            style={{ fontWeight: 700, color: "#F4EFE2" }}
           >
             Ferramentas poderosas para sua evolução
           </h2>
@@ -297,14 +297,14 @@ function Tools() {
             <div key={t.title}>
               <t.Icon size={28} weight="light" color="var(--landing-gold)" />
               <h3
-                className="font-display mt-5 text-[1.1rem] text-white"
-                style={{ fontWeight: 600 }}
+                className="font-display mt-5 text-[1.1rem]"
+                style={{ fontWeight: 600, color: "#F4EFE2" }}
               >
                 {t.title}
               </h3>
               <p
                 className="mt-3 text-[0.92rem] leading-[1.65]"
-                style={{ color: "rgba(244,239,226,0.7)" }}
+                style={{ color: "rgba(244,239,226,0.75)" }}
               >
                 {t.text}
               </p>
@@ -414,7 +414,7 @@ function FinalCTA() {
           <div className="text-white">
             <h2
               className="font-display text-[1.7rem] leading-[1.2] md:text-[2.2rem]"
-              style={{ fontWeight: 600 }}
+              style={{ fontWeight: 600, color: "#F4EFE2" }}
             >
               Pronto para transformar sua vida?
             </h2>
