@@ -60,6 +60,7 @@ export function LandingPage() {
     <div className="landing-root min-h-screen">
       <LandingNav />
       <Hero />
+      <DashboardPreview />
       <PillarsSection />
       <HowItWorks />
       <Differentiators />
