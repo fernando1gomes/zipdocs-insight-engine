@@ -24,44 +24,44 @@ export function PillarCard({
     <div
       onMouseEnter={() => onHover(pillar.id)}
       onMouseLeave={() => onHover(null)}
-      className="relative rounded-2xl bg-card p-4 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer border border-border/60"
+      className="relative rounded-xl bg-card p-2.5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer border border-border/60"
       style={{
         borderColor: showBorder ? meta.ring : undefined,
         borderWidth: showBorder ? 1.5 : 1,
         boxShadow: hovered ? `0 8px 24px -8px ${meta.ring}55` : undefined,
       }}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <div className="flex items-center gap-1.5">
           <span
-            className="flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold text-white"
+            className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white"
             style={{ background: meta.num }}
           >
             {pillar.id}
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground leading-tight">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-foreground leading-tight">
             {pillar.shortName}
           </span>
         </div>
         {pillar.focus && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--focus-soft)] px-2 py-0.5 text-[10px] font-semibold text-[color:var(--focus)]">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--focus-soft)] px-1.5 py-0.5 text-[9px] font-semibold text-[color:var(--focus)]">
             ◎ Foco
           </span>
         )}
       </div>
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <pillar.Icon size={24} weight="light" style={{ color: meta.num }} />
-          <span className="text-3xl font-bold tabular-nums" style={{ color: meta.num, fontFamily: "var(--font-display)" }}>
+      <div className="flex items-end justify-between gap-2">
+        <div className="flex items-center gap-1.5">
+          <pillar.Icon size={18} weight="light" style={{ color: meta.num }} />
+          <span className="text-2xl font-bold tabular-nums" style={{ color: meta.num, fontFamily: "var(--font-display)" }}>
             {pillar.score.toFixed(1)}
           </span>
         </div>
         <div className="text-right">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Impacto</div>
-          <div className="text-[11px] font-semibold" style={{ color: meta.num }}>{impact}</div>
+          <div className="text-[9px] uppercase tracking-wider text-muted-foreground">Impacto</div>
+          <div className="text-[10px] font-semibold" style={{ color: meta.num }}>{impact}</div>
         </div>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground leading-snug">{pillar.message}</p>
+      <p className="mt-1 text-[10px] text-muted-foreground leading-snug">{pillar.message}</p>
     </div>
   );
 }
