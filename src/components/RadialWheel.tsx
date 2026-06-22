@@ -154,15 +154,44 @@ export function RadialWheel({ pillars, balance, hovered, onHover }: Props) {
                 strokeWidth={1.5}
                 strokeDasharray="3 4"
                 opacity={0.7}
+                className="wheel-connector"
+                style={{ animationDelay: `${i * 0.18}s` }}
               />
-              <circle cx={start.x} cy={start.y} r={3.5} fill="white" stroke={STATUS_FILL[status]} strokeWidth={1.5} />
-              <circle cx={end.x} cy={end.y} r={3} fill="white" stroke="var(--border)" strokeWidth={1} />
+              <circle
+                cx={start.x}
+                cy={start.y}
+                r={3.5}
+                fill="white"
+                stroke={STATUS_FILL[status]}
+                strokeWidth={1.5}
+                className="wheel-node-origin"
+                style={{ animationDelay: `${i * 0.18}s` }}
+              />
+              <circle
+                cx={end.x}
+                cy={end.y}
+                r={3}
+                fill="white"
+                stroke="var(--border)"
+                strokeWidth={1}
+                className="wheel-node-end"
+                style={{ animationDelay: `${i * 0.18}s` }}
+              />
             </g>
           );
         })}
 
         {/* Center hub */}
-        <circle cx={CX} cy={CY} r={R_INNER - 4} fill="white" stroke="var(--primary)" strokeOpacity={0.35} strokeWidth={2} />
+        <circle
+          cx={CX}
+          cy={CY}
+          r={R_INNER - 4}
+          fill="white"
+          stroke="var(--primary)"
+          strokeOpacity={0.35}
+          strokeWidth={2}
+          className="wheel-hub"
+        />
         <text
           x={CX}
           y={CY - 22}
