@@ -325,10 +325,24 @@
 }
 .ve-nav-link:hover { color: var(--ve-ink); }
 
-/* Legacy CTAs — remap to new buttons so any leftover usage stays on-brand */
-.landing-cta { @apply ve-btn; }
-.landing-cta-gold { @apply ve-btn; }
-.landing-cta-ghost { @apply ve-btn-outline; }
+/* Legacy CTAs — mirror new buttons so any leftover usage stays on-brand */
+.landing-cta, .landing-cta-gold {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: 14px 32px; border-radius: var(--ve-radius-lg);
+  background: var(--ve-primary); color: #fff; border: 0.5px solid var(--ve-primary);
+  font-weight: 500; font-size: 15px; line-height: 1;
+  box-shadow: var(--ve-shadow-sm);
+  transition: background .25s var(--ve-ease);
+}
+.landing-cta:hover, .landing-cta-gold:hover { background: var(--ve-primary-deep); }
+.landing-cta-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: 14px 32px; border-radius: var(--ve-radius-lg);
+  background: transparent; color: var(--ve-primary); border: 0.5px solid var(--ve-primary);
+  font-weight: 500; font-size: 15px; line-height: 1;
+  transition: background .25s var(--ve-ease);
+}
+.landing-cta-ghost:hover { background: color-mix(in oklab, var(--ve-primary) 8%, transparent); }
 .landing-divider {
   height: 0.5px;
   background: var(--ve-line);
