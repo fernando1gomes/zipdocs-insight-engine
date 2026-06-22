@@ -188,14 +188,17 @@
    para manter coerência visual com o interior do produto.
    ============================================================ */
 .landing-root {
-  --landing-bg: var(--background);
-  --landing-bg-soft: color-mix(in oklab, var(--primary) 5%, var(--background));
-  --landing-ink: var(--foreground);
-  --landing-ink-soft: color-mix(in oklab, var(--foreground) 70%, var(--background));
-  --landing-muted: var(--muted-foreground);
-  --landing-gold: var(--accent);
-  --landing-gold-deep: color-mix(in oklab, var(--accent) 80%, var(--foreground));
-  --landing-line: var(--border);
+  --landing-bg: #F8F6F1;
+  --landing-bg-soft: #FFFFFF;
+  --landing-ink: #2C2C2C;
+  --landing-ink-soft: #6B6B6B;
+  --landing-muted: #9C9A93;
+  --landing-gold: #C9A962;
+  --landing-gold-deep: #B8984F;
+  --landing-line: #E8E6E1;
+  --landing-green: #2D4A3E;
+  --landing-green-deep: #1F352C;
+  --landing-ink-dark: #2C2C2C;
   background: var(--landing-bg);
   color: var(--landing-ink);
   font-family: var(--font-sans);
@@ -203,38 +206,45 @@
 .landing-root h1, .landing-root h2, .landing-root h3 {
   font-family: var(--font-display);
   color: var(--landing-ink);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 .landing-cta {
-  background: var(--landing-ink);
-  color: var(--background);
-  border-radius: 999px;
-  padding: 0.85rem 1.6rem;
+  background: var(--landing-green);
+  color: var(--landing-bg);
+  border-radius: 4px;
+  padding: 1rem 2rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
-  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--foreground) 40%, transparent);
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
-.landing-cta:hover { background: color-mix(in oklab, var(--foreground) 85%, var(--primary)); transform: translateY(-1px); }
+.landing-cta:hover { background: var(--landing-green-deep); }
 .landing-cta-gold {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--primary) 55%, transparent);
+  background: var(--landing-gold);
+  color: var(--landing-green);
 }
-.landing-cta-gold:hover { background: color-mix(in oklab, var(--primary) 85%, var(--foreground)); }
+.landing-cta-gold:hover { background: var(--landing-gold-deep); color: var(--landing-green); }
 .landing-cta-ghost {
   background: transparent;
   color: var(--landing-ink);
-  border: 1px solid var(--landing-line);
+  border: 1px solid var(--landing-ink);
 }
-.landing-cta-ghost:hover { background: color-mix(in oklab, var(--foreground) 5%, transparent); }
+.landing-cta-ghost:hover { background: var(--landing-ink); color: var(--landing-bg); }
+.landing-cta-ghost-gold {
+  background: transparent;
+  color: var(--landing-gold);
+  border: 1px solid var(--landing-gold);
+}
+.landing-cta-ghost-gold:hover { background: var(--landing-gold); color: var(--landing-green); }
 .landing-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary) 30%, var(--focus) 70%, transparent);
-  opacity: .5;
+  background: var(--landing-gold);
+  opacity: .8;
 }
 
 /* Hero wheel — gentle living motion */
