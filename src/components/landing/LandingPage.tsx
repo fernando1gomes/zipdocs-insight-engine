@@ -150,181 +150,21 @@ function Hero() {
           </ul>
         </div>
 
-        {/* Right — iMac mockup */}
+        {/* Right — dashboard preview */}
         <div className="relative">
-          <IMacMockup />
+          <div className="relative mx-auto w-full max-w-[640px] rounded-[18px] bg-white p-[10px] shadow-[0_30px_60px_-25px_rgba(26,77,77,0.22)]">
+            <img
+              src={pcModeloAsset.url}
+              alt="Dashboard Vida em Eixo mostrando progresso geral, foco do dia e pilares da vida"
+              className="w-full rounded-[10px]"
+            />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function IMacMockup() {
-  return (
-    <div className="relative mx-auto w-full max-w-[640px]">
-      {/* Monitor */}
-      <div
-        className="relative rounded-[18px] bg-[#E8E8EA] p-[10px] shadow-[0_30px_60px_-25px_rgba(26,77,77,0.25)]"
-      >
-        <div className="overflow-hidden rounded-[10px] bg-white">
-          <DashboardScreen />
-        </div>
-      </div>
-      {/* Stand neck */}
-      <div className="mx-auto h-6 w-24 rounded-b-[6px] bg-gradient-to-b from-[#D8D8DA] to-[#BFC0C2]" />
-      {/* Stand base */}
-      <div className="mx-auto h-2 w-48 rounded-full bg-[#BFC0C2]/80 shadow-[0_8px_18px_-8px_rgba(0,0,0,0.2)]" />
-    </div>
-  );
-}
-
-function DashboardScreen() {
-  return (
-    <div className="flex h-[360px] bg-[#FBFAF7] text-[color:var(--landing-ink)] sm:h-[400px]">
-      {/* Sidebar */}
-      <aside className="hidden w-[160px] shrink-0 flex-col bg-[color:var(--landing-deep)] px-4 py-5 text-white sm:flex">
-        <div className="flex items-center gap-2">
-          <Sparkle size={16} weight="fill" color="#C9A227" />
-          <span className="font-display text-[0.8rem] leading-tight" style={{ fontWeight: 600 }}>
-            Vida<br />em Eixo
-          </span>
-        </div>
-        <ul className="mt-6 space-y-2 text-[0.7rem]">
-          {[
-            { label: "Dashboard", active: true },
-            { label: "Pilares" },
-            { label: "Planejamento" },
-            { label: "Hábitos" },
-            { label: "Metas" },
-            { label: "Reflexões" },
-            { label: "Relatórios" },
-            { label: "IA Assistente" },
-            { label: "Configurações" },
-          ].map((item) => (
-            <li
-              key={item.label}
-              className={`rounded-md px-2 py-1.5 ${
-                item.active
-                  ? "bg-white/12 text-white"
-                  : "text-white/70"
-              }`}
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 p-4 sm:p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <h4 className="font-display text-[0.95rem]" style={{ fontWeight: 600 }}>
-              Olá, Camila! <span>👋</span>
-            </h4>
-            <p className="mt-0.5 text-[0.65rem] text-[color:var(--landing-ink-soft)]">
-              Aqui está o resumo da sua vida hoje.
-            </p>
-          </div>
-          <span className="text-[0.6rem] text-[color:var(--landing-ink-soft)]">28 de Maio, 2025</span>
-        </div>
-
-        <div className="mt-3 grid grid-cols-[1.2fr_1fr] gap-3">
-          {/* Progress card */}
-          <div className="flex items-center justify-center rounded-lg border border-[color:var(--landing-line)] bg-white p-3">
-            <div className="relative h-20 w-20">
-              <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
-                <circle cx="50" cy="50" r="42" fill="none" stroke="#EAE6DD" strokeWidth="8" />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  fill="none"
-                  stroke="#1A4D4D"
-                  strokeWidth="8"
-                  strokeLinecap="round"
-                  strokeDasharray={`${(68 / 100) * 263.9} 263.9`}
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-display text-[0.95rem] leading-none" style={{ fontWeight: 700 }}>
-                  68%
-                </span>
-                <span className="mt-0.5 text-[0.5rem] text-[color:var(--landing-ink-soft)]">
-                  Progresso geral
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right column cards */}
-          <div className="space-y-2">
-            <MiniCard
-              icon={<Sparkle size={10} weight="fill" color="#C9A227" />}
-              title="Foco de hoje"
-              line1="Trabalhar no projeto"
-              line2="Prioridade alta"
-            />
-            <MiniCard
-              icon={<Bell size={10} weight="fill" color="#C9A227" />}
-              title="Próximo hábito"
-              line1="Meditar por 10 minutos"
-              line2="⏰ 08:00"
-            />
-          </div>
-        </div>
-
-        <div className="mt-3">
-          <div className="flex items-center justify-between">
-            <span className="text-[0.7rem] font-semibold">Seus Pilares</span>
-            <span className="text-[0.55rem] text-[color:var(--landing-ink-soft)]">Ver todos</span>
-          </div>
-          <div className="mt-1.5 grid grid-cols-4 gap-1.5">
-            {[
-              { name: "Saúde", v: 75 },
-              { name: "Relacionamentos", v: 60 },
-              { name: "Desenvolvimento", v: 80 },
-              { name: "Propósito", v: 70 },
-            ].map((p) => (
-              <div
-                key={p.name}
-                className="rounded-md border border-[color:var(--landing-line)] bg-white px-1.5 py-1.5 text-center"
-              >
-                <div className="truncate text-[0.5rem] text-[color:var(--landing-ink-soft)]">{p.name}</div>
-                <div className="mt-0.5 font-display text-[0.75rem]" style={{ fontWeight: 700, color: "var(--landing-deep)" }}>
-                  {p.v}%
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MiniCard({
-  icon,
-  title,
-  line1,
-  line2,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  line1: string;
-  line2: string;
-}) {
-  return (
-    <div className="rounded-md border border-[color:var(--landing-line)] bg-white px-2 py-1.5">
-      <div className="flex items-center gap-1 text-[0.55rem] font-semibold">
-        {icon}
-        {title}
-      </div>
-      <div className="mt-0.5 text-[0.55rem]">{line1}</div>
-      <div className="text-[0.5rem] text-[color:var(--landing-ink-soft)]">{line2}</div>
-    </div>
-  );
-}
 
 /* ---------- Trust strip ---------- */
 function TrustStrip() {
