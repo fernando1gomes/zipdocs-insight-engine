@@ -302,7 +302,7 @@ function PillarTile({ name, Icon, index = 0 }: { name: string; Icon: IconType; i
       className="pillar-card flex flex-col items-center rounded-xl border border-[color:var(--landing-line)] bg-white px-3 py-7 text-center transition hover:-translate-y-1 hover:border-[color:var(--landing-deep)]/30 hover:shadow-[0_14px_30px_-18px_rgba(26,77,77,0.25)]"
       style={{
         ["--pillar-in-delay" as string]: `${inDelay}ms`,
-        ["--pillar-float-delay" as string]: `-${floatStart}ms`,
+        ["--pillar-float-delay" as string]: `${floatStart}ms`,
       }}
     >
       <Icon size={30} weight="light" color="var(--landing-deep)" />
