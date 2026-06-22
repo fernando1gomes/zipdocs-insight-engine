@@ -370,3 +370,18 @@
 @media (prefers-reduced-motion: reduce) {
   .wheel-connector, .wheel-node-origin, .wheel-node-end, .wheel-hub, .wheel-hub-halo, .wheel-card-float { animation: none; }
 }
+
+@keyframes pillars-marquee-rtl {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.pillars-marquee-track {
+  animation: pillars-marquee-rtl 70s linear infinite;
+  will-change: transform;
+}
+.pillars-marquee-track:hover {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pillars-marquee-track { animation: none; }
+}

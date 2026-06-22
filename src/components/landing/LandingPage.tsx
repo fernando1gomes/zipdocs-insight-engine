@@ -163,22 +163,44 @@ function Hero() {
 
 /* ---------- Trust strip ---------- */
 function TrustStrip() {
-  const logos = ["Forbes", "EXAME", "VOCÊ S/A", "Valor", "TVCiência", "PEGN"];
+  const items = [
+    { src: pillarImg01, alt: "Pessoa correndo ao amanhecer — pilar Saúde Física" },
+    { src: pillarImg02, alt: "Mulher meditando junto à janela — pilar Saúde Mental" },
+    { src: pillarImg03, alt: "Amigos rindo juntos em um jantar — pilar Relacionamentos" },
+    { src: pillarImg04, alt: "Pessoa lendo um livro em biblioteca acolhedora — pilar Desenvolvimento Pessoal" },
+    { src: pillarImg05, alt: "Profissional apresentando ideia em reunião — pilar Carreira" },
+    { src: pillarImg06, alt: "Pessoa organizando finanças em uma mesa — pilar Finanças" },
+    { src: pillarImg07, alt: "Pessoa contemplando o nascer do sol — pilar Espiritualidade" },
+    { src: pillarImg08, alt: "Amigos em piquenique no parque — pilar Lazer e Diversão" },
+    { src: pillarImg09, alt: "Pessoa cuidando de plantas em casa — pilar Ambiente" },
+    { src: pillarImg10, alt: "Voluntária entregando doações — pilar Contribuição" },
+    { src: pillarImg11, alt: "Pessoa escrevendo no planner — pilar Organização e Produtividade" },
+  ];
   return (
     <section className="bg-[#F1EDE4] py-12">
       <div className="mx-auto max-w-[1200px] px-6 text-center">
         <p className="eyebrow" style={{ color: "var(--landing-ink-soft)", letterSpacing: "0.2em" }}>
-          Confiado por pessoas e organizações que buscam evolução
+          Cenas de uma vida em equilíbrio nos 11 pilares
         </p>
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-x-12 gap-y-5 opacity-60">
-          {logos.map((l) => (
-            <span
-              key={l}
-              className="font-display text-[1.5rem] text-[color:var(--landing-ink)]"
-              style={{ fontWeight: 600, letterSpacing: "-0.01em" }}
+      </div>
+      <div className="mt-8 w-full overflow-hidden">
+        <div className="pillars-marquee-track flex w-max gap-4 px-2">
+          {[...items, ...items].map((it, i) => (
+            <div
+              key={i}
+              className="relative h-[150px] w-[225px] shrink-0 overflow-hidden rounded-xl shadow-sm md:h-[170px] md:w-[255px]"
+              aria-hidden={i >= items.length ? "true" : undefined}
             >
-              {l}
-            </span>
+              <img
+                src={it.src}
+                alt={i >= items.length ? "" : it.alt}
+                width={768}
+                height={576}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            </div>
           ))}
         </div>
       </div>
