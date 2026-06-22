@@ -189,15 +189,16 @@
    Sentence case, 2 pesos (400/500), 0.5px borders, radius 12.
    ============================================================ */
 .landing-root {
-  --ve-primary:      #2b5a4a;
-  --ve-primary-deep: #214538;
-  --ve-accent:       #d4806d;
+  --ve-primary:      #1a4d4a;
+  --ve-primary-deep: #143b39;
+  --ve-accent:       #d4a574;
+  --ve-accent-soft:  #e8b4a1;
   --ve-ink:          #2c2c2a;
   --ve-ink-soft:     #5f5e5a;
   --ve-muted:        #888780;
-  --ve-bg:           #ffffff;
-  --ve-bg-soft:      #f8f8f6;
-  --ve-line:         #d3d1c7;
+  --ve-bg:           #fdfcf9;
+  --ve-bg-soft:      #f5f0e6;
+  --ve-line:         #e5dfd2;
   --ve-shadow-sm: 0 2px 4px rgba(0,0,0,.06);
   --ve-shadow-md: 0 4px 12px rgba(0,0,0,.08);
   --ve-shadow-lg: 0 8px 24px rgba(0,0,0,.10);
@@ -224,9 +225,10 @@
   -webkit-font-smoothing: antialiased;
 }
 .dark .landing-root {
-  --ve-primary:      #5a9d86;
-  --ve-primary-deep: #4a8a74;
-  --ve-accent:       #e09b87;
+  --ve-primary:      #4a8a85;
+  --ve-primary-deep: #3d7370;
+  --ve-accent:       #d4a574;
+  --ve-accent-soft:  #e8b4a1;
   --ve-ink:          #ececea;
   --ve-ink-soft:     #b8b6af;
   --ve-muted:        #8a8980;
