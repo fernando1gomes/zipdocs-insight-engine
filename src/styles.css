@@ -388,20 +388,20 @@
 
 /* ---------- Pillars section entrance + float ---------- */
 @keyframes pillars-text-in-left {
-  from { opacity: 0; transform: translateX(-40px); }
+  from { opacity: 0; transform: translateX(-60px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 @keyframes pillars-text-in-right {
-  from { opacity: 0; transform: translateX(40px); }
+  from { opacity: 0; transform: translateX(60px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 @keyframes pillar-card-in {
-  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  from { opacity: 0; transform: translateY(32px) scale(0.94); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes pillar-card-float {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
+  50%      { transform: translateY(-7px); }
 }
 
 .pillars-section .pillars-text-left,
@@ -415,15 +415,15 @@
 }
 
 .pillars-section.is-visible .pillars-text-left {
-  animation: pillars-text-in-left 700ms cubic-bezier(.2,.7,.2,1) forwards;
+  animation: pillars-text-in-left 900ms cubic-bezier(.2,.7,.2,1) forwards;
 }
 .pillars-section.is-visible .pillars-text-right {
-  animation: pillars-text-in-right 700ms cubic-bezier(.2,.7,.2,1) 120ms forwards;
+  animation: pillars-text-in-right 900ms cubic-bezier(.2,.7,.2,1) 180ms forwards;
 }
 .pillars-section.is-visible .pillar-card {
   animation:
-    pillar-card-in 600ms cubic-bezier(.2,.7,.2,1) var(--pillar-in-delay, 0ms) forwards,
-    pillar-card-float 6s ease-in-out var(--pillar-float-delay, 0ms) infinite;
+    pillar-card-in 700ms cubic-bezier(.2,.7,.2,1) var(--pillar-in-delay, 0ms) forwards,
+    pillar-card-float 5.5s ease-in-out var(--pillar-float-delay, 0ms) infinite;
   /* Float should begin after entrance completes (entrance delay + 600ms) */
 }
 .pillars-section .pillar-card:hover {
