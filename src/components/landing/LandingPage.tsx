@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import {
   Heartbeat,
   Brain,
@@ -235,18 +236,43 @@ const PILLARS_LIST: { name: string; Icon: IconType }[] = [
 ];
 
 function Pillars() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setVisible(true);
+            obs.disconnect();
+          }
+        });
+      },
+      { threshold: 0.2 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <section id="pilares" className="bg-[color:var(--landing-bg)] py-24 md:py-28">
+    <section
+      ref={sectionRef}
+      id="pilares"
+      className={`pillars-section bg-[color:var(--landing-bg)] py-24 md:py-28 ${visible ? "is-visible" : ""}`}
+    >
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="text-center">
-          <p className="eyebrow">Os 11 pilares da vida</p>
+          <p className="eyebrow pillars-text-left">Os 11 pilares da vida</p>
           <h2
-            className="font-display mx-auto mt-4 max-w-3xl text-[2.1rem] leading-[1.15] text-[color:var(--landing-deep)] md:text-[2.8rem]"
+            className="pillars-text-left font-display mx-auto mt-4 max-w-3xl text-[2.1rem] leading-[1.15] text-[color:var(--landing-deep)] md:text-[2.8rem]"
             style={{ fontWeight: 700 }}
           >
             Uma visão completa do que importa
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-[0.98rem] leading-[1.65] text-[color:var(--landing-ink-soft)]">
+          <p className="pillars-text-right mx-auto mt-5 max-w-2xl text-[0.98rem] leading-[1.65] text-[color:var(--landing-ink-soft)]">
             Desenvolva equilíbrio e clareza nas 11 áreas essenciais da sua vida.
             Nossa IA te ajuda a identificar prioridades, criar planos e
             acompanhar seu progresso.
@@ -254,13 +280,13 @@ function Pillars() {
         </div>
 
         <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {PILLARS_LIST.slice(0, 6).map((p) => (
-            <PillarTile key={p.name} {...p} />
+          {PILLARS_LIST.slice(0, 6).map((p, i) => (
+            <PillarTile key={p.name} index={i} {...p} />
           ))}
         </div>
         <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-5 md:px-[8.5%] lg:px-[12%]">
-          {PILLARS_LIST.slice(6).map((p) => (
-            <PillarTile key={p.name} {...p} />
+          {PILLARS_LIST.slice(6).map((p, i) => (
+            <PillarTile key={p.name} index={i + 6} {...p} />
           ))}
         </div>
       </div>
@@ -268,10 +294,16 @@ function Pillars() {
   );
 }
 
-function PillarTile({ name, Icon }: { name: string; Icon: IconType }) {
+function PillarTile({ name, Icon, index = 0 }: { name: string; Icon: IconType; index?: number }) {
+  const inDelay = index * 70;
+  const floatStart = inDelay + 600 + (index % 5) * 220;
   return (
     <div
-      className="flex flex-col items-center rounded-xl border border-[color:var(--landing-line)] bg-white px-3 py-7 text-center transition hover:-translate-y-1 hover:border-[color:var(--landing-deep)]/30 hover:shadow-[0_14px_30px_-18px_rgba(26,77,77,0.25)]"
+      className="pillar-card flex flex-col items-center rounded-xl border border-[color:var(--landing-line)] bg-white px-3 py-7 text-center transition hover:-translate-y-1 hover:border-[color:var(--landing-deep)]/30 hover:shadow-[0_14px_30px_-18px_rgba(26,77,77,0.25)]"
+      style={{
+        ["--pillar-in-delay" as string]: `${inDelay}ms`,
+        ["--pillar-float-delay" as string]: `${floatStart}ms`,
+      }}
     >
       <Icon size={30} weight="light" color="var(--landing-deep)" />
       <p
