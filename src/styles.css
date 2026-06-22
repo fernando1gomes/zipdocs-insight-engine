@@ -83,7 +83,7 @@
   --card-foreground: oklch(0.28 0.012 200);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.28 0.012 200);
-  --primary: oklch(0.33 0.035 180);        /* #1A3A3A verde-azulado profundo */
+  --primary: oklch(0.39 0.045 195);        /* #1A4D4D verde-azulado profundo */
   --primary-foreground: oklch(0.97 0.008 80);
   --secondary: oklch(0.93 0.012 80);
   --secondary-foreground: oklch(0.28 0.012 200);
@@ -188,13 +188,13 @@
    para manter coerência visual com o interior do produto.
    ============================================================ */
 .landing-root {
-  --landing-bg: #F8F6F1;
+  --landing-bg: #F8F9FA;
   --landing-bg-soft: #F1EDE4;
   --landing-ink: #2D3436;
   --landing-ink-soft: #636E72;
   --landing-muted: #8A8F92;
-  --landing-deep: #1A3A3A;
-  --landing-deep-soft: #244848;
+  --landing-deep: #1A4D4D;
+  --landing-deep-soft: #235F5F;
   --landing-gold: #C9A227;
   --landing-gold-soft: #D4B450;
   --landing-gold-deep: #A8861B;
