@@ -69,44 +69,43 @@
   --color-focus-soft: var(--focus-soft);
   --color-empty: var(--empty);
   --color-empty-soft: var(--empty-soft);
-  --font-display: "Poppins", system-ui, sans-serif;
-  --font-sans: "Lato", system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.625rem;
-  /* Vida em Eixo — Identidade Visual
-     Sálvia #4A7C59 · Aloe #8FB996 · Creme #F5F1E8 ·
-     Terracota #D4A574 · Petróleo #2C4A52 */
-  --background: oklch(0.96 0.012 85);
-  --foreground: oklch(0.34 0.04 215);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.34 0.04 215);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.34 0.04 215);
-  --primary: oklch(0.52 0.08 145);
-  --primary-foreground: oklch(0.98 0.01 85);
-  --secondary: oklch(0.92 0.025 145);
-  --secondary-foreground: oklch(0.34 0.04 215);
-  --muted: oklch(0.93 0.012 85);
-  --muted-foreground: oklch(0.5 0.03 215);
-  --accent: oklch(0.75 0.08 70);
-  --accent-foreground: oklch(0.28 0.04 215);
-  --destructive: oklch(0.58 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 85);
-  --border: oklch(0.88 0.018 90);
-  --input: oklch(0.88 0.018 90);
-  --ring: oklch(0.75 0.08 70);
-  --balanced: oklch(0.52 0.08 145);
-  --balanced-soft: oklch(0.74 0.06 145);
-  --attention: oklch(0.75 0.08 70);
-  --attention-soft: oklch(0.92 0.04 75);
-  --critical: oklch(0.58 0.2 25);
-  --critical-soft: oklch(0.93 0.06 30);
-  --focus: oklch(0.34 0.04 215);
-  --focus-soft: oklch(0.88 0.025 215);
-  --empty: oklch(0.78 0.01 90);
-  --empty-soft: oklch(0.93 0.012 85);
+  /* Vida em Eixo — Premium Editorial
+     Verde-escuro #2D4A3E · Dourado #C9A962 · Off-white #F8F6F1 · Antracite #2C2C2C */
+  --background: #F8F6F1;
+  --foreground: #2C2C2C;
+  --card: #FFFFFF;
+  --card-foreground: #2C2C2C;
+  --popover: #FFFFFF;
+  --popover-foreground: #2C2C2C;
+  --primary: #2D4A3E;
+  --primary-foreground: #F8F6F1;
+  --secondary: #EFEAE0;
+  --secondary-foreground: #2C2C2C;
+  --muted: #EFEAE0;
+  --muted-foreground: #6B6B6B;
+  --accent: #C9A962;
+  --accent-foreground: #2D4A3E;
+  --destructive: #B5483A;
+  --destructive-foreground: #F8F6F1;
+  --border: #E8E6E1;
+  --input: #D4D4D4;
+  --ring: #C9A962;
+  --balanced: #2D4A3E;
+  --balanced-soft: #DCE5DA;
+  --attention: #C9A962;
+  --attention-soft: #F2E8CF;
+  --critical: #B5483A;
+  --critical-soft: #F2D9D2;
+  --focus: #2D4A3E;
+  --focus-soft: #E8E2D2;
+  --empty: #B8B4AA;
+  --empty-soft: #E8E6E1;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
