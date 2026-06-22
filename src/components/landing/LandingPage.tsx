@@ -1,298 +1,340 @@
 import { Link } from "@tanstack/react-router";
-import { PILLAR_DEFAULTS, statusFromScore, overallBalance, type Pillar } from "@/lib/pillars";
 import {
-  HandHeart,
-  Brain,
-  House,
-  Heart,
-  UsersThree,
-  Target,
-  ChartLineUp,
-  BookOpen,
+  Briefcase,
   FlowerLotus,
-  MusicNotes,
-  Heartbeat,
+  Plant,
+  Heart,
+  PersonSimple,
+  Sun,
+  Star,
+  CurrencyDollar,
+  Target,
+  ListBullets,
+  Flag,
+  Scales,
+  Compass,
+  MapTrifold,
+  Mountains,
+  ChartLineUp,
+  EnvelopeSimple,
+  WhatsappLogo,
+  MapPin,
+  InstagramLogo,
+  YoutubeLogo,
+  LinkedinLogo,
 } from "@phosphor-icons/react";
-import { RadialWheel } from "@/components/RadialWheel";
-import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
-import { Waves, Compass, Sparkle, CheckCircle, Plant } from "@phosphor-icons/react";
-import type { ComponentType } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-const STEPS = [
-  { n: "01", title: "Autoavaliação", text: "Dê uma nota de 0 a 10 para cada um dos 11 pilares da sua vida e veja sua roda inteira numa só imagem." },
-  { n: "02", title: "Impactos", text: "Descubra o efeito dominó: como cada pilar fortalece (ou enfraquece) os outros — e onde mexer primeiro." },
-  { n: "03", title: "Plano", text: "Transforme consciência em ação: um plano simples, focado nos pilares de maior impacto agora." },
-  { n: "04", title: "Check-in", text: "Acompanhe sua evolução com check-ins curtos e veja a roda da sua vida girar — viva." },
-];
-
-const DIFFERENTIATORS: Array<{
-  Icon: ComponentType<{ size?: number | string; weight?: "light" | "regular"; className?: string }>;
-  title: string;
-  text: string;
-}> = [
-  { Icon: Waves, title: "Efeito dominó", text: "Nenhum pilar adoece — ou floresce — sozinho. Mostramos as conexões reais entre eles." },
-  { Icon: Compass, title: "Autorresponsabilidade ativa", text: "Não é coaching motivacional. É um espelho honesto que devolve a você o leme da sua vida." },
-  { Icon: Sparkle, title: "IA orientadora", text: "Uma orientadora que conhece sua roda e te faz as perguntas certas no momento certo." },
-];
-
-const TESTIMONIALS = [
-  { name: "Marina, 34", quote: "Eu achava que o problema era trabalho. A Roda me mostrou que era o emocional puxando tudo pra baixo. Em 6 semanas, mudei o que importava." },
-  { name: "Rafael, 41", quote: "Nunca tinha visto minha vida assim — inteira. É desconfortável e libertador ao mesmo tempo." },
-  { name: "Júlia, 28", quote: "O que mais me ajudou foi entender o efeito dominó. Parei de tentar consertar dez coisas ao mesmo tempo." },
-];
-
-const FAQ = [
-  { q: "É gratuito?", a: "Sim. Você cria sua conta, faz sua Roda da Vida (Vida em Eixo) completa e usa todas as áreas — autoavaliação, impactos, plano, check-in e IA — sem custo." },
-  { q: "Quanto tempo leva pra começar?", a: "A autoavaliação inicial leva entre 8 e 15 minutos. Você pode pausar e voltar quando quiser." },
-  { q: "Preciso fazer tudo de uma vez?", a: "Não. A Roda é um processo vivo. Comece pela autoavaliação, e o sistema te guia pelos próximos passos no seu ritmo." },
-  { q: "Como a IA me ajuda?", a: "Ela enxerga sua roda inteira — pontuações, impactos, plano — e conversa com você fazendo perguntas que ajudam a clarear escolhas e próximos passos." },
-  { q: "Meus dados são privados?", a: "Sim. Sua roda é só sua. Não compartilhamos suas avaliações, planos ou conversas com a IA com ninguém." },
-];
+import heroPortrait from "@/assets/hero-portrait.jpg.asset.json";
 
 export function LandingPage() {
   return (
     <div className="landing-root min-h-screen">
       <LandingNav />
       <Hero />
-      <DashboardPreview />
-      <PillarsSection />
-      <HowItWorks />
-      <Differentiators />
-      <Testimonials />
-      <FAQSection />
-      <FinalCTA />
+      <LifeWheelSection />
+      <Methodology />
       <LandingFooter />
     </div>
   );
 }
 
-function LandingNav() {
+/* ---------- Brand mark ---------- */
+function BrandMark({ tone = "light" }: { tone?: "light" | "dark" }) {
+  const color = tone === "light" ? "#F1ECDF" : "#1A3A3A";
+  const accent = "#C9A227";
   return (
-    <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-      <Link to="/" className="flex items-center gap-2.5">
-        <img
-          src={logoAsset.url}
-          alt="Vida em Eixo"
-          className="h-10 w-10 rounded-2xl object-contain"
-        />
-        <span className="text-lg font-semibold tracking-tight">Vida em Eixo</span>
-      </Link>
-      <div className="flex items-center gap-2">
-        <Link to="/auth" className="landing-cta landing-cta-ghost hidden sm:inline-flex">
-          Entrar
+    <span
+      className="font-display select-none"
+      style={{ color, letterSpacing: "0.04em", fontSize: "1.35rem", fontWeight: 500 }}
+    >
+      VIDA <span style={{ fontStyle: "italic", fontWeight: 400, color: accent }}>em</span> EIXO
+    </span>
+  );
+}
+
+/* ---------- Nav ---------- */
+function LandingNav() {
+  const links = [
+    { label: "Sobre", href: "#sobre" },
+    { label: "Metodologia", href: "#metodologia" },
+    { label: "Depoimentos", href: "#depoimentos" },
+    { label: "Contato", href: "#contato" },
+  ];
+  return (
+    <header
+      className="absolute inset-x-0 top-0 z-20"
+      style={{ background: "transparent" }}
+    >
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-6 md:py-7">
+        <Link to="/" aria-label="Vida em Eixo — início">
+          <BrandMark tone="light" />
         </Link>
-        <Link to="/auth" className="landing-cta">
-          Começar agora
+        <nav className="hidden items-center gap-10 md:flex">
+          {links.map((l) => (
+            <a
+              key={l.label}
+              href={l.href}
+              className="text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[#F1ECDF]/85 transition hover:text-[color:var(--landing-gold)]"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <Link
+          to="/auth"
+          className="text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[color:var(--landing-gold)] transition hover:text-[color:var(--landing-gold-soft)]"
+        >
+          Entrar
         </Link>
       </div>
     </header>
   );
 }
 
+/* ---------- Hero ---------- */
 function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:grid-cols-[1.1fr_1fr] md:py-24">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] px-3 py-1 text-xs font-medium tracking-wide text-[color:var(--landing-ink-soft)] uppercase">
-            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--landing-gold)]" />
-            Autoconhecimento integrado
-          </span>
-          <h1 className="mt-6 text-4xl font-bold leading-[1.05] md:text-6xl">
-            Veja sua vida inteira <br className="hidden md:block" />
-            <span className="italic text-[color:var(--landing-ink-soft)]">em uma só imagem.</span>
+    <section
+      className="relative overflow-hidden"
+      style={{ background: "var(--landing-deep)" }}
+    >
+      <div className="mx-auto grid min-h-[680px] max-w-[1200px] grid-cols-1 items-center gap-12 px-6 pb-20 pt-32 md:grid-cols-[1.15fr_1fr] md:gap-16 md:pt-36">
+        <div className="text-[#F1ECDF]">
+          <span className="landing-rule mb-8 block" />
+          <h1
+            className="font-display text-[2.6rem] leading-[1.08] md:text-[4rem]"
+            style={{ fontWeight: 500, letterSpacing: "-0.015em", color: "#F4EFE2" }}
+          >
+            Transforme<br />
+            sua vida em um<br />
+            sistema que funciona
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--landing-ink-soft)]">
-            A Vida em Eixo é um espelho honesto dos 11 pilares que sustentam você.
-            Você avalia, vê o efeito dominó entre eles e descobre exatamente onde mexer
-            primeiro para mudar tudo.
+          <p
+            className="mt-8 max-w-md text-base leading-[1.7] md:text-[1.05rem]"
+            style={{ color: "rgba(241,236,223,0.78)" }}
+          >
+            A metodologia completa para você sair do piloto automático e construir
+            uma vida com propósito, equilíbrio e resultados reais.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link to="/auth" className="landing-cta landing-cta-gold">
-              Começar agora — é gratuito →
+          <div className="mt-10">
+            <Link to="/auth" className="landing-cta landing-cta-gold-outline">
+              Comece sua jornada
             </Link>
-            <a href="#como-funciona" className="text-sm font-medium text-[color:var(--landing-ink-soft)] underline-offset-4 hover:underline">
-              ver como funciona
-            </a>
-          </div>
-          <div className="mt-10 flex items-center gap-6 text-xs text-[color:var(--landing-muted)]">
-            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> 11 pilares mapeados</span>
-            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> Sem cobrança</span>
-            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> Comece em 10 min</span>
           </div>
         </div>
-        <HeroWheel />
+
+        <div className="relative">
+          <div
+            className="relative mx-auto aspect-[3/4] w-full max-w-[460px] overflow-hidden"
+            style={{ borderRadius: 2 }}
+          >
+            <img
+              src={heroPortrait.url}
+              alt="Mulher profissional refletindo, em ambiente sofisticado"
+              className="h-full w-full object-cover"
+              width={1024}
+              height={1536}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-function HeroWheel() {
-  const SIZE = 420;
-  const CX = SIZE / 2;
-  const CY = SIZE / 2;
-  const R_OUTER = 170;
-  const R_INNER = 80;
-  const N = PILLAR_DEFAULTS.length;
-  const segDeg = 360 / N;
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const balance = overallBalance(PILLAR_DEFAULTS);
+/* ---------- Life Wheel Section ---------- */
+const WHEEL_PILLARS = [
+  { name: "Espiritualidade", Icon: FlowerLotus, angle: -90 },
+  { name: "Saúde\ne Bem-estar", Icon: Plant, angle: -45 },
+  { name: "Relacionamentos", Icon: Heart, angle: 0 },
+  { name: "Desenvolvimento\nPessoal", Icon: PersonSimple, angle: 45 },
+  { name: "Lazer e Diversão", Icon: Sun, angle: 90 },
+  { name: "Realização\ne Propósito", Icon: Star, angle: 135 },
+  { name: "Finanças", Icon: CurrencyDollar, angle: 180 },
+  { name: "Carreira", Icon: Briefcase, angle: -135 },
+];
 
-  const STATUS_FILL: Record<string, string> = {
-    balanced: "var(--balanced)",
-    attention: "var(--attention)",
-    critical: "var(--critical)",
-    empty: "var(--empty)",
-  };
+const WHEEL_BENEFITS = [
+  { Icon: Target, title: "Reconheça", text: "seus pontos fortes e desafios" },
+  { Icon: ListBullets, title: "Defina", text: "prioridades com clareza" },
+  { Icon: Flag, title: "Trace planos", text: "alinhados ao que realmente importa" },
+  { Icon: Scales, title: "Equilibre", text: "suas áreas e avance com consistência" },
+];
+
+function EditorialWheel() {
+  const SIZE = 460;
+  const C = SIZE / 2;
+  const R_OUTER = 200;
+  const R_INNER = 70;
+  const N = WHEEL_PILLARS.length;
+  const seg = 360 / N;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const deep = "#1A3A3A";
+  const gold = "#C9A227";
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[420px]">
-      <div className="hero-wheel-halo absolute inset-6 rounded-full bg-gradient-to-br from-[color:var(--landing-bg-soft)] via-[color:var(--landing-bg-soft)] to-transparent blur-2xl" />
-      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="relative h-full w-full">
-        <g className="hero-wheel-rotate">
-        {PILLAR_DEFAULTS.map((p, i) => {
-          const a0 = -90 - segDeg / 2 + i * segDeg;
-          const a1 = a0 + segDeg;
-          const mid = (a0 + a1) / 2;
-          const midR = toRad(mid);
-          const x0o = CX + R_OUTER * Math.cos(toRad(a0));
-          const y0o = CY + R_OUTER * Math.sin(toRad(a0));
-          const x1o = CX + R_OUTER * Math.cos(toRad(a1));
-          const y1o = CY + R_OUTER * Math.sin(toRad(a1));
-          const x0i = CX + R_INNER * Math.cos(toRad(a1));
-          const y0i = CY + R_INNER * Math.sin(toRad(a1));
-          const x1i = CX + R_INNER * Math.cos(toRad(a0));
-          const y1i = CY + R_INNER * Math.sin(toRad(a0));
-          const d = `M ${x0o} ${y0o} A ${R_OUTER} ${R_OUTER} 0 0 1 ${x1o} ${y1o} L ${x0i} ${y0i} A ${R_INNER} ${R_INNER} 0 0 0 ${x1i} ${y1i} Z`;
-          const status = statusFromScore(p.score);
-          const iconR = (R_INNER + R_OUTER) / 2 + 4;
-          const ix = CX + iconR * Math.cos(midR);
-          const iy = CY + iconR * Math.sin(midR);
-          const numR = R_INNER + 14;
-          const nx = CX + numR * Math.cos(midR);
-          const ny = CY + numR * Math.sin(midR);
+    <div className="relative mx-auto w-full max-w-[460px]">
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-auto w-full">
+        {/* outer ring */}
+        <circle cx={C} cy={C} r={R_OUTER} fill="none" stroke={deep} strokeWidth={1.5} />
+        {/* inner ring (hub border) */}
+        <circle cx={C} cy={C} r={R_INNER} fill={deep} stroke={gold} strokeWidth={1} />
+        {/* dividers */}
+        {WHEEL_PILLARS.map((_, i) => {
+          const a = toRad(-90 - seg / 2 + i * seg);
+          const x1 = C + R_INNER * Math.cos(a);
+          const y1 = C + R_INNER * Math.sin(a);
+          const x2 = C + R_OUTER * Math.cos(a);
+          const y2 = C + R_OUTER * Math.sin(a);
           return (
-            <g key={p.id} className="hero-wheel-seg" style={{ animationDelay: `${i * 0.18}s` }}>
-              <path d={d} fill={STATUS_FILL[status]} fillOpacity={0.9} stroke="white" strokeWidth={2} />
-              <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill="white">
-                {p.id}
-              </text>
-              <foreignObject x={ix - 10} y={iy - 10} width={20} height={20}>
-                <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <p.Icon size={16} weight="light" color="white" />
-                </div>
-              </foreignObject>
-            </g>
+            <line
+              key={i}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke={gold}
+              strokeWidth={0.8}
+              opacity={0.7}
+            />
           );
         })}
-        </g>
-        <g className="hero-wheel-hub">
-        <circle cx={CX} cy={CY} r={R_INNER - 4} fill="white" stroke="var(--primary)" strokeOpacity={0.35} strokeWidth={2} />
-        </g>
-        <text x={CX} y={CY - 16} textAnchor="middle" fontSize="12" fill="var(--landing-ink-soft)" fontWeight="500">
-          Equilíbrio Geral
+        {/* hub text */}
+        <text
+          x={C}
+          y={C - 10}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontFamily='"Playfair Display", serif'
+          fontSize="13"
+          letterSpacing="2"
+          fill="#F1ECDF"
+        >
+          VIDA
         </text>
         <text
-          x={CX}
-          y={CY + 16}
+          x={C}
+          y={C + 6}
           textAnchor="middle"
-          fontSize="34"
-          fontWeight="800"
-          fill="var(--landing-ink)"
+          dominantBaseline="middle"
+          fontFamily='"Playfair Display", serif'
+          fontStyle="italic"
+          fontSize="11"
+          letterSpacing="1"
+          fill={gold}
         >
-          {balance}%
+          em
         </text>
-        <foreignObject x={CX - 10} y={CY + 32} width={20} height={20}>
-          <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--primary)" }}>
-            <Plant size={18} weight="light" />
-          </div>
-        </foreignObject>
+        <text
+          x={C}
+          y={C + 22}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontFamily='"Playfair Display", serif'
+          fontSize="13"
+          letterSpacing="2"
+          fill="#F1ECDF"
+        >
+          EIXO
+        </text>
       </svg>
+
+      {/* labels + icons absolutely positioned around */}
+      {WHEEL_PILLARS.map((p) => {
+        const labelR = R_OUTER - 56;
+        const iconR = R_OUTER - 30;
+        const a = toRad(p.angle);
+        const lx = C + labelR * Math.cos(a);
+        const ly = C + labelR * Math.sin(a);
+        const ix = C + iconR * Math.cos(a);
+        const iy = C + iconR * Math.sin(a);
+        return (
+          <div key={p.name} className="pointer-events-none absolute inset-0">
+            <div
+              className="absolute flex items-center justify-center"
+              style={{
+                left: `${(ix / SIZE) * 100}%`,
+                top: `${(iy / SIZE) * 100}%`,
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <p.Icon size={22} weight="light" color={deep} />
+            </div>
+            <div
+              className="absolute text-center"
+              style={{
+                left: `${(lx / SIZE) * 100}%`,
+                top: `${(ly / SIZE) * 100}%`,
+                transform: "translate(-50%, -50%)",
+                width: 96,
+              }}
+            >
+              <span
+                className="block whitespace-pre-line text-[0.62rem] font-medium uppercase leading-[1.3] tracking-[0.14em]"
+                style={{ color: deep }}
+              >
+                {p.name}
+              </span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-const DEMO_PILLARS: Pillar[] = [
-  { id: 1,  name: "Contribuição",  shortName: "Contribuição",  icon: "🤝", Icon: HandHeart,   score: 8.2, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
-  { id: 2,  name: "Emocional",     shortName: "Emocional",     icon: "❤️", Icon: Brain,       score: 6.4, message: "Exemplo: atenção",            impact: 3, impactPillars: [] },
-  { id: 3,  name: "Família",       shortName: "Família",       icon: "🏠", Icon: House,       score: 7.6, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
-  { id: 4,  name: "Relacionamento",shortName: "Relacionamento",icon: "💕", Icon: Heart,       score: 4.9, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
-  { id: 5,  name: "Social",        shortName: "Social",        icon: "👥", Icon: UsersThree,  score: 7.1, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
-  { id: 6,  name: "Carreira",      shortName: "Carreira",      icon: "🎯", Icon: Target,      score: 6.2, message: "Exemplo: atenção",            impact: 4, impactPillars: [], focus: true },
-  { id: 7,  name: "Financeiro",    shortName: "Financeiro",    icon: "💵", Icon: ChartLineUp, score: 8.5, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
-  { id: 8,  name: "Intelectual",   shortName: "Intelectual",   icon: "📖", Icon: BookOpen,    score: 7.8, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
-  { id: 9,  name: "Espiritualidade",shortName:"Espiritualidade",icon:"🧘", Icon: FlowerLotus, score: 5.3, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
-  { id: 10, name: "Lazer",         shortName: "Lazer",         icon: "🎵", Icon: MusicNotes,  score: 6.8, message: "Exemplo: atenção",            impact: 3, impactPillars: [] },
-  { id: 11, name: "Saúde",         shortName: "Saúde",         icon: "🏃", Icon: Heartbeat,   score: 4.3, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
-];
-
-function DashboardPreview() {
+function LifeWheelSection() {
   return (
-    <section className="relative overflow-hidden border-y border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] py-20">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--landing-line)] bg-[color:var(--background)] px-3 py-1 text-xs font-medium tracking-wide text-[color:var(--landing-ink-soft)] uppercase">
-            Prévia do painel
-          </span>
-          <h2 className="mt-5 text-3xl font-bold leading-tight md:text-4xl">
-            Sua vida inteira, viva e em movimento
+    <section id="sobre" className="bg-[color:var(--landing-bg)] py-24 md:py-32">
+      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-6 lg:grid-cols-[1fr_1.1fr_1fr]">
+        {/* Left copy */}
+        <div>
+          <p className="eyebrow">Sua vida, em equilíbrio</p>
+          <h2
+            className="mt-5 font-display text-[2rem] leading-[1.15] md:text-[2.6rem]"
+            style={{ fontWeight: 500, color: "var(--landing-ink)" }}
+          >
+            Uma visão<br />completa de<br />quem você é.
           </h2>
-          <p className="mt-4 text-[color:var(--landing-ink-soft)]">
-            Uma amostra ilustrativa do painel — os números abaixo são fictícios,
-            só para você sentir como a Roda da Vida ganha vida com os seus dados.
+          <p className="mt-6 max-w-[320px] text-[0.95rem] leading-[1.7] text-[color:var(--landing-ink-soft)]">
+            A Roda da Vida mostra onde você está hoje em cada área essencial e
+            revela onde pode crescer para viver com mais leveza e realização.
           </p>
+          <div className="mt-8">
+            <Link to="/auth" className="landing-cta landing-cta-solid">
+              Avalie sua roda da vida
+            </Link>
+          </div>
         </div>
-        <div className="mt-12 hidden md:block">
-          <RadialWheel
-            pillars={DEMO_PILLARS}
-            balance={68}
-            hovered={null}
-            onHover={() => {}}
-          />
-          <p className="mt-4 text-center text-xs italic text-[color:var(--landing-muted)]">
-            * dados ilustrativos
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
 
-function PillarsSection() {
-  return (
-    <section className="bg-[color:var(--landing-bg-soft)] py-20">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Os 11 pilares</p>
-          <h2 className="mt-3 text-3xl font-bold md:text-4xl">
-            Sua vida não é uma lista de tarefas.
-            <span className="block text-[color:var(--landing-ink-soft)]">É um sistema vivo.</span>
-          </h2>
-          <p className="mt-4 text-[color:var(--landing-ink-soft)]">
-            Cada pilar conversa com os outros. Quando um adoece, todos sentem.
-            Quando um floresce, todos respiram melhor.
-          </p>
+        {/* Center wheel */}
+        <div className="order-first lg:order-none">
+          <EditorialWheel />
         </div>
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PILLAR_DEFAULTS.map((p) => (
-            <div
-              key={p.id}
-              className="group rounded-2xl border border-[color:var(--landing-line)] bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[color:var(--landing-line)]"
-            >
-              <div className="flex items-start gap-3">
-                <p.Icon size={24} weight="light" className="text-[color:var(--primary)] shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-base font-semibold">{p.name}</h3>
-                  <p className="mt-1 text-sm text-[color:var(--landing-ink-soft)]">
-                    Conecta com {p.impactPillars.slice(0, 2).join(" e ")}.
-                  </p>
-                </div>
+
+        {/* Right benefits */}
+        <div className="space-y-7">
+          {WHEEL_BENEFITS.map((b) => (
+            <div key={b.title} className="flex items-start gap-4">
+              <div
+                className="flex h-11 w-11 shrink-0 items-center justify-center"
+                style={{
+                  border: "1px solid var(--landing-gold)",
+                  borderRadius: 999,
+                  color: "var(--landing-gold-deep)",
+                }}
+              >
+                <b.Icon size={20} weight="light" />
+              </div>
+              <div>
+                <h3
+                  className="text-[0.78rem] font-semibold uppercase tracking-[0.18em]"
+                  style={{ color: "var(--landing-ink)", fontFamily: "var(--font-sans)" }}
+                >
+                  {b.title}
+                </h3>
+                <p className="mt-1 text-[0.92rem] leading-[1.55] text-[color:var(--landing-ink-soft)]">
+                  {b.text}
+                </p>
               </div>
             </div>
           ))}
@@ -302,21 +344,87 @@ function PillarsSection() {
   );
 }
 
-function HowItWorks() {
+/* ---------- Methodology ---------- */
+const STEPS = [
+  {
+    n: "01",
+    Icon: Compass,
+    title: "Diagnóstico\ne Clareza",
+    text: "Entenda onde você está hoje e o que precisa mudar para chegar onde deseja.",
+  },
+  {
+    n: "02",
+    Icon: MapTrifold,
+    title: "Plano\nPersonalizado",
+    text: "Criamos um plano estratégico alinhado aos seus objetivos e valores.",
+  },
+  {
+    n: "03",
+    Icon: Mountains,
+    title: "Ação com\nFoco",
+    text: "Você entra em ação com método, foco e acompanhamento contínuo.",
+  },
+  {
+    n: "04",
+    Icon: ChartLineUp,
+    title: "Resultados\ne Evolução",
+    text: "Celebre conquistas, ajuste a rota e continue evoluindo com consistência.",
+  },
+];
+
+function Methodology() {
   return (
-    <section id="como-funciona" className="py-20">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Como funciona</p>
-          <h2 className="mt-3 text-3xl font-bold md:text-4xl">Quatro passos. Uma vida inteira clareada.</h2>
+    <section
+      id="metodologia"
+      className="bg-[color:var(--landing-bg)] pb-28 pt-8 md:pb-32"
+    >
+      <div className="mx-auto max-w-[1200px] px-6">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.05fr_1fr] md:items-end">
+          <div>
+            <p className="eyebrow">Metodologia Vida em Eixo</p>
+            <span className="landing-rule mt-4 block" style={{ width: 48 }} />
+            <h2
+              className="mt-5 font-display text-[2rem] leading-[1.15] md:text-[2.6rem]"
+              style={{ fontWeight: 500, color: "var(--landing-ink)" }}
+            >
+              Um caminho estruturado<br />para resultados reais.
+            </h2>
+          </div>
+          <p className="max-w-md text-[0.95rem] leading-[1.7] text-[color:var(--landing-ink-soft)] md:pb-3">
+            Nossa metodologia combina estratégia, autoconhecimento e ação para
+            transformar sua vida de dentro para fora.
+          </p>
         </div>
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
-            <div key={s.n} className="relative rounded-2xl border border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] p-6">
-              <span className="font-display text-5xl font-bold text-[color:var(--landing-gold)]">{s.n}</span>
-              <h3 className="mt-3 text-lg font-semibold">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[color:var(--landing-ink-soft)]">{s.text}</p>
-            </div>
+            <article
+              key={s.n}
+              className="flex flex-col items-center bg-white px-8 py-10 text-center transition hover:-translate-y-1 hover:shadow-[0_18px_40px_-22px_rgba(26,58,58,0.25)]"
+              style={{ border: "1px solid var(--landing-line)", borderRadius: 4 }}
+            >
+              <span
+                className="font-display text-[2.25rem] leading-none"
+                style={{ color: "var(--landing-gold)", fontWeight: 500 }}
+              >
+                {s.n}
+              </span>
+              <s.Icon
+                size={36}
+                weight="light"
+                className="mt-6"
+                color="var(--landing-gold)"
+              />
+              <h3
+                className="mt-6 whitespace-pre-line text-[0.82rem] font-semibold uppercase tracking-[0.2em]"
+                style={{ color: "var(--landing-ink)", fontFamily: "var(--font-sans)" }}
+              >
+                {s.title}
+              </h3>
+              <p className="mt-4 text-[0.88rem] leading-[1.6] text-[color:var(--landing-ink-soft)]">
+                {s.text}
+              </p>
+            </article>
           ))}
         </div>
       </div>
@@ -324,108 +432,127 @@ function HowItWorks() {
   );
 }
 
-function Differentiators() {
-  return (
-    <section className="bg-[color:var(--landing-ink)] py-20 text-[color:#FBF8F2]">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="max-w-2xl">
-          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold)] uppercase">Por que é diferente</p>
-          <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
-            Não é mais um app de hábitos. É um espelho que devolve o leme pra você.
-          </h2>
-        </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {DIFFERENTIATORS.map((d) => (
-            <div key={d.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-              <d.Icon size={32} weight="light" className="text-[color:var(--landing-gold)]" />
-              <h3 className="mt-4 text-lg font-semibold !text-white">{d.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">{d.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  return (
-    <section className="py-20">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Quem já rodou</p>
-          <h2 className="mt-3 text-3xl font-bold md:text-4xl">O que as pessoas descobrem.</h2>
-        </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="rounded-2xl border border-[color:var(--landing-line)] bg-white p-6">
-              <span className="font-display text-4xl leading-none text-[color:var(--landing-gold)]">"</span>
-              <blockquote className="mt-2 text-[color:var(--landing-ink)] leading-relaxed">
-                {t.quote}
-              </blockquote>
-              <figcaption className="mt-4 text-sm font-medium text-[color:var(--landing-ink-soft)]">— {t.name}</figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FAQSection() {
-  return (
-    <section className="bg-[color:var(--landing-bg-soft)] py-20">
-      <div className="mx-auto max-w-3xl px-6">
-        <div className="text-center">
-          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Perguntas frequentes</p>
-          <h2 className="mt-3 text-3xl font-bold md:text-4xl">Tudo que você quer saber antes de começar.</h2>
-        </div>
-        <Accordion type="single" collapsible className="mt-10">
-          {FAQ.map((f, i) => (
-            <AccordionItem key={i} value={`item-${i}`} className="border-b border-[color:var(--landing-line)]">
-              <AccordionTrigger className="py-5 text-left text-base font-semibold text-[color:var(--landing-ink)] hover:no-underline">
-                {f.q}
-              </AccordionTrigger>
-              <AccordionContent className="text-[color:var(--landing-ink-soft)] leading-relaxed">
-                {f.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </section>
-  );
-}
-
-function FinalCTA() {
-  return (
-    <section className="py-24">
-      <div className="mx-auto max-w-3xl px-6 text-center">
-        <div className="landing-divider mx-auto mb-12 max-w-xs" />
-        <h2 className="text-3xl font-bold md:text-5xl">
-          Nenhum pilar muda sozinho.
-          <span className="block italic text-[color:var(--landing-ink-soft)]">Comece o seu efeito dominó hoje.</span>
-        </h2>
-        <p className="mt-6 text-lg text-[color:var(--landing-ink-soft)]">
-          Em menos de 15 minutos você terá a primeira imagem honesta da sua vida inteira.
-        </p>
-        <div className="mt-10">
-          <Link to="/auth" className="landing-cta landing-cta-gold text-base">
-            Criar minha Roda gratuita →
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
+/* ---------- Footer ---------- */
 function LandingFooter() {
   return (
-    <footer className="border-t border-[color:var(--landing-line)] py-8">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-sm text-[color:var(--landing-muted)]">
-        <p>© {new Date().getFullYear()} Vida em Eixo. Feito para quem quer ver a vida inteira.</p>
-        <Link to="/auth" className="hover:text-[color:var(--landing-ink)]">Entrar / Criar conta</Link>
+    <footer
+      id="contato"
+      className="text-[#F1ECDF]"
+      style={{ background: "var(--landing-deep)" }}
+    >
+      <div className="mx-auto max-w-[1200px] px-6 pb-10 pt-20">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
+          <div>
+            <BrandMark tone="light" />
+            <p
+              className="mt-5 max-w-[240px] text-[0.85rem] leading-[1.65]"
+              style={{ color: "rgba(241,236,223,0.7)" }}
+            >
+              Coaching e desenvolvimento pessoal para quem quer viver com
+              propósito, equilíbrio e liberdade.
+            </p>
+            <p
+              className="mt-5 font-display italic"
+              style={{ color: "var(--landing-gold)", fontSize: "0.95rem" }}
+            >
+              Sua vida. Seu eixo. Suas escolhas.
+            </p>
+          </div>
+
+          <FooterCol
+            title="Navegação"
+            items={[
+              { label: "Sobre", href: "#sobre" },
+              { label: "Metodologia", href: "#metodologia" },
+              { label: "Depoimentos", href: "#depoimentos" },
+              { label: "Contato", href: "#contato" },
+            ]}
+          />
+
+          <div>
+            <FooterTitle>Contato</FooterTitle>
+            <ul className="mt-5 space-y-3 text-[0.88rem]" style={{ color: "rgba(241,236,223,0.78)" }}>
+              <li className="flex items-center gap-3">
+                <EnvelopeSimple size={16} weight="light" color="#C9A227" />
+                contato@vidaemeixo.com.br
+              </li>
+              <li className="flex items-center gap-3">
+                <WhatsappLogo size={16} weight="light" color="#C9A227" />
+                (11) 99999-9999
+              </li>
+              <li className="flex items-center gap-3">
+                <MapPin size={16} weight="light" color="#C9A227" />
+                Atendimentos online
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <FooterTitle>Siga nas redes</FooterTitle>
+            <p className="mt-5 text-[0.88rem]" style={{ color: "rgba(241,236,223,0.78)" }}>
+              @vidaemeixo
+            </p>
+            <div className="mt-5 flex items-center gap-3">
+              {[InstagramLogo, YoutubeLogo, LinkedinLogo].map((Icon, i) => (
+                <a
+                  key={i}
+                  href="#"
+                  aria-label="rede social"
+                  className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-[color:var(--landing-gold)] hover:text-[color:var(--landing-deep)]"
+                  style={{ border: "1px solid var(--landing-gold)", color: "var(--landing-gold)" }}
+                >
+                  <Icon size={18} weight="light" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="mt-16 border-t pt-6 text-center text-[0.78rem]"
+          style={{ borderColor: "rgba(241,236,223,0.12)", color: "rgba(241,236,223,0.55)" }}
+        >
+          © {new Date().getFullYear()} Vida em Eixo. Todos os direitos reservados.
+        </div>
       </div>
     </footer>
+  );
+}
+
+function FooterTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h4
+      className="text-[0.72rem] font-semibold uppercase tracking-[0.22em]"
+      style={{ color: "#F1ECDF", fontFamily: "var(--font-sans)" }}
+    >
+      {children}
+    </h4>
+  );
+}
+
+function FooterCol({
+  title,
+  items,
+}: {
+  title: string;
+  items: { label: string; href: string }[];
+}) {
+  return (
+    <div>
+      <FooterTitle>{title}</FooterTitle>
+      <ul className="mt-5 space-y-3 text-[0.88rem]">
+        {items.map((i) => (
+          <li key={i.label}>
+            <a
+              href={i.href}
+              className="transition hover:text-[color:var(--landing-gold)]"
+              style={{ color: "rgba(241,236,223,0.78)" }}
+            >
+              {i.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
