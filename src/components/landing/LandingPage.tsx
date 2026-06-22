@@ -1,5 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { PILLAR_DEFAULTS, statusFromScore, overallBalance } from "@/lib/pillars";
+import { PILLAR_DEFAULTS, statusFromScore, overallBalance, type Pillar } from "@/lib/pillars";
+import {
+  HandHeart,
+  Brain,
+  House,
+  Heart,
+  UsersThree,
+  Target,
+  ChartLineUp,
+  BookOpen,
+  FlowerLotus,
+  MusicNotes,
+  Heartbeat,
+} from "@phosphor-icons/react";
+import { RadialWheel } from "@/components/RadialWheel";
 import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
 import { Waves, Compass, Sparkle, CheckCircle, Plant } from "@phosphor-icons/react";
 import type { ComponentType } from "react";
