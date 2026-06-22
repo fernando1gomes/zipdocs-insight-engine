@@ -23,6 +23,17 @@ import {
 } from "@phosphor-icons/react";
 import iconeAsset from "@/assets/vida-em-eixo-icone-verde.png.asset.json";
 import pcModeloAsset from "@/assets/pc-modelo.png.asset.json";
+import pillarImg01 from "@/assets/pillars/01-saude-fisica.jpg";
+import pillarImg02 from "@/assets/pillars/02-saude-mental.jpg";
+import pillarImg03 from "@/assets/pillars/03-relacionamentos.jpg";
+import pillarImg04 from "@/assets/pillars/04-desenvolvimento.jpg";
+import pillarImg05 from "@/assets/pillars/05-carreira.jpg";
+import pillarImg06 from "@/assets/pillars/06-financas.jpg";
+import pillarImg07 from "@/assets/pillars/07-espiritualidade.jpg";
+import pillarImg08 from "@/assets/pillars/08-lazer.jpg";
+import pillarImg09 from "@/assets/pillars/09-ambiente.jpg";
+import pillarImg10 from "@/assets/pillars/10-contribuicao.jpg";
+import pillarImg11 from "@/assets/pillars/11-organizacao.jpg";
 import type { ComponentType } from "react";
 
 type IconType = ComponentType<{
