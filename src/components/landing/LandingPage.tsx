@@ -105,9 +105,16 @@ function Hero() {
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 px-6 pb-24 pt-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16 lg:pb-32 lg:pt-16">
         {/* Left */}
         <div>
-          <span className="inline-flex items-center rounded-full border border-[color:var(--landing-line)] bg-white px-4 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[color:var(--landing-ink-soft)]">
-            Plataforma de Gerenciamento de Vida com IA
+        <div className="flex items-center gap-3">
+          <img
+            src={logoAsset.url}
+            alt=""
+            className="h-10 w-10 object-contain"
+          />
+          <span className="font-display text-[1.15rem] font-semibold tracking-[-0.01em] text-[color:var(--landing-deep)]">
+            Vida em Eixo
           </span>
+        </div>
           <h1
             className="font-display mt-7 text-[3rem] leading-[1.05] tracking-[-0.02em] text-[color:var(--landing-deep)] sm:text-[3.6rem] lg:text-[4.4rem]"
             style={{ fontWeight: 700 }}
