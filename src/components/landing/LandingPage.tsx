@@ -1,244 +1,261 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { PILLAR_DEFAULTS, statusFromScore, overallBalance, type Pillar } from "@/lib/pillars";
 import {
-  HandHeart, Brain, House, Heart, UsersThree, Target,
-  ChartLineUp, BookOpen, FlowerLotus, MusicNotes, Heartbeat,
-  List, X,
+  HandHeart,
+  Brain,
+  House,
+  Heart,
+  UsersThree,
+  Target,
+  ChartLineUp,
+  BookOpen,
+  FlowerLotus,
+  MusicNotes,
+  Heartbeat,
 } from "@phosphor-icons/react";
 import { RadialWheel } from "@/components/RadialWheel";
-import { PILLAR_DEFAULTS, type Pillar } from "@/lib/pillars";
 import logoAsset from "@/assets/vida-em-eixo-logo.png.asset.json";
+import { Waves, Compass, Sparkle, CheckCircle, Plant } from "@phosphor-icons/react";
+import type { ComponentType } from "react";
 import {
-  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const NAV_LINKS = [
-  { href: "#metodo", label: "Como funciona" },
-  { href: "#pilares", label: "Pilares" },
-  { href: "#depoimentos", label: "Depoimentos" },
-  { href: "#perguntas", label: "Perguntas" },
-];
-
-const STATS = [
-  { value: "11", label: "pilares mapeados" },
-  { value: "10 min", label: "para começar" },
-  { value: "100%", label: "gratuito, sempre" },
-];
-
 const STEPS = [
-  { n: "01", title: "Autoavaliação",
-    text: "Dê uma nota de 0 a 10 para cada um dos 11 pilares e veja sua vida inteira em uma só imagem." },
-  { n: "02", title: "Impactos",
-    text: "Descubra o efeito dominó: como cada pilar fortalece — ou enfraquece — todos os outros." },
-  { n: "03", title: "Plano",
-    text: "Transforme consciência em ação com um plano simples, focado no que muda tudo." },
-  { n: "04", title: "Check-in",
-    text: "Acompanhe sua evolução com check-ins curtos e veja a sua roda girar — viva." },
+  { n: "01", title: "Autoavaliação", text: "Dê uma nota de 0 a 10 para cada um dos 11 pilares da sua vida e veja sua roda inteira numa só imagem." },
+  { n: "02", title: "Impactos", text: "Descubra o efeito dominó: como cada pilar fortalece (ou enfraquece) os outros — e onde mexer primeiro." },
+  { n: "03", title: "Plano", text: "Transforme consciência em ação: um plano simples, focado nos pilares de maior impacto agora." },
+  { n: "04", title: "Check-in", text: "Acompanhe sua evolução com check-ins curtos e veja a roda da sua vida girar — viva." },
+];
+
+const DIFFERENTIATORS: Array<{
+  Icon: ComponentType<{ size?: number | string; weight?: "light" | "regular"; className?: string }>;
+  title: string;
+  text: string;
+}> = [
+  { Icon: Waves, title: "Efeito dominó", text: "Nenhum pilar adoece — ou floresce — sozinho. Mostramos as conexões reais entre eles." },
+  { Icon: Compass, title: "Autorresponsabilidade ativa", text: "Não é coaching motivacional. É um espelho honesto que devolve a você o leme da sua vida." },
+  { Icon: Sparkle, title: "IA orientadora", text: "Uma orientadora que conhece sua roda e te faz as perguntas certas no momento certo." },
 ];
 
 const TESTIMONIALS = [
-  { name: "Marina, 34", quote: "Eu achava que o problema era trabalho. A roda me mostrou que era o emocional puxando tudo pra baixo. Em seis semanas, mudei o que importava." },
+  { name: "Marina, 34", quote: "Eu achava que o problema era trabalho. A Roda me mostrou que era o emocional puxando tudo pra baixo. Em 6 semanas, mudei o que importava." },
   { name: "Rafael, 41", quote: "Nunca tinha visto minha vida assim — inteira. É desconfortável e libertador ao mesmo tempo." },
   { name: "Júlia, 28", quote: "O que mais me ajudou foi entender o efeito dominó. Parei de tentar consertar dez coisas ao mesmo tempo." },
 ];
 
 const FAQ = [
-  { q: "É gratuito?", a: "Sim. Você cria sua conta, faz a sua roda completa e usa todas as áreas — autoavaliação, impactos, plano, check-in e IA — sem custo." },
-  { q: "Quanto tempo leva para começar?", a: "A autoavaliação inicial leva entre 8 e 15 minutos. Você pode pausar e voltar quando quiser." },
-  { q: "Preciso fazer tudo de uma vez?", a: "Não. A roda é um processo vivo. Comece pela autoavaliação e o sistema te guia pelos próximos passos no seu ritmo." },
-  { q: "Como a IA me ajuda?", a: "Ela enxerga a sua roda inteira — pontuações, impactos, plano — e conversa com você fazendo perguntas que ajudam a clarear escolhas." },
-  { q: "Meus dados são privados?", a: "Sim. Sua roda é só sua. Não compartilhamos suas avaliações, planos ou conversas com ninguém." },
-];
-
-const DEMO_PILLARS: Pillar[] = [
-  { id: 1,  name: "Contribuição",   shortName: "Contribuição",   icon: "🤝", Icon: HandHeart,   score: 8.2, message: "Exemplo: equilíbrio", impact: 3, impactPillars: [] },
-  { id: 2,  name: "Emocional",      shortName: "Emocional",      icon: "❤️", Icon: Brain,       score: 6.4, message: "Exemplo: atenção",    impact: 3, impactPillars: [] },
-  { id: 3,  name: "Família",        shortName: "Família",        icon: "🏠", Icon: House,       score: 7.6, message: "Exemplo: equilíbrio", impact: 3, impactPillars: [] },
-  { id: 4,  name: "Relacionamento", shortName: "Relacionamento", icon: "💕", Icon: Heart,       score: 4.9, message: "Exemplo: crítico",    impact: 3, impactPillars: [] },
-  { id: 5,  name: "Social",         shortName: "Social",         icon: "👥", Icon: UsersThree,  score: 7.1, message: "Exemplo: equilíbrio", impact: 3, impactPillars: [] },
-  { id: 6,  name: "Carreira",       shortName: "Carreira",       icon: "🎯", Icon: Target,      score: 6.2, message: "Exemplo: atenção",    impact: 4, impactPillars: [], focus: true },
-  { id: 7,  name: "Financeiro",     shortName: "Financeiro",     icon: "💵", Icon: ChartLineUp, score: 8.5, message: "Exemplo: equilíbrio", impact: 3, impactPillars: [] },
-  { id: 8,  name: "Intelectual",    shortName: "Intelectual",    icon: "📖", Icon: BookOpen,    score: 7.8, message: "Exemplo: equilíbrio", impact: 3, impactPillars: [] },
-  { id: 9,  name: "Espiritualidade",shortName: "Espiritualidade",icon: "🧘", Icon: FlowerLotus, score: 5.3, message: "Exemplo: crítico",    impact: 3, impactPillars: [] },
-  { id: 10, name: "Lazer",          shortName: "Lazer",          icon: "🎵", Icon: MusicNotes,  score: 6.8, message: "Exemplo: atenção",    impact: 3, impactPillars: [] },
-  { id: 11, name: "Saúde",          shortName: "Saúde",          icon: "🏃", Icon: Heartbeat,   score: 4.3, message: "Exemplo: crítico",    impact: 3, impactPillars: [] },
+  { q: "É gratuito?", a: "Sim. Você cria sua conta, faz sua Roda da Vida (Vida em Eixo) completa e usa todas as áreas — autoavaliação, impactos, plano, check-in e IA — sem custo." },
+  { q: "Quanto tempo leva pra começar?", a: "A autoavaliação inicial leva entre 8 e 15 minutos. Você pode pausar e voltar quando quiser." },
+  { q: "Preciso fazer tudo de uma vez?", a: "Não. A Roda é um processo vivo. Comece pela autoavaliação, e o sistema te guia pelos próximos passos no seu ritmo." },
+  { q: "Como a IA me ajuda?", a: "Ela enxerga sua roda inteira — pontuações, impactos, plano — e conversa com você fazendo perguntas que ajudam a clarear escolhas e próximos passos." },
+  { q: "Meus dados são privados?", a: "Sim. Sua roda é só sua. Não compartilhamos suas avaliações, planos ou conversas com a IA com ninguém." },
 ];
 
 export function LandingPage() {
   return (
     <div className="landing-root min-h-screen">
-      <StickyNav />
+      <LandingNav />
       <Hero />
-      <StatsStrip />
       <DashboardPreview />
-      <Method />
-      <Pillars />
+      <PillarsSection />
+      <HowItWorks />
       <Differentiators />
       <Testimonials />
-      <CentralCTA />
       <FAQSection />
+      <FinalCTA />
       <LandingFooter />
     </div>
   );
 }
 
-function StickyNav() {
-  const [open, setOpen] = useState(false);
+function LandingNav() {
   return (
-    <header className="ve-nav">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-2.5">
-          <img src={logoAsset.url} alt="Vida em Eixo" className="h-8 w-8 rounded-lg object-contain" />
-          <span className="text-[15px]" style={{ fontWeight: 500 }}>Vida em Eixo</span>
+    <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+      <Link to="/" className="flex items-center gap-2.5">
+        <img
+          src={logoAsset.url}
+          alt="Vida em Eixo"
+          className="h-10 w-10 rounded-2xl object-contain"
+        />
+        <span className="text-lg font-semibold tracking-tight">Vida em Eixo</span>
+      </Link>
+      <div className="flex items-center gap-2">
+        <Link to="/auth" className="landing-cta landing-cta-ghost hidden sm:inline-flex">
+          Entrar
         </Link>
-        <nav className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="ve-nav-link">{l.label}</a>
-          ))}
-        </nav>
-        <div className="hidden items-center gap-3 md:flex">
-          <Link to="/auth" className="ve-nav-link">Entrar</Link>
-          <Link to="/auth" className="ve-btn">Inicie sua jornada</Link>
-        </div>
-        <button
-          type="button"
-          className="md:hidden"
-          aria-label="Abrir menu"
-          onClick={() => setOpen((v) => !v)}
-          style={{ color: "var(--ve-ink)" }}
-        >
-          {open ? <X size={22} weight="light" /> : <List size={22} weight="light" />}
-        </button>
+        <Link to="/auth" className="landing-cta">
+          Começar agora
+        </Link>
       </div>
-      {open && (
-        <div className="border-t md:hidden" style={{ borderColor: "var(--ve-line)", borderWidth: "0.5px" }}>
-          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5">
-            {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="ve-nav-link" onClick={() => setOpen(false)}>{l.label}</a>
-            ))}
-            <Link to="/auth" className="ve-btn mt-2">Inicie sua jornada</Link>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
 
 function Hero() {
   return (
-    <section className="px-6 py-20 md:py-28">
-      <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-[1.05fr_1fr]">
+    <section className="relative overflow-hidden">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 md:grid-cols-[1.1fr_1fr] md:py-24">
         <div>
-          <span className="ve-eyebrow">Autoconhecimento integrado</span>
-          <h1 className="mt-5">
-            Veja sua vida inteira <em>em uma só imagem.</em>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] px-3 py-1 text-xs font-medium tracking-wide text-[color:var(--landing-ink-soft)] uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--landing-gold)]" />
+            Autoconhecimento integrado
+          </span>
+          <h1 className="mt-6 text-4xl font-bold leading-[1.05] md:text-6xl">
+            Veja sua vida inteira <br className="hidden md:block" />
+            <span className="italic text-[color:var(--landing-ink-soft)]">em uma só imagem.</span>
           </h1>
-          <p className="mt-6 max-w-[560px]" style={{ color: "var(--ve-ink-soft)" }}>
-            A Vida em Eixo é um espelho honesto dos onze pilares que sustentam você.
-            Você avalia, vê o efeito dominó entre eles e descobre exatamente
-            onde mexer primeiro para mudar tudo.
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--landing-ink-soft)]">
+            A Vida em Eixo é um espelho honesto dos 11 pilares que sustentam você.
+            Você avalia, vê o efeito dominó entre eles e descobre exatamente onde mexer
+            primeiro para mudar tudo.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link to="/auth" className="ve-btn">Inicie sua jornada</Link>
-            <a href="#metodo" className="ve-btn-outline">Ver como funciona</a>
+            <Link to="/auth" className="landing-cta landing-cta-gold">
+              Começar agora — é gratuito →
+            </Link>
+            <a href="#como-funciona" className="text-sm font-medium text-[color:var(--landing-ink-soft)] underline-offset-4 hover:underline">
+              ver como funciona
+            </a>
+          </div>
+          <div className="mt-10 flex items-center gap-6 text-xs text-[color:var(--landing-muted)]">
+            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> 11 pilares mapeados</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> Sem cobrança</span>
+            <span className="inline-flex items-center gap-1.5"><CheckCircle size={14} weight="light" /> Comece em 10 min</span>
           </div>
         </div>
-        <div className="ve-card" style={{ padding: "1.5rem", boxShadow: "var(--ve-shadow-md)" }}>
-          <HeroVisual />
-        </div>
+        <HeroWheel />
       </div>
     </section>
   );
 }
 
-function HeroVisual() {
-  // Lightweight composition preview (the full RadialWheel lives below in DashboardPreview)
+function HeroWheel() {
+  const SIZE = 420;
+  const CX = SIZE / 2;
+  const CY = SIZE / 2;
+  const R_OUTER = 170;
+  const R_INNER = 80;
+  const N = PILLAR_DEFAULTS.length;
+  const segDeg = 360 / N;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const balance = overallBalance(PILLAR_DEFAULTS);
+
+  const STATUS_FILL: Record<string, string> = {
+    balanced: "var(--balanced)",
+    attention: "var(--attention)",
+    critical: "var(--critical)",
+    empty: "var(--empty)",
+  };
+
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[420px]">
-      <RadialWheelMini />
+      <div className="hero-wheel-halo absolute inset-6 rounded-full bg-gradient-to-br from-[color:var(--landing-bg-soft)] via-[color:var(--landing-bg-soft)] to-transparent blur-2xl" />
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="relative h-full w-full">
+        <g className="hero-wheel-rotate">
+        {PILLAR_DEFAULTS.map((p, i) => {
+          const a0 = -90 - segDeg / 2 + i * segDeg;
+          const a1 = a0 + segDeg;
+          const mid = (a0 + a1) / 2;
+          const midR = toRad(mid);
+          const x0o = CX + R_OUTER * Math.cos(toRad(a0));
+          const y0o = CY + R_OUTER * Math.sin(toRad(a0));
+          const x1o = CX + R_OUTER * Math.cos(toRad(a1));
+          const y1o = CY + R_OUTER * Math.sin(toRad(a1));
+          const x0i = CX + R_INNER * Math.cos(toRad(a1));
+          const y0i = CY + R_INNER * Math.sin(toRad(a1));
+          const x1i = CX + R_INNER * Math.cos(toRad(a0));
+          const y1i = CY + R_INNER * Math.sin(toRad(a0));
+          const d = `M ${x0o} ${y0o} A ${R_OUTER} ${R_OUTER} 0 0 1 ${x1o} ${y1o} L ${x0i} ${y0i} A ${R_INNER} ${R_INNER} 0 0 0 ${x1i} ${y1i} Z`;
+          const status = statusFromScore(p.score);
+          const iconR = (R_INNER + R_OUTER) / 2 + 4;
+          const ix = CX + iconR * Math.cos(midR);
+          const iy = CY + iconR * Math.sin(midR);
+          const numR = R_INNER + 14;
+          const nx = CX + numR * Math.cos(midR);
+          const ny = CY + numR * Math.sin(midR);
+          return (
+            <g key={p.id} className="hero-wheel-seg" style={{ animationDelay: `${i * 0.18}s` }}>
+              <path d={d} fill={STATUS_FILL[status]} fillOpacity={0.9} stroke="white" strokeWidth={2} />
+              <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill="white">
+                {p.id}
+              </text>
+              <foreignObject x={ix - 10} y={iy - 10} width={20} height={20}>
+                <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <p.Icon size={16} weight="light" color="white" />
+                </div>
+              </foreignObject>
+            </g>
+          );
+        })}
+        </g>
+        <g className="hero-wheel-hub">
+        <circle cx={CX} cy={CY} r={R_INNER - 4} fill="white" stroke="var(--primary)" strokeOpacity={0.35} strokeWidth={2} />
+        </g>
+        <text x={CX} y={CY - 16} textAnchor="middle" fontSize="12" fill="var(--landing-ink-soft)" fontWeight="500">
+          Equilíbrio Geral
+        </text>
+        <text
+          x={CX}
+          y={CY + 16}
+          textAnchor="middle"
+          fontSize="34"
+          fontWeight="800"
+          fill="var(--landing-ink)"
+        >
+          {balance}%
+        </text>
+        <foreignObject x={CX - 10} y={CY + 32} width={20} height={20}>
+          <div style={{ width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--primary)" }}>
+            <Plant size={18} weight="light" />
+          </div>
+        </foreignObject>
+      </svg>
     </div>
   );
 }
 
-function RadialWheelMini() {
-  // Compact wheel for the hero card.
-  const SIZE = 420;
-  const CX = SIZE / 2;
-  const CY = SIZE / 2;
-  const R_OUT = 170;
-  const R_IN = 82;
-  const N = PILLAR_DEFAULTS.length;
-  const seg = 360 / N;
-  const rad = (d: number) => (d * Math.PI) / 180;
-
-  return (
-    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-full w-full">
-      {PILLAR_DEFAULTS.map((p, i) => {
-        const a0 = -90 - seg / 2 + i * seg;
-        const a1 = a0 + seg;
-        const x0o = CX + R_OUT * Math.cos(rad(a0));
-        const y0o = CY + R_OUT * Math.sin(rad(a0));
-        const x1o = CX + R_OUT * Math.cos(rad(a1));
-        const y1o = CY + R_OUT * Math.sin(rad(a1));
-        const x0i = CX + R_IN * Math.cos(rad(a1));
-        const y0i = CY + R_IN * Math.sin(rad(a1));
-        const x1i = CX + R_IN * Math.cos(rad(a0));
-        const y1i = CY + R_IN * Math.sin(rad(a0));
-        const d = `M ${x0o} ${y0o} A ${R_OUT} ${R_OUT} 0 0 1 ${x1o} ${y1o} L ${x0i} ${y0i} A ${R_IN} ${R_IN} 0 0 0 ${x1i} ${y1i} Z`;
-        const fill = i % 3 === 0 ? "var(--ve-primary)" : i % 3 === 1 ? "var(--ve-accent)" : "var(--ve-muted)";
-        return (
-          <path key={p.id} d={d} fill={fill} fillOpacity={0.85}
-                stroke="var(--ve-bg)" strokeWidth={1} />
-        );
-      })}
-      <circle cx={CX} cy={CY} r={R_IN - 4} fill="var(--ve-bg)"
-              stroke="var(--ve-primary)" strokeOpacity={0.35} strokeWidth={2}
-              className="wheel-hub" />
-      <circle cx={CX} cy={CY} r={R_IN + 6} fill="none"
-              stroke="var(--ve-primary)" strokeWidth={1.5}
-              className="wheel-hub-halo" />
-      <text x={CX} y={CY - 8} textAnchor="middle" fontSize="12"
-            fill="var(--ve-muted)" fontWeight="400">Equilíbrio</text>
-      <text x={CX} y={CY + 22} textAnchor="middle" fontSize="32"
-            fontWeight="500" fill="var(--ve-ink)">68%</text>
-    </svg>
-  );
-}
-
-function StatsStrip() {
-  return (
-    <section className="px-6 py-16">
-      <div className="mx-auto grid max-w-5xl gap-10 sm:grid-cols-3">
-        {STATS.map((s) => (
-          <div key={s.label} className="text-center">
-            <div style={{ fontSize: 44, fontWeight: 500, color: "var(--ve-primary)", lineHeight: 1.1 }}>
-              {s.value}
-            </div>
-            <div className="mt-2 text-sm" style={{ color: "var(--ve-muted)" }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+const DEMO_PILLARS: Pillar[] = [
+  { id: 1,  name: "Contribuição",  shortName: "Contribuição",  icon: "🤝", Icon: HandHeart,   score: 8.2, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 2,  name: "Emocional",     shortName: "Emocional",     icon: "❤️", Icon: Brain,       score: 6.4, message: "Exemplo: atenção",            impact: 3, impactPillars: [] },
+  { id: 3,  name: "Família",       shortName: "Família",       icon: "🏠", Icon: House,       score: 7.6, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 4,  name: "Relacionamento",shortName: "Relacionamento",icon: "💕", Icon: Heart,       score: 4.9, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
+  { id: 5,  name: "Social",        shortName: "Social",        icon: "👥", Icon: UsersThree,  score: 7.1, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 6,  name: "Carreira",      shortName: "Carreira",      icon: "🎯", Icon: Target,      score: 6.2, message: "Exemplo: atenção",            impact: 4, impactPillars: [], focus: true },
+  { id: 7,  name: "Financeiro",    shortName: "Financeiro",    icon: "💵", Icon: ChartLineUp, score: 8.5, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 8,  name: "Intelectual",   shortName: "Intelectual",   icon: "📖", Icon: BookOpen,    score: 7.8, message: "Exemplo: equilíbrio",         impact: 3, impactPillars: [] },
+  { id: 9,  name: "Espiritualidade",shortName:"Espiritualidade",icon:"🧘", Icon: FlowerLotus, score: 5.3, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
+  { id: 10, name: "Lazer",         shortName: "Lazer",         icon: "🎵", Icon: MusicNotes,  score: 6.8, message: "Exemplo: atenção",            impact: 3, impactPillars: [] },
+  { id: 11, name: "Saúde",         shortName: "Saúde",         icon: "🏃", Icon: Heartbeat,   score: 4.3, message: "Exemplo: crítico",            impact: 3, impactPillars: [] },
+];
 
 function DashboardPreview() {
   return (
-    <section className="px-6 py-20 md:py-28" style={{ background: "var(--ve-bg-soft)" }}>
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-[700px] text-center">
-          <span className="ve-eyebrow">Prévia do painel</span>
-          <h2 className="mt-4">
-            Sua vida inteira, <em>viva e em movimento.</em>
+    <section className="relative overflow-hidden border-y border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--landing-line)] bg-[color:var(--background)] px-3 py-1 text-xs font-medium tracking-wide text-[color:var(--landing-ink-soft)] uppercase">
+            Prévia do painel
+          </span>
+          <h2 className="mt-5 text-3xl font-bold leading-tight md:text-4xl">
+            Sua vida inteira, viva e em movimento
           </h2>
-          <p className="mt-5" style={{ color: "var(--ve-ink-soft)" }}>
-            Uma amostra do painel. Os números abaixo são fictícios — servem
-            só para você sentir como a sua roda ganha vida com os seus dados.
+          <p className="mt-4 text-[color:var(--landing-ink-soft)]">
+            Uma amostra ilustrativa do painel — os números abaixo são fictícios,
+            só para você sentir como a Roda da Vida ganha vida com os seus dados.
           </p>
         </div>
-        <div className="mt-14 hidden md:block">
-          <RadialWheel pillars={DEMO_PILLARS} balance={68} hovered={null} onHover={() => {}} />
-          <p className="mt-6 text-center text-xs italic" style={{ color: "var(--ve-muted)" }}>
+        <div className="mt-12 hidden md:block">
+          <RadialWheel
+            pillars={DEMO_PILLARS}
+            balance={68}
+            hovered={null}
+            onHover={() => {}}
+          />
+          <p className="mt-4 text-center text-xs italic text-[color:var(--landing-muted)]">
             * dados ilustrativos
           </p>
         </div>
@@ -247,53 +264,35 @@ function DashboardPreview() {
   );
 }
 
-function Method() {
+function PillarsSection() {
   return (
-    <section id="metodo" className="px-6 py-20 md:py-28">
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-[700px] text-center">
-          <span className="ve-eyebrow">Como funciona</span>
-          <h2 className="mt-4">
-            Quatro passos, <em>uma vida clareada.</em>
+    <section className="bg-[color:var(--landing-bg-soft)] py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Os 11 pilares</p>
+          <h2 className="mt-3 text-3xl font-bold md:text-4xl">
+            Sua vida não é uma lista de tarefas.
+            <span className="block text-[color:var(--landing-ink-soft)]">É um sistema vivo.</span>
           </h2>
-        </div>
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map((s) => (
-            <article key={s.n} className="ve-card">
-              <div style={{ fontSize: 13, color: "var(--ve-muted)" }}>{s.n}</div>
-              <h3 className="mt-3" style={{ fontSize: 20 }}>{s.title}</h3>
-              <p className="mt-3 text-[15px]" style={{ color: "var(--ve-ink-soft)" }}>{s.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Pillars() {
-  return (
-    <section id="pilares" className="px-6 py-20 md:py-28" style={{ background: "var(--ve-bg-soft)" }}>
-      <div className="mx-auto max-w-6xl">
-        <div className="max-w-[700px]">
-          <span className="ve-eyebrow">Os onze pilares</span>
-          <h2 className="mt-4">
-            Sua vida não é uma lista. <em>É um sistema vivo.</em>
-          </h2>
-          <p className="mt-5" style={{ color: "var(--ve-ink-soft)" }}>
+          <p className="mt-4 text-[color:var(--landing-ink-soft)]">
             Cada pilar conversa com os outros. Quando um adoece, todos sentem.
             Quando um floresce, todos respiram melhor.
           </p>
         </div>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PILLAR_DEFAULTS.map((p) => (
-            <div key={p.id} className="ve-card flex items-start gap-4">
-              <p.Icon size={22} weight="light" color="var(--ve-primary)" />
-              <div>
-                <h3 style={{ fontSize: 17 }}>{p.name}</h3>
-                <p className="mt-1 text-[14px]" style={{ color: "var(--ve-muted)" }}>
-                  Conecta com {p.impactPillars.slice(0, 2).join(" e ") || "todos os outros pilares"}.
-                </p>
+            <div
+              key={p.id}
+              className="group rounded-2xl border border-[color:var(--landing-line)] bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[color:var(--landing-line)]"
+            >
+              <div className="flex items-start gap-3">
+                <p.Icon size={24} weight="light" className="text-[color:var(--primary)] shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-base font-semibold">{p.name}</h3>
+                  <p className="mt-1 text-sm text-[color:var(--landing-ink-soft)]">
+                    Conecta com {p.impactPillars.slice(0, 2).join(" e ")}.
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -303,27 +302,44 @@ function Pillars() {
   );
 }
 
-function Differentiators() {
-  const items = [
-    { title: "Efeito dominó", text: "Nenhum pilar adoece — ou floresce — sozinho. Mostramos as conexões reais entre eles." },
-    { title: "Autorresponsabilidade ativa", text: "Não é coaching motivacional. É um espelho honesto que devolve a você o leme da sua vida." },
-    { title: "IA orientadora", text: "Uma orientadora que conhece a sua roda e faz as perguntas certas no momento certo." },
-  ];
+function HowItWorks() {
   return (
-    <section className="px-6 py-20 md:py-28">
-      <div className="mx-auto max-w-6xl">
-        <div className="max-w-[700px]">
-          <span className="ve-eyebrow">Por que é diferente</span>
-          <h2 className="mt-4">
-            Não é mais um app de hábitos. <em>É um espelho que devolve o leme.</em>
+    <section id="como-funciona" className="py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Como funciona</p>
+          <h2 className="mt-3 text-3xl font-bold md:text-4xl">Quatro passos. Uma vida inteira clareada.</h2>
+        </div>
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((s) => (
+            <div key={s.n} className="relative rounded-2xl border border-[color:var(--landing-line)] bg-[color:var(--landing-bg-soft)] p-6">
+              <span className="font-display text-5xl font-bold text-[color:var(--landing-gold)]">{s.n}</span>
+              <h3 className="mt-3 text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[color:var(--landing-ink-soft)]">{s.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Differentiators() {
+  return (
+    <section className="bg-[color:var(--landing-ink)] py-20 text-[color:#FBF8F2]">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold)] uppercase">Por que é diferente</p>
+          <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
+            Não é mais um app de hábitos. É um espelho que devolve o leme pra você.
           </h2>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {items.map((d) => (
-            <div key={d.title} className="ve-card">
-              <div style={{ width: 28, height: 2, background: "var(--ve-accent)", borderRadius: 2 }} />
-              <h3 className="mt-5" style={{ fontSize: 20 }}>{d.title}</h3>
-              <p className="mt-3 text-[15px]" style={{ color: "var(--ve-ink-soft)" }}>{d.text}</p>
+          {DIFFERENTIATORS.map((d) => (
+            <div key={d.title} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <d.Icon size={32} weight="light" className="text-[color:var(--landing-gold)]" />
+              <h3 className="mt-4 text-lg font-semibold !text-white">{d.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">{d.text}</p>
             </div>
           ))}
         </div>
@@ -334,22 +350,20 @@ function Differentiators() {
 
 function Testimonials() {
   return (
-    <section id="depoimentos" className="px-6 py-20 md:py-28" style={{ background: "var(--ve-bg-soft)" }}>
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-[700px] text-center">
-          <span className="ve-eyebrow">Quem já rodou</span>
-          <h2 className="mt-4">
-            O que as pessoas <em>descobrem.</em>
-          </h2>
+    <section className="py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Quem já rodou</p>
+          <h2 className="mt-3 text-3xl font-bold md:text-4xl">O que as pessoas descobrem.</h2>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="ve-card">
-              <span style={{ color: "var(--ve-accent)", fontSize: 36, lineHeight: 1, fontStyle: "italic" }}>“</span>
-              <blockquote className="mt-2 text-[15px]" style={{ color: "var(--ve-ink)", lineHeight: 1.7 }}>
+            <figure key={t.name} className="rounded-2xl border border-[color:var(--landing-line)] bg-white p-6">
+              <span className="font-display text-4xl leading-none text-[color:var(--landing-gold)]">"</span>
+              <blockquote className="mt-2 text-[color:var(--landing-ink)] leading-relaxed">
                 {t.quote}
               </blockquote>
-              <figcaption className="mt-5 text-sm" style={{ color: "var(--ve-muted)" }}>— {t.name}</figcaption>
+              <figcaption className="mt-4 text-sm font-medium text-[color:var(--landing-ink-soft)]">— {t.name}</figcaption>
             </figure>
           ))}
         </div>
@@ -358,62 +372,21 @@ function Testimonials() {
   );
 }
 
-function CentralCTA() {
-  return (
-    <section className="px-6 py-20 md:py-28">
-      <div
-        className="mx-auto max-w-5xl text-center"
-        style={{
-          background: "var(--ve-primary)",
-          color: "#fff",
-          borderRadius: "var(--ve-radius-lg)",
-          padding: "4rem 2rem",
-        }}
-      >
-        <h2 style={{ color: "#fff" }}>
-          Nenhum pilar muda sozinho. <em style={{ color: "rgba(255,255,255,.75)" }}>Comece o seu efeito dominó hoje.</em>
-        </h2>
-        <p className="mx-auto mt-5 max-w-[560px]" style={{ color: "rgba(255,255,255,.8)" }}>
-          Em menos de quinze minutos você terá a primeira imagem honesta da sua vida inteira.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            to="/auth"
-            className="ve-btn"
-            style={{ background: "#fff", color: "var(--ve-primary)", borderColor: "#fff" }}
-          >
-            Crie a sua roda gratuita
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function FAQSection() {
   return (
-    <section id="perguntas" className="px-6 py-20 md:py-28">
-      <div className="mx-auto max-w-3xl">
+    <section className="bg-[color:var(--landing-bg-soft)] py-20">
+      <div className="mx-auto max-w-3xl px-6">
         <div className="text-center">
-          <span className="ve-eyebrow">Perguntas frequentes</span>
-          <h2 className="mt-4">
-            Tudo que você quer saber <em>antes de começar.</em>
-          </h2>
+          <p className="text-sm font-semibold tracking-widest text-[color:var(--landing-gold-deep)] uppercase">Perguntas frequentes</p>
+          <h2 className="mt-3 text-3xl font-bold md:text-4xl">Tudo que você quer saber antes de começar.</h2>
         </div>
-        <Accordion type="single" collapsible className="mt-12">
+        <Accordion type="single" collapsible className="mt-10">
           {FAQ.map((f, i) => (
-            <AccordionItem
-              key={i}
-              value={`item-${i}`}
-              style={{ borderBottom: "0.5px solid var(--ve-line)" }}
-            >
-              <AccordionTrigger
-                className="py-5 text-left hover:no-underline"
-                style={{ fontSize: 16, fontWeight: 500, color: "var(--ve-ink)" }}
-              >
+            <AccordionItem key={i} value={`item-${i}`} className="border-b border-[color:var(--landing-line)]">
+              <AccordionTrigger className="py-5 text-left text-base font-semibold text-[color:var(--landing-ink)] hover:no-underline">
                 {f.q}
               </AccordionTrigger>
-              <AccordionContent style={{ color: "var(--ve-ink-soft)", lineHeight: 1.7, fontSize: 15 }}>
+              <AccordionContent className="text-[color:var(--landing-ink-soft)] leading-relaxed">
                 {f.a}
               </AccordionContent>
             </AccordionItem>
@@ -424,16 +397,34 @@ function FAQSection() {
   );
 }
 
+function FinalCTA() {
+  return (
+    <section className="py-24">
+      <div className="mx-auto max-w-3xl px-6 text-center">
+        <div className="landing-divider mx-auto mb-12 max-w-xs" />
+        <h2 className="text-3xl font-bold md:text-5xl">
+          Nenhum pilar muda sozinho.
+          <span className="block italic text-[color:var(--landing-ink-soft)]">Comece o seu efeito dominó hoje.</span>
+        </h2>
+        <p className="mt-6 text-lg text-[color:var(--landing-ink-soft)]">
+          Em menos de 15 minutos você terá a primeira imagem honesta da sua vida inteira.
+        </p>
+        <div className="mt-10">
+          <Link to="/auth" className="landing-cta landing-cta-gold text-base">
+            Criar minha Roda gratuita →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function LandingFooter() {
   return (
-    <footer
-      className="px-6 py-10"
-      style={{ borderTop: "0.5px solid var(--ve-line)" }}
-    >
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm"
-           style={{ color: "var(--ve-muted)" }}>
-        <p>© {new Date().getFullYear()} Vida em Eixo. Para quem quer ver a vida inteira.</p>
-        <Link to="/auth" className="ve-nav-link">Entrar ou criar conta</Link>
+    <footer className="border-t border-[color:var(--landing-line)] py-8">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-sm text-[color:var(--landing-muted)]">
+        <p>© {new Date().getFullYear()} Vida em Eixo. Feito para quem quer ver a vida inteira.</p>
+        <Link to="/auth" className="hover:text-[color:var(--landing-ink)]">Entrar / Criar conta</Link>
       </div>
     </footer>
   );
